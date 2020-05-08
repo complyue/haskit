@@ -32,6 +32,11 @@ directly, if you have the choice?
 
 Here is this offer:
 
+- **HaskIt** (this package)
+
+  Interactive workbench with easy yet powerful visualizations, for data/idea
+  exploration.
+
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
   An **Object** layer (or otherwise a parasitic programming language)
@@ -49,10 +54,11 @@ Here is this offer:
   [Array](https://en.wikipedia.org/wiki/Array_DBMS)s
   .
 
-  Integrate with your numeric systems with persistent high-dimensional
-  data (parameters of machine learning models, training data etc.), with
-  [HasPyC](https://github.com/e-wrks/haspyc)
-  the Python connector to **HasDB**
+  - [HasPyC](https://github.com/e-wrks/haspyc)
+
+    The Python connector to **HasDB**, to integrate with your numeric systems,
+    bound to persistent, high-dimensional data, e.g. parameters of machine
+    learning models, training data.
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
