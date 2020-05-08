@@ -21,5 +21,5 @@ your trials, where you have plenty, practical choices, besides
 - **Go** for collaboration between commponents
 - **JavaScript** for Web technology based UI, and even backend stuffs with extra love
 
-But why not start benefitting from **Haskell** before your can use it
-by yourself, if you have the choice?
+But why not start benefitting from **Haskell** before you can use it
+directly, if you have the choice?
