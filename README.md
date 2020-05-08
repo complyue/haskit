@@ -59,8 +59,9 @@ Here is this offer:
 
     The **Python** connector to **HasDB**, to integrate with your numeric
     systems, bound to high-dimensional data (e.g. parameters of machine
-    learning models, training data), modeled after **Entity-Relationship**
-    as **Graph**s, i.e. entities as nodes and relationships as edges.
+    learning models, training data, time-seriesÎ), modeled after
+    **Entity-Relationship** as **Graph**s, i.e. entities as nodes and
+    relationships as edges.
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
