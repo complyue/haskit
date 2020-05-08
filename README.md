@@ -40,7 +40,8 @@ Here is this offer:
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
   An **Object** layer (or otherwise a parasitic programming language)
-  within **Haskell** ([GHC](https://haskell.org/ghc))
+  powered by **Haskell** ([GHC](https://haskell.org/ghc)), especially
+  [Software Transactional Memory](http://hackage.haskell.org/package/stm).
 
 - [HasDB](https://github.com/e-wrks/hasdb)
 
