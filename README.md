@@ -27,8 +27,8 @@ practical choices:
 - **JavaScript** for Web technology based UI, and even backend stuffs with extra love
 - many others in the mix
 
-But why not start benefitting from **Haskell**, before you can use it
-directly, if you have the choice?
+But why not start benefitting from **Haskell**, before you feel comfortable
+to use it directly, if you have the choice?
 
 Here is this offer:
 
