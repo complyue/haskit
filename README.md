@@ -5,10 +5,11 @@ makes the wrong stuff harder to build, if not the right
 things easier to form.
 
 Programming in **Haskell**, it is actually harder, for you to progress,
-before coming (back, likely at times) with a sufficient understanding
-of your problem, [in mathematical ways](https://arxiv.org/abs/1904.07968),
-this is one of the reasons why **Haskell** software usually bear with
-high quality and the language is so great.
+before you come (back, likely at times, with your love) with a sufficient
+understanding of your problem,
+[in mathematical ways](https://arxiv.org/abs/1904.07968),
+this is one of the reasons why **Haskell** software usually bear high
+quality and the language is so great.
 
 At times, you just can **not** gain understandings of that grade, without
 trials, i.e. experiments with your data and workflows for currently
@@ -16,8 +17,9 @@ running business, that might include your users and even your suppliers.
 
 And that normally involve some pieces of software powering the run of
 your trials. With respect to programming languages, there you have plenty,
-practical choices, besides **Haskell**
+practical choices:
 
+- boring **Haskell** for true love
 - **C/C++** for raw machine performance
 - **Python** for fast iterations
 - **Julia** for both above
