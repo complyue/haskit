@@ -33,10 +33,12 @@ directly, if you have the choice?
 Here is this offer:
 
 - [Đ (Edh)](https://github.com/e-wrks/edh)
+
   An **Object** layer (or otherwise a parasitic programming language)
-  atop **Haskell** (GHC)
+  within **Haskell** ([GHC](https://haskell.org/ghc))
 
 - [HasDB](https://github.com/e-wrks/hasdb)
+
   A
   [DBMS](https://en.wikipedia.org/wiki/Database#Database_management_system)
   that manages
@@ -53,9 +55,11 @@ Here is this offer:
   the Python connector to **HasDB**
 
 - [Sedh](https://github.com/e-wrks/sedh)
+
   Manage your swarm of servers
 
   Think of [OpenMP](https://www.openmp.org/) made even easier.
 
 - [Nedh](https://github.com/e-wrks/nedh)
+
   Low level networking support
