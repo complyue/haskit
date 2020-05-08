@@ -24,7 +24,7 @@ practical choices:
 - **Python**, **Ruby** for fast iterations
 - **Julia** for both above
 - **Go** for collaboration between commponents
-- **JavaScript** for Web technology based UI, and even backend stuffs with extra love
+- **JavaScript** for Web technology based UI, and everything else with extra love
 - many others in the mix
 
 But why not start benefitting from **Haskell**, before you feel comfortable
