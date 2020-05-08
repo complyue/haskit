@@ -56,16 +56,19 @@ Here is this offer:
 
   - [HasPyC](https://github.com/e-wrks/haspyc)
 
-    The Python connector to **HasDB**, to integrate with your numeric systems,
-    bound to persistent, high-dimensional data, e.g. parameters of machine
-    learning models, training data.
+    The **Python** connector to **HasDB**, to integrate with your numeric
+    systems, bound to high-dimensional data (e.g. parameters of machine
+    learning models, training data), modeled after **Entity-Relationship**
+    as **Graph**s, i.e. entities as nodes and relationships as edges.
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
-  Manage your swarm of servers
+  Manage your swarm of servers.
 
   Think of [OpenMP](https://www.openmp.org/) made even easier.
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
-  Low level networking support
+  Another abstraction of networking.
+
+  Something like **TCP** services with **UDP** discoveries.
