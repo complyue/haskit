@@ -64,12 +64,12 @@ Here is this offer:
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
-  Manage your swarm of servers.
+  Manage your swarms of servers.
 
   Think of [OpenMP](https://www.openmp.org/) made even easier.
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
-  Another abstraction of networking.
+  Yet another abstraction of networking.
 
-  Something like **TCP** services with **UDP** discoveries.
+  Think of something like **TCP** services with **UDP** discoveries.
