@@ -20,8 +20,8 @@ your trials. With respect to programming languages, there you have plenty,
 practical choices:
 
 - boring **Haskell** for true love
-- **C/C++** for raw machine performance
-- **Python** for fast iterations
+- **Rust**, **C/C++** for raw machine performance
+- **Python**, **Ruby** for fast iterations
 - **Julia** for both above
 - **Go** for collaboration between commponents
 - **JavaScript** for Web technology based UI, and even backend stuffs with extra love
