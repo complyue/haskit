@@ -66,7 +66,8 @@ Here is this offer:
 
   Manage your swarms of servers.
 
-  Think of [OpenMP](https://www.openmp.org/) made even easier.
+  Think of even easier parallelism in spirit of
+  [MPI](https://www.mpi-forum.org)
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
