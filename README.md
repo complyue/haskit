@@ -7,11 +7,13 @@ of your problem in mathematical ways, this is one of the reasons why
 is so great.
 
 At times, you just can not gain understandings of that grade, without
-trials, i.e. experiments with your data and workflows, that might
-include your users and even your suppliers, and that normally invole
-some software powering the run of your trial business.
+trials, i.e. experiments with your data and workflows for currently
+running business, that might include your users and even your
+suppliers.
 
-You have plenty, practical choices besides **Haskell**
+And that normally involve some pieces of software powering the run of
+your trials, where you have plenty, practical choices, besides
+**Haskell**
 
 - **C/C++** for raw machine performance
 - **Python** for fast iterations
