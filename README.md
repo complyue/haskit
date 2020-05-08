@@ -1,5 +1,8 @@
 # HaskIt - Haskell software, fast Iterations
 
+**Haskell** makes the wrong stuff harder to build, if not the right
+things easier to form.
+
 Programming in **Haskell**, it's actually harder for you to progress
 before coming (back, likely at times) with a sufficient understanding
 of your problem in mathematical ways, this is one of the reasons why
