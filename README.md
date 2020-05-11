@@ -69,11 +69,15 @@ Here is this offer:
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
-  Yet another abstraction of networking.
+  Yet another abstraction of networking for
+  [IPC](https://en.wikipedia.org/wiki/Inter-process_communication)
+  and
+  [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call)
+  over network.
 
   Think of something like **TCP** services with **UDP** discoveries, with
   [Head-of-Line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking)
-  solved by arbitrary number of concurrent command channels, where each
+  solved by arbitrary number of named, concurrent command channels, where each
   channel conveys its own stream of business actions with data.
 
 - [Đ (Edh)](https://github.com/e-wrks/edh)
