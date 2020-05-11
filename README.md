@@ -37,12 +37,6 @@ Here is this offer:
   Interactive workbench with easy yet powerful visualizations, for data/idea
   exploration.
 
-- [Đ (Edh)](https://github.com/e-wrks/edh)
-
-  An **Object** layer (or otherwise a parasitic programming language)
-  powered by **Haskell** ([GHC](https://haskell.org/ghc)), especially
-  [Software Transactional Memory](http://hackage.haskell.org/package/stm).
-
 - [HasDB](https://github.com/e-wrks/hasdb)
 
   A
@@ -65,13 +59,22 @@ Here is this offer:
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
-  Manage your swarms of servers.
+  Run jobs those need parallel computing power, on-premises, with your own
+  swarms of servers.
 
   Think of even easier parallelism in spirit of
-  [MPI](https://www.mpi-forum.org)
+  [MPI](https://www.mpi-forum.org),
+  with the bonus that jobs are atomatically scheduled with respect to
+  priority and headcount specification as submitted.
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
   Yet another abstraction of networking.
 
   Think of something like **TCP** services with **UDP** discoveries.
+
+- [Đ (Edh)](https://github.com/e-wrks/edh)
+
+  An **Object** layer (or otherwise a parasitic programming language)
+  powered by **Haskell** ([GHC](https://haskell.org/ghc)), especially
+  [Software Transactional Memory](http://hackage.haskell.org/package/stm).
