@@ -78,7 +78,7 @@ Here is this offer:
   Think of something like **TCP** services with **UDP** discoveries, where
   [Head-of-Line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking)
   is resolved by arbitrary number of named, concurrent command channels, with
-  each channel conveys its own stream of business instructions w/ data.
+  each channel conveying its own stream of business instructions w/ data.
 
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
