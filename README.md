@@ -69,12 +69,12 @@ Here is this offer:
 
 - [Nedh](https://github.com/e-wrks/nedh)
 
-  Yet another abstraction of networking, with
+  Yet another abstraction of networking.
+
+  Think of something like **TCP** services with **UDP** discoveries, with
   [Head-of-Line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking)
   solved by arbitrary number of concurrent command channels, where each
   channel conveys its own stream of business actions with data.
-
-  Think of something like **TCP** services with **UDP** discoveries.
 
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
