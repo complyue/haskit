@@ -59,8 +59,10 @@ Here is this offer:
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
-  Run jobs those need parallel computing power, on-premises, with your own
-  swarms of servers.
+  Run jobs those need parallel computing power, with your own swarms of
+  servers, all having straight access to big data living in **HasDB**
+  instances, including those high-dimensional parts as efficiently shared
+  ND arrays.
 
   Think of even easier parallelism in spirit of
   [MPI](https://www.mpi-forum.org),
