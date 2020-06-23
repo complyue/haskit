@@ -22,6 +22,22 @@ export class EdhCodelensProvider implements vscode.CodeLensProvider {
             if (line.text.trim().startsWith("#%%")) {
                 codeLenses.push(new vscode.CodeLens(
                     new vscode.Range(lineIdx, 0, lineIdx + 1, 0), {
+                    "title": "Run Above",
+                    "command": "edh.SendToEdhTermSession",
+                    "arguments": [
+                        document, 0, lineIdx
+                    ]
+                }));
+                codeLenses.push(new vscode.CodeLens(
+                    new vscode.Range(lineIdx, 0, lineIdx + 1, 0), {
+                    "title": "Run Rest",
+                    "command": "edh.SendToEdhTermSession",
+                    "arguments": [
+                        document, lineIdx, -1
+                    ]
+                }));
+                codeLenses.push(new vscode.CodeLens(
+                    new vscode.Range(lineIdx, 0, lineIdx + 1, 0), {
                     "title": "Run Cell",
                     "command": "edh.SendToEdhTermSession",
                     "arguments": [
@@ -55,6 +71,10 @@ export function sendEdhSourceToTerminal(document?: vscode.TextDocument,
             beforeLineIdx = sel.end.line + 1;
             sourceText = document?.getText(sel);
         }
+    }
+
+    if (beforeLineIdx < 0) {
+        beforeLineIdx = document.lineCount;
     }
 
     if (null === sourceText) {
