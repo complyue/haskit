@@ -1,0 +1,112 @@
+cabal-version: 2.4
+name: haskit
+version: 0.1.0.0
+license: BSD-3-Clause
+copyright: 2019 Compl Yue
+maintainer: compl.yue@icloud.com
+author: Compl Yue
+stability: experimental
+homepage: https://github.com/e-wrks/haskit
+bug-reports: https://github.com/e-wrks/haskit/issues
+synopsis: HaskIt Đ - Haskell Software, Fast Iterations
+description:
+    Quality from Haskell, Speed to Market from Đ (Edh)
+    Please see the README on Github at <https://github.com/e-wrks/haskit>
+category: Software Engineering Development
+build-type: Simple
+extra-source-files:
+    README.md
+
+source-repository head
+    type: git
+    location: https://github.com/e-wrks/haskit
+
+library
+    exposed-modules:
+        HaskIt
+    hs-source-dirs: pub
+    default-language: Haskell2010
+    default-extensions: NoImplicitPrelude OverloadedStrings LambdaCase
+                        BangPatterns TupleSections ScopedTypeVariables
+    ghc-options: -Wall
+    build-depends:
+        haskit-internal -any,
+        hasdb -any,
+        sedh -any,
+        nedh -any,
+        edh -any,
+        lossless-decimal -any,
+        network >=3.1.1.1,
+        base >=4.12,
+        stm >=2.5,
+        scientific -any,
+        binary -any,
+        hashable -any,
+        unordered-containers -any,
+        containers -any,
+        unix -any,
+        time -any,
+        clock -any,
+        text -any,
+        bytestring -any,
+        mtl -any,
+        transformers -any
+
+
+executable hski
+    main-is: Main.hs
+    hs-source-dirs: hski
+    other-modules:
+    default-language: Haskell2010
+    default-extensions: NoImplicitPrelude OverloadedStrings LambdaCase
+                        BangPatterns TupleSections ScopedTypeVariables
+    ghc-options: -Wall -threaded
+    build-depends:
+        haskit -any,
+        hasdb -any,
+        sedh -any,
+        nedh -any,
+        edh -any,
+        lossless-decimal -any,
+        base >=4.12,
+        stm >=2.5,
+        text -any,
+        bytestring -any,
+        mtl -any,
+        transformers -any
+
+
+library haskit-internal
+    exposed-modules:
+        HaskIt.RT
+    hs-source-dirs: src
+    default-language: Haskell2010
+    default-extensions: NoImplicitPrelude OverloadedStrings LambdaCase
+                        BangPatterns TupleSections ScopedTypeVariables
+    ghc-options: -Wall
+    build-depends:
+        hasdb -any,
+        sedh -any,
+        nedh -any,
+        edh -any,
+        lossless-decimal -any,
+        base >=4.12,
+        stm >=2.5,
+        scientific -any,
+        binary -any,
+        filepath -any,
+        directory -any,
+        hashable -any,
+        unordered-containers -any,
+        containers -any,
+        primitive >= 0.2.1,
+        vector >= 0.5,
+        mmap >= 0.5.4,
+        unix -any,
+        time -any,
+        clock -any,
+        text -any,
+        bytestring -any,
+        mtl -any,
+        transformers -any,
+        neat-interpolation -any
