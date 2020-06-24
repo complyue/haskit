@@ -77,13 +77,21 @@ export function sendEdhSourceToTerminal(document?: vscode.TextDocument,
         beforeLineIdx = document.lineCount;
     }
 
+    const lineCnt = beforeLineIdx >= document.lineCount
+        ? beforeLineIdx - sinceLineIdx - 1
+        : beforeLineIdx - sinceLineIdx;
+
     if (null === sourceText) {
         sourceText = document.getText(new vscode.Range(
             sinceLineIdx, 0, beforeLineIdx, 0));
     }
 
     const term = prepareEdhTerminal();
-    term.sendText(sourceText, false);
+    term.sendText("%%paste "
+        + lineCnt // lineCnt
+        + ' ' + (sinceLineIdx + 1) // lineNo
+        + ' ' + document.fileName // srcName
+        + '\n' + sourceText, true);
 }
 
 export function prepareEdhTerminal(): vscode.Terminal {

@@ -1,11 +1,11 @@
 
 #%% xx
 3*7
-
+'n' * 5 # runtime error
 
 #%% zz
-console.print( 'xxx' )
-
+console.print( 'xxx' );
+/5 # syntax error
 
 #%% yy
 console.info<| 'yyy'
