@@ -62,14 +62,17 @@ export function sendEdhSourceToTerminal(document?: vscode.TextDocument,
             return;
         }
         const sel = vscode.window.activeTextEditor?.selection;
-        if (!sel) {
+        const selText = sel ? document.getText(sel) : undefined;
+        if (!sel || !selText) {
             sinceLineIdx = 0;
-            beforeLineIdx = document?.lineCount;
+            beforeLineIdx = document.lineCount;
             sourceText = document.getText();
         } else {
             sinceLineIdx = sel.start.line;
-            beforeLineIdx = sel.end.line + 1;
-            sourceText = document?.getText(sel);
+            beforeLineIdx = sel.end.character > 0
+                ? sel.end.line + 1
+                : sel.end.line;
+            sourceText = selText;
         }
     }
 
@@ -80,6 +83,11 @@ export function sendEdhSourceToTerminal(document?: vscode.TextDocument,
     const lineCnt = beforeLineIdx >= document.lineCount
         ? beforeLineIdx - sinceLineIdx - 1
         : beforeLineIdx - sinceLineIdx;
+
+    if (lineCnt < 1) {
+        console.warn('No Edh source to send.');
+        return;
+    }
 
     if (null === sourceText) {
         sourceText = document.getText(new vscode.Range(
