@@ -2,11 +2,11 @@
     "publisher": "ComplYue",
     "license": "MIT",
     "repository": {
-        "url": "https://github.com/e-wrks/haskit.git"
+        "url": "https://github.com/e-wrks/haskit"
     },
     "name": "haskit-vscode",
     "displayName": "HaskIt Đ - Haskell Software, Fast Iterations",
-    "description": "Quality from Haskell, Speed to Market from Đ (Edh)",
+    "description": "Quality from Haskell, Speed-to-Market from Đ (Edh)",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.40.0"
@@ -20,6 +20,10 @@
     "main": "./out/extension",
     "contributes": {
         "commands": [
+            {
+                "command": "edh.NewEdhTermSession",
+                "title": "Edh: New Đ Terminal"
+            },
             {
                 "command": "edh.SendToEdhTermSession",
                 "title": "Edh: Execute Đ Source"

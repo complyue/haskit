@@ -2,6 +2,76 @@
 import * as vscode from 'vscode';
 
 
+class AsEnteredCmd implements vscode.QuickPickItem {
+
+    alwaysShow = true;
+
+    label = '';
+    description = 'Run: epm x hski';
+
+}
+
+class TemplateCmd implements vscode.QuickPickItem {
+
+    alwaysShow = true;
+
+    label: string;
+    description?: string;
+
+    constructor(lable: string, description?: string) {
+        this.label = lable;
+        this.description = description;
+    }
+
+}
+
+export function newEdhTerminal(cmdl?: string): void {
+    function doIt(cmdl: string): void {
+        const cmds = cmdl.split(/\s/).filter(arg => !!arg);
+        const term = vscode.window.createTerminal(
+            "Đ Session - " + cmdl,
+            "/usr/bin/env", ["epm", "x"].concat(cmds),
+        );
+        term.show();
+    }
+
+    if (undefined !== cmdl) {
+        doIt(cmdl);
+        return;
+    }
+
+    const enteredCmd = new AsEnteredCmd();
+    const stackCmd = new TemplateCmd("stack run ", "Build & Run with Stack");
+    const cabalCmd = new TemplateCmd("cabal run hski", 'Build & Run with Cabal');
+    const qp = vscode.window.createQuickPick<AsEnteredCmd | TemplateCmd>();
+    qp.title = "New Đ Terminal running command:";
+    qp.placeholder = "hski";
+    qp.onDidChangeValue(e => {
+        enteredCmd.label = e;
+        enteredCmd.description = 'Run: epm x ' + e;
+        qp.items = [enteredCmd, stackCmd, cabalCmd];
+    });
+    qp.canSelectMany = true;
+    qp.items = [enteredCmd, stackCmd, cabalCmd];
+    qp.onDidChangeSelection(sels => {
+        for (const sel of sels) {
+            if (sel instanceof TemplateCmd) {
+                enteredCmd.label = sel.label;
+                enteredCmd.description = 'Run: epm x ' + enteredCmd.label;
+            }
+        }
+        qp.items = [enteredCmd, stackCmd, cabalCmd];
+        qp.value = enteredCmd.label;
+    });
+    qp.onDidAccept(() => {
+        const cmdl = qp.value;
+        qp.hide();
+        qp.dispose();
+        doIt(cmdl ? cmdl : 'hski');
+    });
+    qp.show();
+}
+
 export class EdhCodelensProvider implements vscode.CodeLensProvider {
 
     private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
@@ -109,7 +179,7 @@ export function prepareEdhTerminal(): vscode.Terminal {
         if (isEdhTerminal(term)) return term;
     }
     const cmdl = vscode.workspace.getConfiguration(
-        "haskit.shell").get("cmd", ["gwd"]);
+        "haskit.shell").get("cmd", ["hski"]);
     term = vscode.window.createTerminal(
         "Đ Session - " + cmdl,
         "/usr/bin/env", ["epm", "x"].concat(cmdl)
