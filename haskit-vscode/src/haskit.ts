@@ -2,41 +2,45 @@
 import * as vscode from 'vscode';
 
 
-class AsEnteredCmd implements vscode.QuickPickItem {
+const EdhTermPrefix = "Đ Session - ";
 
-    alwaysShow = true;
-
-    label = '';
-    description = 'Run: epm x hski';
-
+function createEdhTerminal(cmds: string[]): vscode.Terminal {
+    const term = vscode.window.createTerminal(
+        EdhTermPrefix + cmds.join(' '),
+        "/usr/bin/env", ["epm", "x"].concat(cmds),
+    );
+    term.show();
+    return term;
 }
 
-class TemplateCmd implements vscode.QuickPickItem {
-
-    alwaysShow = true;
-
-    label: string;
-    description?: string;
-
-    constructor(lable: string, description?: string) {
-        this.label = lable;
-        this.description = description;
+function isEdhTerminal(term: vscode.Terminal): boolean {
+    if (term && undefined === term.exitStatus) {
+        if (term.name.startsWith(EdhTermPrefix)) {
+            return true;
+        }
+        // Theia doesn't have `creationOptions` as up to 1.3
+        // const opts = <vscode.TerminalOptions>term.creationOptions;
+        // if (opts.shellPath === '/usr/bin/env' && opts?.shellArgs) {
+        //     const shArgs = opts.shellArgs;
+        //     if (shArgs.length >= 3
+        //         && 'epm' === shArgs[0]
+        //         && 'x' === shArgs[1]) {
+        //         return true;
+        //     }
+        // }
     }
-
+    return false;
 }
 
 export function newEdhTerminal(cmdl?: string): void {
-    function doIt(cmdl: string): void {
-        const cmds = cmdl.split(/\s/).filter(arg => !!arg);
-        const term = vscode.window.createTerminal(
-            "Đ Session - " + cmdl,
-            "/usr/bin/env", ["epm", "x"].concat(cmds),
-        );
-        term.show();
+    function parseCmdLine(cmdl: string): string[] {
+        // todo honor string quotes ?
+        const cmds = cmdl.split(/\s+/).filter(arg => !!arg);
+        return cmds;
     }
 
     if (undefined !== cmdl) {
-        doIt(cmdl);
+        createEdhTerminal(parseCmdLine(cmdl));
         return;
     }
 
@@ -67,10 +71,34 @@ export function newEdhTerminal(cmdl?: string): void {
         const cmdl = qp.value;
         qp.hide();
         qp.dispose();
-        doIt(cmdl ? cmdl : 'hski');
+        createEdhTerminal(cmdl ? parseCmdLine(cmdl) : ['hski']);
     });
     qp.show();
 }
+
+class AsEnteredCmd implements vscode.QuickPickItem {
+
+    alwaysShow = true;
+
+    label = '';
+    description = 'Run: epm x hski';
+
+}
+
+class TemplateCmd implements vscode.QuickPickItem {
+
+    alwaysShow = true;
+
+    label: string;
+    description?: string;
+
+    constructor(lable: string, description?: string) {
+        this.label = lable;
+        this.description = description;
+    }
+
+}
+
 
 export class EdhCodelensProvider implements vscode.CodeLensProvider {
 
@@ -178,32 +206,7 @@ export function prepareEdhTerminal(): vscode.Terminal {
     for (term of vscode.window.terminals) {
         if (isEdhTerminal(term)) return term;
     }
-    const cmdl = vscode.workspace.getConfiguration(
+    const cmds = vscode.workspace.getConfiguration(
         "haskit.shell").get("cmd", ["hski"]);
-    term = vscode.window.createTerminal(
-        "Đ Session - " + cmdl,
-        "/usr/bin/env", ["epm", "x"].concat(cmdl)
-    );
-    term.show();
-    return term;
+    return createEdhTerminal(cmds);
 }
-
-function isEdhTerminal(term: vscode.Terminal): boolean {
-    if (term && undefined === term.exitStatus) {
-        if (term.name.startsWith("Đ Session - ")) {
-            return true;
-        }
-        // Theia doesn't have `creationOptions` as up to 1.3
-        // const opts = <vscode.TerminalOptions>term.creationOptions;
-        // if (opts.shellPath === '/usr/bin/env' && opts?.shellArgs) {
-        //     const shArgs = opts.shellArgs;
-        //     if (shArgs.length >= 3
-        //         && 'epm' === shArgs[0]
-        //         && 'x' === shArgs[1]) {
-        //         return true;
-        //     }
-        // }
-    }
-    return false;
-}
-
