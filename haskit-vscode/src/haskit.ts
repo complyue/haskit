@@ -190,15 +190,19 @@ export function prepareEdhTerminal(): vscode.Terminal {
 
 function isEdhTerminal(term: vscode.Terminal): boolean {
     if (term && undefined === term.exitStatus) {
-        const opts = <vscode.TerminalOptions>term.creationOptions;
-        if (opts.shellPath === '/usr/bin/env' && opts?.shellArgs) {
-            const shArgs = opts.shellArgs;
-            if (shArgs.length >= 3
-                && 'epm' === shArgs[0]
-                && 'x' === shArgs[1]) {
-                return true;
-            }
+        if (term.name.startsWith("Đ Session - ")) {
+            return true;
         }
+        // Theia doesn't have `creationOptions` as up to 1.3
+        // const opts = <vscode.TerminalOptions>term.creationOptions;
+        // if (opts.shellPath === '/usr/bin/env' && opts?.shellArgs) {
+        //     const shArgs = opts.shellArgs;
+        //     if (shArgs.length >= 3
+        //         && 'epm' === shArgs[0]
+        //         && 'x' === shArgs[1]) {
+        //         return true;
+        //     }
+        // }
     }
     return false;
 }
