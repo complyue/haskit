@@ -1,11 +1,13 @@
 
-#%% xx
+console.info<| 'First of all, ... '
+
+# %% xx
 3*7
 'n' * 5 # runtime error
 
-#%% zz
+# %% zz
 console.print( 'xxx' );
 /5 # syntax error
 
-#%% yy
+# %% yy
 console.info<| 'yyy'
