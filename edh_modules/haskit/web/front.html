@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<head>
+  <link rel="icon" type="image/png" href="/haskit-fav.png" />
+  <title>
+    HaskIt Đ
+  </title>
+  <script src="/vendor/jquery/jquery.js"></script>
+
+  <!-- note: order of BokehJS imports does matter -->
+  <script src="/vendor/bokehjs/bokeh.js"></script>
+  <script src="/vendor/bokehjs/bokeh-widgets.js"></script>
+  <script src="/vendor/bokehjs/bokeh-tables.js"></script>
+  <script src="/vendor/bokehjs/bokeh-gl.js"></script>
+  <script src="/vendor/bokehjs/bokeh-api.js"></script>
+
+  <script type="module">
+    // let bokeh be some verbose
+    Bokeh.set_log_level("info");
+    Bokeh.settings.dev = true;
+  </script>
+</head>
+
+<body>
+  <h3>HaskIt Đ - Haskell Software, Fast Iterations</h3>
+  <p>
+    Quality from
+    <a target="_blank" href="https://haskell.org"> Haskell </a> ,
+    Speed-to-Market from
+    <a target="_blank" href="https://github.com/e-wrks/edh"> Đ (Edh) </a>
+  </p>
+
+  <script type="module" src="/haskit.js"></script>
+</body>

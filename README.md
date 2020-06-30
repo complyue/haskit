@@ -1,4 +1,4 @@
-# HaskIt - Haskell software, fast Iterations
+# HaskIt Đ - Haskell software, fast Iterations
 
 [Haskell](https://haskell.org)
 makes the wrong stuff harder to build, if not the right
