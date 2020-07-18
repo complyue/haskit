@@ -12,7 +12,7 @@ import           Language.Edh.EHI
 
 import           Language.Edh.Swarm
 
-import           DB.Batteries
+import           DB.EHI
 
 import           HaskIt
 

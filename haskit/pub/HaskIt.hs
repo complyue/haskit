@@ -6,8 +6,6 @@ import           Prelude
 
 import           Control.Monad.Reader
 
-import qualified Data.HashMap.Strict           as Map
-
 import           Language.Edh.EHI
 
 
@@ -19,15 +17,12 @@ installHaskItBatteries !world = do
     let moduScope = contextScope $ edh'context pgs
         modu      = thisObject moduScope
 
-    !moduArts <-
-      sequence
-      $  [ (nm, ) <$> mkHostClass moduScope nm True hc | (nm, hc) <- [] ]
-      ++ [ (nm, ) <$> mkHostProc moduScope mc nm hp args
-         | (mc, nm, hp, args) <- []
-         ]
+    !moduArts <- sequence
+      [ (nm, ) <$> mkHostProc moduScope mc nm hp args
+      | (mc, nm, hp, args) <- []
+      ]
 
-    artsDict <- createEdhDict
-      $ Map.fromList [ (EdhString k, v) | (k, v) <- moduArts ]
+    artsDict <- createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
     updateEntityAttrs pgs (objEntity modu)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
@@ -39,15 +34,12 @@ installHaskItBatteries !world = do
     let moduScope = contextScope $ edh'context pgs
         modu      = thisObject moduScope
 
-    !moduArts <-
-      sequence
-      $  [ (nm, ) <$> mkHostClass moduScope nm True hc | (nm, hc) <- [] ]
-      ++ [ (nm, ) <$> mkHostProc moduScope mc nm hp args
-         | (mc, nm, hp, args) <- []
-         ]
+    !moduArts <- sequence
+      [ (nm, ) <$> mkHostProc moduScope mc nm hp args
+      | (mc, nm, hp, args) <- []
+      ]
 
-    artsDict <- createEdhDict
-      $ Map.fromList [ (EdhString k, v) | (k, v) <- moduArts ]
+    artsDict <- createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
     updateEntityAttrs pgs (objEntity modu)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
