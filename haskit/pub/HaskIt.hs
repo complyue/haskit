@@ -22,7 +22,8 @@ installHaskItBatteries !world = do
       | (mc, nm, hp, args) <- []
       ]
 
-    artsDict <- createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
+    artsDict <- EdhDict
+      <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
     updateEntityAttrs pgs (objEntity modu)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
@@ -39,7 +40,8 @@ installHaskItBatteries !world = do
       | (mc, nm, hp, args) <- []
       ]
 
-    artsDict <- createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
+    artsDict <- EdhDict
+      <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
     updateEntityAttrs pgs (objEntity modu)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
