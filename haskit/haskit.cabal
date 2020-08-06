@@ -31,7 +31,7 @@ library
     ghc-options: -Wall
     build-depends:
         haskit-internal -any,
-        hasdb -any,
+--        hasdb -any,
         sedh -any,
         nedh -any,
         edh -any,
@@ -63,7 +63,7 @@ executable hski
     ghc-options: -Wall -threaded
     build-depends:
         haskit -any,
-        hasdb -any,
+--        hasdb -any,
         sedh -any,
         nedh -any,
         edh -any,
@@ -85,7 +85,7 @@ library haskit-internal
                         BangPatterns TupleSections ScopedTypeVariables
     ghc-options: -Wall
     build-depends:
-        hasdb -any,
+--        hasdb -any,
         sedh -any,
         nedh -any,
         edh -any,
