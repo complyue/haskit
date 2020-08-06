@@ -12,14 +12,14 @@ import           Language.Edh.EHI
 
 import           Language.Edh.Swarm
 
--- import           DB.EHI
+import           Dim.EHI
 
 import           HaskIt
 
 
 main :: IO ()
 main = startSwarmWork' haskitRepl $ \world -> do
-  -- installDbBatteries world
+  installDimBatteries world
   installHaskItBatteries world
 
 
