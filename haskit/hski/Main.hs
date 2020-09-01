@@ -18,7 +18,7 @@ import           HaskIt
 
 
 main :: IO ()
-main = startSwarmWork' haskitRepl $ \world -> do
+main = startSwarmWork' haskitRepl $ \ !world -> do
   installDimBatteries world
   installHaskItBatteries world
 
@@ -62,4 +62,4 @@ haskitRepl !console !world = do
               consoleOut "🐴🐴🐯🐯\n"
             doneRightOrRebirth
   doneRightOrRebirth
-  where consoleOut = writeTBQueue (consoleIO console) . ConsoleOut
+  where !consoleOut = writeTBQueue (consoleIO console) . ConsoleOut

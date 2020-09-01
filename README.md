@@ -37,31 +37,10 @@ Here is this offer:
   Interactive workbench with easy yet powerful visualizations, for data/idea
   exploration.
 
-- [HasDB](https://github.com/e-wrks/hasdb)
-
-  A
-  [DBMS](https://en.wikipedia.org/wiki/Database#Database_management_system)
-  that manages
-  [in-memory](https://en.wikipedia.org/wiki/In-memory_database)
-  [Graph](https://en.wikipedia.org/wiki/Graph_database)s
-  those manifesting
-  [out-of-core](https://en.wikipedia.org/wiki/Out-of-core)
-  [Array](https://en.wikipedia.org/wiki/Array_DBMS)s
-  .
-
-  - [HasPyC](https://github.com/e-wrks/haspyc)
-
-    The **Python** connector to **HasDB**, to integrate with your numeric
-    systems, bound to high-dimensional data (e.g. parameters of machine
-    learning models, training data, time-series), modeled after
-    **Entity-Relationship** as **Graph**s, i.e. entities as nodes and
-    relationships as edges.
-
 - [Sedh](https://github.com/e-wrks/sedh)
 
   Run jobs those need parallel computing power, with your own swarms of
-  servers, all having straight access to big data living in **HasDB**
-  instances, including those high-dimensional parts as efficiently shared
+  servers, including those high-dimensional parts as efficiently shared
   ND arrays.
 
   Think of even easier parallelism in spirit of

@@ -12,28 +12,26 @@ import           Language.Edh.EHI
 installHaskItBatteries :: EdhWorld -> IO ()
 installHaskItBatteries !world = do
 
-  void $ installEdhModule world "haskit/RT" $ \pgs exit -> do
+  void $ installEdhModule world "haskit/RT" $ \ets exit -> do
 
-    let moduScope = contextScope $ edh'context pgs
-        modu      = thisObject moduScope
+    let moduScope = contextScope $ edh'context ets
 
     !moduArts <- sequence
       [ (nm, ) <$> mkHostProc moduScope mc nm hp args
       | (mc, nm, hp, args) <- []
       ]
 
-    artsDict <- EdhDict
+    !artsDict <- EdhDict
       <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
-    updateEntityAttrs pgs (objEntity modu)
+    flip iopdUpdate (edh'scope'entity moduScope)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
 
     exit
 
-  void $ installEdhModule world "haskit/web/RT" $ \pgs exit -> do
+  void $ installEdhModule world "haskit/web/RT" $ \ets exit -> do
 
-    let moduScope = contextScope $ edh'context pgs
-        modu      = thisObject moduScope
+    let moduScope = contextScope $ edh'context ets
 
     !moduArts <- sequence
       [ (nm, ) <$> mkHostProc moduScope mc nm hp args
@@ -42,7 +40,7 @@ installHaskItBatteries !world = do
 
     artsDict <- EdhDict
       <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
-    updateEntityAttrs pgs (objEntity modu)
+    flip iopdUpdate (edh'scope'entity moduScope)
       $  [ (AttrByName k, v) | (k, v) <- moduArts ]
       ++ [(AttrByName "__exports__", artsDict)]
 
