@@ -37,6 +37,10 @@ Here is this offer:
   Interactive workbench with easy yet powerful visualizations, for data/idea
   exploration.
 
+- [HasDim](https://github.com/e-wrks/hasdim)
+
+  Do dimensional modeling of your data and processes.
+
 - [Sedh](https://github.com/e-wrks/sedh)
 
   Run jobs those need parallel computing power, with your own swarms of

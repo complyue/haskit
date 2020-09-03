@@ -27,6 +27,7 @@ main = startSwarmWork' haskitRepl $ \ !world -> do
 haskitRepl :: EdhConsole -> EdhWorld -> IO ()
 haskitRepl !console !world = do
   atomically $ do
+    consoleOut ">> HaskIt Đ - Haskell Software, Fast Iterations <<\n"
     consoleOut
       "* Blank Screen Syndrome ? Take the Tour as your companion, checkout:\n"
     consoleOut "  https://github.com/e-wrks/haskit/tree/master/Tour\n"
