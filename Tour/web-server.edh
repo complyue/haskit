@@ -1,40 +1,37 @@
 
 import * 'net'
 
-{
-
-  case WsServer(
-    'haskit/web/ws', '127.0.0.1', 3790,
-    port'max=3799,
-  ) of { wsServer } -> {
-    case wsServer.addrs() of {
-      { wsAddr => _extraWsAddrs } -> {
-        console.info<| 'HaskIt WebSocket service listening: ws://'
-        ++ wsAddr.host() ++ ':' ++ wsAddr.port()
-      }
-      error( 'HaskIt WebSocket service failed start serving.' )
+# %%
+case WsServer(
+  'haskit/web/ws', '127.0.0.1', 3790,
+  port'max=3799,
+) of { wsServer } -> {
+  case wsServer.addrs() of {
+    { wsAddr => _extraWsAddrs } -> {
+      console.info<| 'HaskIt WebSocket service listening: ws://'
+      ++ wsAddr.host() ++ ':' ++ wsAddr.port()
     }
+    error( 'HaskIt WebSocket service failed start serving.' )
   }
-
-  case HttpServer(
-    ( 'haskit/web', 'net/demo/web' ),
-    '127.0.0.1', 3780, routes= (
-      # tell web browser our port of WebSocket at uri `/:`
-      ( ":", '' ++ wsAddr.port(), mime= 'text/plain' ),
-    ), port'max=3789,
-  ) of { httpServer } -> {
-    case httpServer.addrs() of {
-      { httpAddr => _extraHttpAddrs } -> {
-        console.info<| 'HaskIt http service listening: http://'
-        ++ httpAddr.host() ++ ':' ++ httpAddr.port()
-      }
-      error( 'HaskIt http service failed start serving.' )
-    }
-  }
-
 }
 
-# following line helps to keep the server live if this
-# file is redirected as stdin.
-# be aware it's no good to be pasted into an repl
+# %%
+case HttpServer(
+  ( 'haskit/web', 'net/demo/web' ),
+  '127.0.0.1', 3780, routes= (
+    # tell web browser our port of WebSocket at uri `/:`
+    ( ":", '' ++ wsAddr.port(), mime= 'text/plain' ),
+  ), port'max=3789,
+) of { httpServer } -> {
+  case httpServer.addrs() of {
+    { httpAddr => _extraHttpAddrs } -> {
+      console.info<| 'HaskIt http service listening: http://'
+      ++ httpAddr.host() ++ ':' ++ httpAddr.port()
+    }
+    error( 'HaskIt http service failed start serving.' )
+  }
+}
+
+# %%
+# this line helps to keep the server live when run not interactively
 httpServer.join()
