@@ -1,4 +1,5 @@
 
+# use a namespece to contain artifacts prepared from the following scoped block
 namespace webServer () pass
 
 # %{ use a scoped block so nedh artifacts are not imported into top-level
