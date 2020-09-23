@@ -11,3 +11,14 @@ console.print( 'xxx' );
 
 # %% yy
 console.info<| 'yyy'
+
+# %{
+
+# %%
+str( 3*7 )
+
+# %%
+
+'xx'
+
+# %}
