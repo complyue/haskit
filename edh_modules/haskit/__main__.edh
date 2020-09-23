@@ -1,4 +1,7 @@
 
+hd = { import * 'dim' }
+effect import * 'dim/effects'
+
 import * 'haskit'
 
 
