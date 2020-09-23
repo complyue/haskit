@@ -5,20 +5,23 @@ console.info<| 'First of all, ... '
 3*7
 'n' * 5 # runtime error
 
+# %{
+{@
+  # %%
+  ss = str( 3*7 )
+
+  # %%
+
+  xx = 'xx'
+
+  # %}
+@}
+
+# %%
+
 # %% zz
 console.print( 'xxx' );
 /5 # syntax error
 
 # %% yy
 console.info<| 'yyy'
-
-# %{
-
-# %%
-str( 3*7 )
-
-# %%
-
-'xx'
-
-# %}
