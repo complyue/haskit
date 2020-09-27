@@ -1,5 +1,5 @@
 /**
- * log.js
+ * logging functions directing messages to some box in UI
  */
 
 import NaiveDate from "/ts.js ";
@@ -15,7 +15,7 @@ export function hasLogBox() {
 
 export function uiLog(msg, type = "msg", details = undefined) {
   if (!hasLogBox()) {
-    console.log("Hadui:", type, msg, details);
+    console.log("HeadlessLog:", type, msg, details);
     return;
   }
 
@@ -27,7 +27,7 @@ export function uiLog(msg, type = "msg", details = undefined) {
       text:
         "[" +
         new NaiveDate(dt.getTime() - 60000 * dt.getTimezoneOffset()).isoFull() +
-        "]"
+        "]",
     })
   );
 
