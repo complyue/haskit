@@ -16,8 +16,12 @@ installHaskItBatteries !world = do
 
     let !moduScope = contextScope $ edh'context ets
 
-    !moduArts <- sequence
-      [ (nm, ) <$> mkHostProc moduScope mc nm hp | (mc, nm, hp) <- [] ]
+    !moduArts <-
+      sequence
+      $  [ (nm, ) <$> mkHostProc moduScope mc nm hp | (mc, nm, hp) <- [] ]
+      ++ [ (nm, ) <$> mkHostProperty moduScope nm getter setter
+         | (nm, getter, setter) <- []
+         ]
 
     !artsDict <- EdhDict
       <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]
@@ -31,8 +35,12 @@ installHaskItBatteries !world = do
 
     let !moduScope = contextScope $ edh'context ets
 
-    !moduArts <- sequence
-      [ (nm, ) <$> mkHostProc moduScope mc nm hp | (mc, nm, hp) <- [] ]
+    !moduArts <-
+      sequence
+      $  [ (nm, ) <$> mkHostProc moduScope mc nm hp | (mc, nm, hp) <- [] ]
+      ++ [ (nm, ) <$> mkHostProperty moduScope nm getter setter
+         | (nm, getter, setter) <- []
+         ]
 
     !artsDict <- EdhDict
       <$> createEdhDict [ (EdhString k, v) | (k, v) <- moduArts ]

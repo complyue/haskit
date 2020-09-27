@@ -10,14 +10,15 @@ import ( Peer, **_ ) 'net/RT'
 import * 'net/symbols'
 effect import * 'net/effects'
 
+import ( withWSC, **_ ) 'haskit/web'
+
 
 # a Peer object should have been implanted atomically, the following
 # line should have no practical effect but to hint an IDE for code
 # completion etc.
 peer ?:= Peer()
 
-console.info<| 'WebSocket client connected - ' ++ peer
-
+console.debug<| 'WebSocket client connected - ' ++ peer
 
 # define various effectful artifacts used for communication with this
 # connected consumer client session, with `@netPeer` and `@dataSink` the
@@ -31,28 +32,5 @@ effect {
 }
 
 
-{
-
-  while peer.eol() is false { # this is the *Loop* in so-called REPL
-    # Read+Eval (peer.readCommand) -> Print (peer.print) -> Loop
-
-    # simply echo back whatever posted to default channel
-    case peer.readSource() of {
-      { srcIn } -> {
-        # echo back
-        peer.postCommand( srcIn )
-        srcIn = nil # clear it
-      }
-      # note nil can be returned from `peer.readSource()` in case a command
-      # is posted to another channel than the default one
-    }
-
-  }
-
-} @=> {
-  { exc } -> {
-    console.error<| 'Disconnecting ws client ' ++ peer
-    ++ ' for error: ' ++ exc
-  }
-  console.info<| 'Disconnecting ws client ' ++ peer
-}
+# let HaskIt entangle with this WSC
+withWSC( peer )

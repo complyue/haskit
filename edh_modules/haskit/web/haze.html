@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<head>
+  <title>Haze</title>
+
+  <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
+
+  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
+  <script src="/vendor/jquery/jquery.js"></script>
+  <script src="/vendor/mui/mui.min.js"></script>
+
+  <!-- note: order of BokehJS imports does matter -->
+  <script src="/vendor/bokehjs/bokeh.js"></script>
+  <script src="/vendor/bokehjs/bokeh-widgets.js"></script>
+  <script src="/vendor/bokehjs/bokeh-tables.js"></script>
+  <script src="/vendor/bokehjs/bokeh-gl.js"></script>
+  <script src="/vendor/bokehjs/bokeh-api.js"></script>
+
+  <script type="module">
+    // let bokeh be some verbose
+    Bokeh.set_log_level("info");
+    Bokeh.settings.dev = true;
+  </script>
+
+  <script type="module" src="/haze-plot.js"></script>
+</head>
+
+<body>
+  <!-- the plot here -->
+</body>

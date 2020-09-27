@@ -1,0 +1,139 @@
+
+export class HaskItServer {
+
+  method __init__(
+    netInterface= '127.0.0.1',
+    httpPort= 3780,
+    wsPort= 3790,
+    numAltPorts= 9,
+  ) {
+
+    this.ws'stack = []
+
+    # locally import Nedh stuff, not needed elsewhere
+    import * 'net'
+
+    this.ws = WsServer(
+      'haskit/web/ws', netInterface, wsPort,
+      port'max= wsPort+numAltPorts,
+    )
+    case this.ws.addrs() of {
+      { wsAddr => _extraWsAddrs } -> {
+        console.info<| 'HaskIt WebSocket service listening: ws://'
+        ++ wsAddr.host() ++ ':' ++ wsAddr.port()
+      }
+      error( 'HaskIt WebSocket service failed start serving.' )
+    }
+
+    this.http = HttpServer(
+      ( 'haskit/web', ),
+      netInterface, httpPort, routes= (
+        # tell web browser our port of WebSocket at uri `/:`
+        ( ":", '' ++ wsAddr.port(), mime= 'text/plain' ),
+      ), port'max= httpPort+numAltPorts,
+    )
+    case this.http.addrs() of {
+      { httpAddr => _extraHttpAddrs } -> {
+        console.info<| 'HaskIt http service listening: http://'
+        ++ httpAddr.host() ++ ':' ++ httpAddr.port()
+      }
+      error( 'HaskIt http service failed start serving.' )
+    }
+
+  }
+
+  method join() {
+    this.ws.join()
+    this.http.join()
+  }
+
+  method stop() {
+    this.http.stop()
+    this.ws.stop()
+  }
+
+}
+
+
+# accept commands on server's console
+export method withWSC( peer ) {
+  effect hskiPeer = peer
+
+  hd = { import * 'dim' }
+  effect import * 'dim/effects'
+
+  go { { # keep landing cmds incoming from ws
+
+      while peer.eol() is false { # this is the *Loop* in so-called REPL
+        # Read+Eval (peer.readCommand) -> Print (peer.print) -> Loop
+
+        case peer.readCommand() of {
+          { cmdVal } -> {
+            console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )
+          }
+        }
+
+      }
+
+    } @=> {
+      { exc } -> {
+        console.error<| 'Disconnecting ws client ' ++ peer
+        ++ ' for error: ' ++ exc
+      }
+      console.debug<| 'Disconnecting ws client ' ++ peer
+  } }
+
+
+  # TODO figure out how to resolve contention on the server console, from
+  #      multiple concurrent websocket connections
+
+  console.print( `A web browser is connected from ` ++ peer.ident
+    ++ `, talk to it here.` )
+  ps1 = "hski://" ++peer.ident++ "/ Đ: "
+
+  while true { # this is the *Loop* in so-called REPL
+    # Read+Eval (console.readCommand) -> Print (console.print) -> Loop
+
+    case console.readCommand( ps1= ps1 ) of {@
+      { { batteries.Command: cmd } } -> case cmd.cmd of {
+        # todo
+        #  *) enrich custom behaviors according to `cmd.apk`
+        #  *) support more commands
+        'quit' -> { break }
+        'dir' -> {
+          hereBlockScope = scope()
+          printDir( ofScope=hereBlockScope.outer )
+        }
+        _ -> console.print( 'Unsupported command: ' ++ cmd )
+      }
+
+      { cmdVal } -> {
+        console.print( cmdVal )
+      }
+    @}
+
+  } $=> { # catch exceptions
+
+    { { IOError: ioExc } } -> {
+      console.fatal<| 'IO error - ' ++ ioExc
+      rethrow # escalate it to the program loop of the
+      # host interpreter, let it decide what to do.
+    }
+
+    { cmdExc } -> {
+      # the exception can have happened in a descendant goroutine/thread,
+      # and throwTo this main thread, console.print() won't show such an
+      # asynchronous exception timely, we use error log here.
+      console.error<| 'Recovered from error: ' ++ desc( cmdExc )
+
+      # TODO in case of asynchronous exception occurred, the last
+      # console.readCommand() is interrupted, but the console IO loop is
+      # still reading stdin, and what ever read will subsequently be
+      # discarded anyway. this behavior may be rather surprising to the
+      # user, need to optimize UX for such cases.
+      console.print( 'Your last input may have no effect due to the error.' )
+    }
+
+  }
+
+}

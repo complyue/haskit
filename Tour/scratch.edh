@@ -25,3 +25,15 @@ console.print( 'xxx' );
 
 # %% yy
 console.info<| 'yyy'
+
+# %%
+peer.postCommand( '{"type":"msg", "msgText":"zzz"}' )
+
+# %%
+peer.postCommand( '{"type":"err", "errText":"eee", "errDetails": "fff fff"}' )
+
+# %%
+peer.postCommand( '{"type":"clear"}' )
+
+# %%
+peer.postCommand( '{"type":"msg", "msgText":"ttt", "msgType":"err", "msgDetails": "ddd ddd"}' )
