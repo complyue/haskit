@@ -2,11 +2,17 @@
 <meta charset="utf-8" />
 
 <head>
+  <title>HaskIt Đ</title>
+
   <link rel="icon" type="image/png" href="/haskit-fav.png" />
-  <title>
-    HaskIt Đ
-  </title>
+
+  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="/haskit.css" />
+
   <script src="/vendor/jquery/jquery.js"></script>
+
+  <script src="/vendor/mui/mui.min.js"></script>
 
   <!-- note: order of BokehJS imports does matter -->
   <script src="/vendor/bokehjs/bokeh.js"></script>
@@ -19,6 +25,8 @@
     Bokeh.set_log_level("info");
     Bokeh.settings.dev = true;
   </script>
+
+  <script type="module" src="/haskit.js"></script>
 </head>
 
 <body>
@@ -30,5 +38,11 @@
     <a target="_blank" href="https://github.com/e-wrks/edh"> Đ (Edh) </a>
   </p>
 
-  <script type="module" src="/haskit.js"></script>
+  <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
+    Clear Log
+  </button>
+
+  <div class="LogArea">
+    <div class="LogBox"></div>
+  </div>
 </body>
