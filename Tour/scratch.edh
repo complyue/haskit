@@ -10,8 +10,10 @@ console.info<| 'First of all, ... '
   # %%
   ss = str( 3*7 )
 
-  # %%
+  # %#
+  this :: ( is whatever not an executable cell )
 
+  # %%
   xx = 'xx'
 
   # %}
