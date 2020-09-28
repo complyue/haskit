@@ -84,17 +84,18 @@ export method withWSC( peer ) {
   } }
 
 
-  # TODO figure out how to resolve contention on the server console, from
-  #      multiple concurrent websocket connections
+  # TODO figure out how to resolve contention for the server console, from
+  #      multiple concurrent websocket connections, maybe use a pending queue
 
   console.print( `A web browser is connected from ` ++ peer.ident
     ++ `, talk to it here.` )
-  ps1 = "hski://" ++peer.ident++ "/ Đ: "
+  ps1 = "⚙️ hski://" ++peer.ident++ "/ Đ: "
+  ps2 = "Đ| "
 
   while true { # this is the *Loop* in so-called REPL
     # Read+Eval (console.readCommand) -> Print (console.print) -> Loop
 
-    case console.readCommand( ps1= ps1 ) of {@
+    case console.readCommand( ps1= ps1, ps2= ps2 ) of {@
       { { batteries.Command: cmd } } -> case cmd.cmd of {
         # todo
         #  *) enrich custom behaviors according to `cmd.apk`
