@@ -26,7 +26,13 @@ export class HaskItServer {
     }
 
     this.http = HttpServer(
-      ( 'haskit/web', ),
+      ( # a stack of overlayed edh modules providing web resources
+        'haskit/web', # from haskit
+        'dim/web', # from hasdim
+        'swarm/web', # from sedh
+        'net/web', # from nedh
+        'web', # from edh
+      ),
       netInterface, httpPort, routes= (
         # tell web browser our port of WebSocket at uri `/:`
         ( ":", '' ++ wsAddr.port(), mime= 'text/plain' ),
