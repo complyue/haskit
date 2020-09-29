@@ -73,11 +73,11 @@ export method withWSC( peer ) {
       while peer.eol() is false { # this is the *Loop* in so-called REPL
         # Read+Eval (peer.readCommand) -> Print (peer.print) -> Loop
 
-        case peer.readCommand() of {
+        case peer.readCommand() of {@
           { cmdVal } -> {
             console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )
           }
-        }
+        @}
 
       }
 
