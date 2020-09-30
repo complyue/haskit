@@ -14,9 +14,9 @@ import ( withWSC, **_ ) 'haskit/web'
 
 
 # a Peer object should have been implanted atomically, the following
-# line should have no practical effect but to hint an IDE for code
+# line should have no technical effect but to hint an IDE for code
 # completion etc.
-peer ?:= Peer()
+peer ?= Peer()
 
 console.debug<| 'WebSocket client connected - ' ++ peer
 
@@ -32,5 +32,8 @@ effect {
 }
 
 
+# should have been implanted by per-connection peer module init method
+hskiServer ?= HaskItServer()
+
 # let HaskIt entangle with this WSC
-withWSC( peer )
+hskiServer.withWSC( peer )
