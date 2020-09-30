@@ -18,7 +18,7 @@ export class HaskItServer {
       port'max= wsPort+numAltPorts,
     )
     case this.ws.addrs() of {
-      { wsAddr => _extraWsAddrs } -> {
+      { wsAddr :> _extraWsAddrs } -> {
         console.info<| 'HaskIt WebSocket service listening: ws://'
         ++ wsAddr.host() ++ ':' ++ wsAddr.port()
       }
@@ -39,7 +39,7 @@ export class HaskItServer {
       ), port'max= httpPort+numAltPorts,
     )
     case this.http.addrs() of {
-      { httpAddr => _extraHttpAddrs } -> {
+      { httpAddr :> _extraHttpAddrs } -> {
         console.info<| 'HaskIt http service listening: http://'
         ++ httpAddr.host() ++ ':' ++ httpAddr.port()
       }
