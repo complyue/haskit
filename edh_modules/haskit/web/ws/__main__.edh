@@ -10,8 +10,6 @@ import ( Peer, **_ ) 'net/RT'
 import * 'net/symbols'
 effect import * 'net/effects'
 
-import ( withWSC, **_ ) 'haskit/web'
-
 
 # a Peer object should have been implanted atomically, the following
 # line should have no technical effect but to hint an IDE for code
@@ -35,5 +33,29 @@ effect {
 # should have been implanted by per-connection peer module init method
 hskiServer ?= HaskItServer()
 
-# let HaskIt entangle with this WSC
-hskiServer.withWSC( peer )
+# HaskIt specific effectful artifacts for commands to be landed here
+effect {
+  hskiServer = hskiServer
+  hskiPeer = peer
+}
+
+# register this root window connection as a web client
+hskiServer.registerWebClient( peer )
+
+
+# keep landing commands from browser over WebSocket
+{
+  while peer.eol() is false {
+    case peer.readCommand() of {@
+      { cmdVal } -> {
+        console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )
+      }
+    @}
+  }
+} @=> {
+  { exc } -> {
+    console.error<| 'Disconnecting ws client ' ++ peer
+    ++ ' for error: ' ++ exc
+  }
+  console.debug<| 'Disconnecting ws client ' ++ peer
+}

@@ -1,14 +1,63 @@
 
-import ( HaskItServer, **_ ) 'haskit'
+import * 'haskit'
 
 
+# create the singleton HaskIt server instance, provide the effects it exports
+# to commands to be eval'ed here
 hskiServer = HaskItServer(
+  # todo support some environment variables for these configurations?
   '127.0.0.1', 3780, 3790,
 )
+# all of the server instance's exports are assumed to be effects
+effect import * hskiServer
 
 
-# %%
-# this line helps to keep the server live when run non-interactively
-# also it ungrabs the console, so REPLs can exclusively use the console
-# for debug purpose
-hskiServer.join()
+# run repl as a usual Edh interactive interpreter
+
+while true { # this is the *Loop* in so-called REPL
+  # Read+Eval (console.readCommand) -> Print (console.print) -> Loop
+
+  case console.readCommand(
+    ps1= "(" ++ __name__ ++ ")Đ: ",
+    ps2= "Đ| "
+  ) of {@
+    { { batteries.Command: cmd } } -> case cmd.cmd of {
+      # todo
+      #  *) enrich custom behaviors according to `cmd.apk`
+      #  *) support more commands
+      'quit' -> { break }
+      'dir' -> {
+        hereBlockScope = scope()
+        printDir( ofScope=hereBlockScope.outer )
+      }
+      _ -> console.print( 'Unsupported command: ' ++ cmd )
+    }
+
+    { cmdVal } -> {
+      console.print( cmdVal )
+    }
+  @}
+
+} $=> { # catch exceptions
+
+  { { IOError: ioExc } } -> {
+    console.fatal<| 'IO error - ' ++ ioExc
+    rethrow # escalate it to the program loop of the
+    # host interpreter, let it decide what to do.
+  }
+
+  { cmdExc } -> {
+    # the exception can have happened in a descendant goroutine/thread,
+    # and throwTo this main thread, console.print() won't show such an
+    # asynchronous exception timely, we use error log here.
+    console.error<| 'Recovered from error: ' ++ desc( cmdExc )
+
+    # TODO in case of asynchronous exception occurred, the last
+    # console.readCommand() is interrupted, but the console IO loop is
+    # still reading stdin, and what ever read will subsequently be
+    # discarded anyway. this behavior may be rather surprising to the
+    # user, need to optimize UX for such cases.
+    console.print( 'Your last input may have no effect due to the error.' )
+  }
+
+}
