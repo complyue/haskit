@@ -4,6 +4,7 @@ export class HaskItServer {
   # meant to be effect-imported
   export method withEveryHaskItClient( perWebClientAction ) {
     this.wcActionSink <- perWebClientAction
+    return nil
   }
 
   # meant to be called from a web client's serving thread, to which some event
