@@ -28,14 +28,24 @@ console.print( 'xxx' );
 # %% yy
 console.info<| 'yyy'
 
-# %%
-peer.postCommand( '{"type":"msg", "msgText":"zzz"}' )
 
 # %%
-peer.postCommand( '{"type":"err", "errText":"eee", "errDetails": "fff fff"}' )
+perform withEveryHaskItClient $ wsPeer => {
+  wsPeer.postCommand( expr
+    console.debug( 'xxx' )
+  )
+}
 
 # %%
-peer.postCommand( '{"type":"clear"}' )
+perform withEveryHaskItClient $ wsPeer => {
+  wsPeer.postCommand( expr
+    clearLog()
+  )
+}
 
 # %%
-peer.postCommand( '{"type":"msg", "msgText":"ttt", "msgType":"err", "msgDetails": "ddd ddd"}' )
+perform withEveryHaskItClient $ wsPeer => {
+  wsPeer.postCommand( expr
+    uiLog( 'xxx', 'msg', 'zzz ... yyy' )
+  )
+}
