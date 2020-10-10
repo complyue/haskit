@@ -1,6 +1,4 @@
 /**
- * ts.js
- *
  * implementation of Naive dates with ISO8601 format
  */
 export class NaiveDate {

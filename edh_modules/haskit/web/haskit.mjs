@@ -4,7 +4,7 @@
 
 import { Lander, WsPeer } from "nedh";
 
-import { hasLogBox, uiLog, clearLog } from "/log.js";
+import { hasLogBox, uiLog, clearLog } from "/log.mjs";
 
 $("button[name=clear-log]").on("click", () => {
   clearLog();
