@@ -1,17 +1,30 @@
 
 export class HaskItServer {
 
-  # meant to be effect-imported
-  export method withEveryHaskItClient( perWebClientAction ) {
-    this.wcActionSink <- perWebClientAction
+  forEachHaskItClient :: ( effects :: {
+      # bound server instance of this method
+      hskiServer :: HaskItServer
+      # the peer object connected through WebSocket,
+      # same as the peer object passed to the action
+      hskiPeer :: Peer
+      # standard data channel sink by Nedh convention
+      @dataSink :: EventSink
+      # also the same peer object as `hskiPeer`, by Nedh convention
+      @netPeer :: Peer
+    } => Peer -> Any ) -> nil
+  # send the specified action to be perceived thus performed on each web
+  # client's serving thread (goroutine)
+  export method forEachHaskItClient( perWebClientAction ) {
+    this.wcaSink <- perWebClientAction
     return nil
   }
 
+  registerWebClient :: Peer -> nil
   # meant to be called from a web client's serving thread, to which some event
   # perceiver will be installed, the `wsPeer` passed to here should be a
   # WebSocket connection established with the root browser window of the client
   method registerWebClient( wsPeer ) {
-    perceive this.wcActionSink { wcAction } -> {
+    perceive this.wcaSink { wcAction } -> {
       wcAction( wsPeer )
     }
   }
@@ -23,7 +36,8 @@ export class HaskItServer {
     numAltPorts= 9,
   ) {
 
-    this.wcActionSink = sink
+    # the sink for web client actions to be performed on demand
+    this.wcaSink = sink
 
     # locally import Nedh stuff, not needed elsewhere
     import * 'net'

@@ -8,8 +8,8 @@ hski = HaskItServer(
   # todo support some environment variables for these configurations?
   '127.0.0.1', 3780, 3790,
 )
-# all of the server instance's exports are assumed to be effects
-effect import * hski
+# expose all the server instance's exports within this repl context
+import * hski
 
 
 # run repl as a usual Edh interactive interpreter

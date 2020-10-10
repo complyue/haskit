@@ -30,21 +30,21 @@ console.info<| 'yyy'
 
 
 # %%
-perform withEveryHaskItClient $ wsPeer => {
+forEachHaskItClient $ wsPeer => {
   wsPeer.postCommand( expr
     console.debug( 'xxx' )
   )
 }
 
 # %%
-perform withEveryHaskItClient $ wsPeer => {
+forEachHaskItClient $ wsPeer => {
   wsPeer.postCommand( expr
     clearLog()
   )
 }
 
 # %%
-perform withEveryHaskItClient $ wsPeer => {
+forEachHaskItClient $ wsPeer => {
   wsPeer.postCommand( expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
