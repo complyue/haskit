@@ -10,6 +10,18 @@
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
 
+  <!-- this requires Chrome, with flag `Experimental Productivity Features`
+       enabled for the time being 2020/10
+    -->
+  <script type="importmap">
+    {
+      "imports": {
+        "edh": "/edh/index.mjs",
+        "nedh": "/nedh/index.mjs"
+      }
+    }
+  </script>
+
   <script src="/vendor/jquery/jquery.js"></script>
 
   <script src="/vendor/mui/mui.min.js"></script>
@@ -26,7 +38,7 @@
     Bokeh.settings.dev = true;
   </script>
 
-  <script type="module" src="/haskit.js"></script>
+  <script type="module" src="/haskit.mjs"></script>
 </head>
 
 <body>

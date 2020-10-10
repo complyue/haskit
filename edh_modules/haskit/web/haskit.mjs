@@ -2,7 +2,7 @@
  * main module of HaskIt root page
  */
 
-import { Lander, WsPeer } from "/nedh/index.js";
+import { Lander, WsPeer } from "nedh";
 
 import { hasLogBox, uiLog, clearLog } from "/log.js";
 
