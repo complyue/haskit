@@ -31,8 +31,13 @@ console.info<| 'yyy'
 
 # %%
 forEachHaskItClient $ wsPeer => {
-  wsPeer.postCommand( expr
-    console.debug( 'xxx' )
+  # note this runs in each client's ws serving thread, not synchronously
+  wsPeer.postCommand(
+    # we can interpolate an expression as for JavaScript source here, only if
+    # if parses as valid Edh source (thus syntax highlighted as such), it'll
+    # run as JavaScript source in the browser window, and we craft it that way.
+    expr
+    console.log( 'xxx: ', 'utc nanos=' + {$ console.now() $} )
   )
 }
 
