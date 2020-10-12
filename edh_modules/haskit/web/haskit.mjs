@@ -68,6 +68,12 @@ class HaskItPeer extends WsPeer {
 
 let _livePeer = null;
 
+// this provides effective current peer object to the source of a command
+// being eval'ed during landing of the command
+export function currPeer() {
+  return _livePeer;
+}
+
 export default async function livePeer() {
   switch (_livePeer ? _livePeer.ws.readyState : WebSocket.CLOSED) {
     case WebSocket.OPEN:

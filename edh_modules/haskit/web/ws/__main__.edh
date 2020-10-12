@@ -35,7 +35,7 @@ hskiServer ?= HaskItServer()
 
 # HaskIt specific effectful artifacts for commands to be landed here
 effect {
-  hskiServer = hskiServer
+  hski = hskiServer
   hskiPeer = peer
 }
 

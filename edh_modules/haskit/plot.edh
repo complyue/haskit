@@ -1,0 +1,52 @@
+# plotting procedures
+
+
+plot :: ( HaskItServer, Any as 'plot group id',
+  # these effects materialized in module `haskit/web/ws/__main__.edh`
+  effect {
+    # will be the HaskItServer passed in
+    hski :: HaskItServer
+    # the peer object connected through WebSocket,
+    # from root window of the web client
+    hskiPeer :: Peer
+    # standard data channel sink by Nedh convention
+    @dataSink :: EventSink
+    # also the same peer object as `hskiPeer`, by Nedh convention
+    @netPeer :: Peer
+  } => () -> Any as 'group plot script',
+) -> nil
+export method plot( hski, pgid, grpPlotScript ) {
+
+  # intermediate data for the plot group
+  namespace pgData( pgid= pgid, ) {
+    naxes = 0
+  }
+
+  hski.withEachClient $ wsPeer => {
+
+    effect method defineAxis( axisName= 'axis' ) {
+      # use a shared counter to isolate different root client windows from
+      # synchronizing axes with eachothers
+      axisNum = ai pgData.naxis+=1
+      return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
+    }
+
+    effect method plotWindow( pwid, winPlotScript ) {
+
+      # intermediate data for the plot window
+      namespace pwData () {
+        nds = 0
+      }
+
+      effect method defineDataSource(** cols ) {
+        dsNum = ai pwData.nds+=1
+
+      }
+
+      winPlotScript()
+    }
+
+    grpPlotScript()
+  }
+
+}

@@ -1,0 +1,33 @@
+
+# import hasdim this way so:
+#  *) all exported artifacts are directly available
+#  *) all module level artifacts are available via `hd`
+#  *) monkey-patching to the module object is possible
+hd = { import * 'dim' }
+# support for dtypes etc. are effectful
+effect import * 'dim/effects'
+
+
+# %%
+nPoints = 500
+nPhases = 8
+x = ( arange( nPoints, dtype=f8 ) *
+  nPhases * pi( nPoints, dtype=f8 ) / ( nPoints-1 ) )
+ySin = sin( x )
+yCos = cos( x )
+
+
+# %%
+
+plot( hski, 'demoPlotGroup1', () => {
+    sharedX = perform defineAxis( 'x' )
+    sharedY = perform defineAxis( 'y' )
+
+    perform plotWindow( 'demoPlotWin1', () => {
+        ds = perform defineDataSource(
+          x= x, sin= ySin, cos= yCos,
+        )
+
+    } )
+
+} )

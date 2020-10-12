@@ -1,9 +1,9 @@
 
 export class HaskItServer {
 
-  forEachHaskItClient :: ( effects :: {
+  withEachClient :: ( effects :: {
       # bound server instance of this method
-      hskiServer :: HaskItServer
+      hski :: HaskItServer
       # the peer object connected through WebSocket,
       # same as the peer object passed to the action
       hskiPeer :: Peer
@@ -14,7 +14,7 @@ export class HaskItServer {
     } => Peer -> Any ) -> nil
   # send the specified action to be perceived thus performed on each web
   # client's serving thread (goroutine)
-  export method forEachHaskItClient( perWebClientAction ) {
+  export method withEachClient( perWebClientAction ) {
     this.wcaSink <- perWebClientAction
     return nil
   }

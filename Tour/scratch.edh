@@ -1,9 +1,12 @@
 
-console.info<| 'First of all, ... '
+# import hasdim this way so:
+#  *) all exported artifacts are directly available
+#  *) all module level artifacts are available via `hd`
+#  *) monkey-patching to the module object is possible
+hd = { import * 'dim' }
+# support for dtypes etc. are effectful
+effect import * 'dim/effects'
 
-# %% xx
-3*7
-'n' * 5 # runtime error
 
 # %{
 {@
@@ -20,17 +23,7 @@ console.info<| 'First of all, ... '
 @}
 
 # %%
-
-# %% zz
-console.print( 'xxx' );
-/5 # syntax error
-
-# %% yy
-console.info<| 'yyy'
-
-
-# %%
-forEachHaskItClient $ wsPeer => {
+withEachClient $ wsPeer => {
   # note this runs in each client's ws serving thread, not synchronously
   wsPeer.postCommand(
     # we can interpolate an expression as for JavaScript source here, only if
@@ -42,15 +35,17 @@ forEachHaskItClient $ wsPeer => {
 }
 
 # %%
-forEachHaskItClient $ wsPeer => {
+withEachClient $ wsPeer => {
   wsPeer.postCommand( expr
     clearLog()
   )
 }
 
 # %%
-forEachHaskItClient $ wsPeer => {
+withEachClient $ wsPeer => {
   wsPeer.postCommand( expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
 }
+
+# %%
