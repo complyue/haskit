@@ -49,3 +49,9 @@ withEachClient $ wsPeer => {
 }
 
 # %%
+withEachClient $ wsPeer => {
+  wsPeer.postCommand( expr {
+      let hw = window.open( '/haze.html', 'ttt' )
+      hw.postMessage( 'hhh' )
+  } )
+}
