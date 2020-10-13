@@ -3,17 +3,17 @@
 
 plot :: ( HaskItServer, Any as 'plot group id',
   # these effects materialized in module `haskit/web/ws/__main__.edh`
-  effect {
-    # will be the HaskItServer passed in
-    hski :: HaskItServer
-    # the peer object connected through WebSocket,
-    # from root window of the web client
-    hskiPeer :: Peer
-    # standard data channel sink by Nedh convention
-    @dataSink :: EventSink
-    # also the same peer object as `hskiPeer`, by Nedh convention
-    @netPeer :: Peer
-  } => () -> Any as 'group plot script',
+  { effect {
+      # will be the HaskItServer passed in
+      hski :: HaskItServer
+      # the peer object connected through WebSocket,
+      # from root window of the web client
+      hskiPeer :: Peer
+      # standard data channel sink by Nedh convention
+      @dataSink :: EventSink
+      # also the same peer object as `hskiPeer`, by Nedh convention
+      @netPeer :: Peer
+  } } => () -> Any as 'group plot script',
 ) -> nil
 export method plot( hski, pgid, grpPlotScript ) {
 
