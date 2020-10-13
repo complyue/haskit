@@ -41,7 +41,7 @@ export method plot( hski, pgid, grpPlotScript ) {
 
       wsPeer.postCommand( expr {
           window.open(
-            '/haze.html',
+            '/haze/plot.html',
             {$ 'plot#' ++ pgid ++ '/' ++ pwid $},
           )
       } )

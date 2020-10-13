@@ -78,7 +78,7 @@ class HazeLander extends Lander {
   }
 }
 
-// source of incoming commands may reference this as well other scripts can
+// source of incoming commands may reference this as well as other scripts can
 // import it
 export const mcc2Root = new McClient(
   // should have been opened directly by the root window, it listens for our
@@ -86,6 +86,6 @@ export const mcc2Root = new McClient(
   window.opener,
   // use simple mcc protocol with this plot window's name as nedhInit
   window.name,
-  // land incoming commands with local module as environment
+  // land incoming commands with this module as environment
   new HazeLander()
 );
