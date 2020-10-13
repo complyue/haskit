@@ -23,7 +23,7 @@ effect import * 'dim/effects'
 @}
 
 # %%
-withEachClient $ wsPeer => {
+clientsEachDo $ wsPeer => {
   # note this runs in each client's ws serving thread, not synchronously
   wsPeer.postCommand(
     # we can interpolate an expression as for JavaScript source here, only if
@@ -35,21 +35,21 @@ withEachClient $ wsPeer => {
 }
 
 # %%
-withEachClient $ wsPeer => {
+clientsEachDo $ wsPeer => {
   wsPeer.postCommand( expr
     clearLog()
   )
 }
 
 # %%
-withEachClient $ wsPeer => {
+clientsEachDo $ wsPeer => {
   wsPeer.postCommand( expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
 }
 
 # %%
-withEachClient $ wsPeer => {
+clientsEachDo $ wsPeer => {
   wsPeer.postCommand( expr {
       let hw = window.open( '/haze.html', 'ttt' )
       hw.postMessage( 'hhh' )

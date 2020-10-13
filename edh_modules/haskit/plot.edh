@@ -22,7 +22,7 @@ export method plot( hski, pgid, grpPlotScript ) {
     naxes = 0
   }
 
-  hski.withEachClient $ wsPeer => {
+  hski.clientsEachDo $ wsPeer => {
 
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from

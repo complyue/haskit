@@ -1,20 +1,20 @@
 
 export class HaskItServer {
 
-  withEachClient :: ( effects :: {
-      # bound server instance of this method
-      hski :: HaskItServer
-      # the peer object connected through WebSocket,
-      # same as the peer object passed to the action
-      hskiPeer :: Peer
-      # standard data channel sink by Nedh convention
-      @dataSink :: EventSink
-      # also the same peer object as `hskiPeer`, by Nedh convention
-      @netPeer :: Peer
-    } => Peer -> Any ) -> nil
+  clientsEachDo :: ( { effect {
+        # bound server instance of this method
+        hski :: HaskItServer
+        # the peer object connected through WebSocket,
+        # same as the peer object passed to the action
+        hskiPeer :: Peer
+        # standard data channel sink by Nedh convention
+        @dataSink :: EventSink
+        # also the same peer object as `hskiPeer`, by Nedh convention
+        @netPeer :: Peer
+    } } => Peer -> Any ) -> nil
   # send the specified action to be perceived thus performed on each web
   # client's serving thread (goroutine)
-  export method withEachClient( perWebClientAction ) {
+  export method clientsEachDo( perWebClientAction ) {
     this.wcaSink <- perWebClientAction
     return nil
   }
