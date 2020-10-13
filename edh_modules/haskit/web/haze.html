@@ -2,10 +2,11 @@
 <meta charset="utf-8" />
 
 <head>
-  <title>Haze</title>
+  <title>Haze - Bokeh without Python</title>
 
   <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
 
+  <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
 
   <!-- this requires Chrome, with flag `Experimental Productivity Features`
@@ -30,6 +31,7 @@
   <script src="/vendor/bokehjs/bokeh-tables.js"></script>
   <script src="/vendor/bokehjs/bokeh-api.js"></script>
 
+  <!-- TODO Bokeh support of dark theme? -->
   <script type="module">
     // let bokeh be some verbose
     Bokeh.set_log_level("info");
@@ -37,6 +39,21 @@
   </script>
 
   <script type="module" src="/haze-plot.mjs"></script>
+
+  <!-- be the last to assume highest precedence, 
+    as mui/Bokeh are not dark theme aware -->
+  <style type="text/css">
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #000;
+      }
+    }
+    @media (prefers-color-scheme: light) {
+      body {
+        background: #fff;
+      }
+    }
+  </style>
 </head>
 
 <body>

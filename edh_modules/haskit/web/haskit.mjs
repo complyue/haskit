@@ -2,7 +2,7 @@
  * main module of HaskIt root page
  */
 
-import { Lander, WsPeer } from "nedh";
+import { Lander, WsPeer, McServer } from "nedh";
 
 import { hasLogBox, uiLog, clearLog } from "/log.mjs";
 
@@ -100,3 +100,17 @@ $(async function () {
     uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details);
   }
 });
+
+// listen for incoming MessageChannel connections from child windows to this
+// root window
+new McServer(
+  window,
+  () => new HaskItLander(),
+  (plotWinName, mcPeer) => {
+    // TODO setup ws relay to plot window
+
+    mcPeer.postCommand(`
+console.log('hello ${plotWinName}', mcc2Root)
+`);
+  }
+);

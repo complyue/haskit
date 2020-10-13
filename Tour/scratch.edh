@@ -51,7 +51,6 @@ clientsEachDo $ wsPeer => {
 # %%
 clientsEachDo $ wsPeer => {
   wsPeer.postCommand( expr {
-      let hw = window.open( '/haze.html', 'ttt' )
-      hw.postMessage( 'hhh' )
+      let hw = window.open( '/haze.html', 'aplotwin' )
   } )
 }
