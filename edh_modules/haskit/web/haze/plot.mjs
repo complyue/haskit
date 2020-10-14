@@ -84,8 +84,12 @@ export const mcc2Root = new McClient(
   // should have been opened directly by the root window, it listens for our
   // connection
   window.opener,
-  // use simple mcc protocol with this plot window's name as nedhInit
-  window.name,
+  // name of the service to connect
+  "plot",
   // land incoming commands with this module as environment
-  new HazeLander()
+  new HazeLander(),
+  // extra info for the connection
+  {
+    plotChannel: window.location.search.substr(1),
+  }
 );

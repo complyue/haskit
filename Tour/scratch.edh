@@ -54,3 +54,7 @@ clientsEachDo $ wsPeer => {
       let hw = window.open( '/haze/plot.html', 'aplotwin' )
   } )
 }
+
+
+# %%
+sink|id|str

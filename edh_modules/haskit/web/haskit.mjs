@@ -2,9 +2,11 @@
  * main module of HaskIt root page
  */
 
-import { Lander, WsPeer, McServer } from "nedh";
+import { Lander, WsPeer } from "nedh";
 
 import { hasLogBox, uiLog, clearLog } from "/log.mjs";
+
+import { setupPlotRelay } from "/haze/plot-relay.mjs";
 
 $("button[name=clear-log]").on("click", () => {
   clearLog();
@@ -101,16 +103,4 @@ $(async function () {
   }
 });
 
-// listen for incoming MessageChannel connections from child windows to this
-// root window
-new McServer(
-  window,
-  () => new HaskItLander(),
-  (plotWinName, mcPeer) => {
-    // TODO setup ws relay to plot window
-
-    mcPeer.postCommand(`
-console.log('hello ${plotWinName}', mcc2Root)
-`);
-  }
-);
+export const openPlotWindow = setupPlotRelay(currPeer);
