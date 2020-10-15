@@ -23,7 +23,7 @@ export method plot( hski, pgid, grpPlotScript ) {
     naxes = 0
   }
 
-  hski.clientsEachDo $ wsPeer => {
+  hski.clientsEachDo $ rootWsPeer => {
 
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
@@ -33,22 +33,44 @@ export method plot( hski, pgid, grpPlotScript ) {
     }
 
     effect method plotWindow( pwid, winPlotScript ) {
+      # open a new plot window from this root client window, establish the
+      # comm channel to it
+      plotChannel = str( UUID() )
+      plotSink = rootWsPeer.armChannel( plotChannel )
+      for ack from producer _ () {
+        rootWsPeer.postCommand( expr {
+            openPlotWindow( {$ pgid $}, {$ pwid$}, {$ plotChannel$} )
+        } )
+      } ( outlet=plotSink ) do {
+        if ack is not 'plot-win-open'
+        then error$ 'bug: bad handshake, check haze/plot-relay.mjs'
+        break
+      }
 
       # intermediate data for the plot window
       namespace pwData () {
         nds = 0
       }
 
-      wsPeer.postCommand( expr {
-          window.open(
-            '/haze/plot.html',
-            {$ 'plot#' ++ pgid ++ '/' ++ pwid $},
-          )
-      } )
-
       effect method defineDataSource(** cols ) {
         dsNum = ai pwData.nds+=1
+        dsName = 'ds' + dsNum
 
+        colNames = [] =< for ( k, _v ) from cols do k
+        colDtypes = [] =< for ( _k, v ) from cols do v.dtype|str
+        rootWsPeer.p2c( plotChannel, expr {
+            'plotCmd' : {$ repr$expr {
+                receiveDataSource(
+                  {$ dsName $}, {$ colNames $}, {$ colDtypes $},
+                )
+            } $}
+        } )
+        for ( _k, v ) from cols do {
+          rootWsPeer.p2c( plotChannel, { 'nextDir' : 'data' } )
+          rootWsPeer.p2c( plotChannel, v )
+        }
+
+        return dsName
       }
 
       winPlotScript()

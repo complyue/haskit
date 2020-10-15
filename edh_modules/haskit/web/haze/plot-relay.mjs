@@ -39,7 +39,7 @@ export function setupPlotRelay(hskiCurrPeer) {
 
         // land one packet
         try {
-          _resolve(eval(_src));
+          _resolve(await eval(_src));
         } catch (exc) {
           _reject(exc);
         }
@@ -59,20 +59,38 @@ export function setupPlotRelay(hskiCurrPeer) {
 
       // spawn the [ hskiServer => plotWin ] cmd pump
       (async () => {
-        for await (const { plotDir, plotCmd } of chIncoming.stream()) {
-          mcPeer.postCommand(plotCmd, plotDir);
+        let chLctr = null;
+        for await (const cmdPayload of chIncoming.stream()) {
+          const dir = chLctr,
+            chLctr = null;
+          if (null !== dir) {
+            mcPeer.p2c(dir, cmdPayload);
+            continue;
+          }
+
+          const { nextDir, plotCmd } = cmdPayload;
+          if (undefined !== nextDir) {
+            chLctr = nextDir;
+          }
+          if (undefined !== plotCmd) {
+            mcPeer.postCommand(plotCmd);
+          }
         }
       })().catch(console.error);
 
       // spawn the [ plotWin => hskiServer ] cmd pump
       (async () => {
-        for await (const { plotDir, plotCmd } of chOutgoing.stream()) {
-          mcPeer.postCommand(plotCmd, plotDir);
+        for await (const cmdPayload of chOutgoing.stream()) {
+          const cmdOut =
+            "string" === typeof cmdPayload
+              ? JSON.stringify(cmdPayload)
+              : cmdPayload;
+          hskiCurrPeer().p2c(plotChannel, cmdOut);
         }
       })().catch(console.error);
 
-      // notify server the window is open now
-      hskiCurrPeer().p2c(plotChannel, '"open"');
+      // act to server the window is open now
+      hskiCurrPeer().p2c(plotChannel, '"plot-win-open"');
     }
   );
 

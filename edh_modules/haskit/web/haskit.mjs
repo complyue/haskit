@@ -48,7 +48,7 @@ class HaskItLander extends Lander {
 
       // land one packet
       try {
-        _resolve(eval(_src));
+        _resolve(await eval(_src));
       } catch (exc) {
         _reject(exc);
       }

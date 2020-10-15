@@ -39,6 +39,23 @@ export function syncRange(rng, axisName) {
   };
 }
 
+/**
+ * Map dtype to js typed array constructor
+ *
+ * @param dt dtype identifier
+ */
+export function dtype2ArrayCtor(dt) {
+  switch (dt) {
+    case "int32":
+      return Int32Array;
+    case "float32":
+      return Float32Array;
+    case "float64":
+      return Float64Array;
+  }
+  throw new Error(`Unsupported dtype: [${dt}] !`);
+}
+
 // lander with this module scope as environment
 class HazeLander extends Lander {
   async landingThread() {
@@ -70,13 +87,16 @@ class HazeLander extends Lander {
 
       // land one packet
       try {
-        _resolve(eval(_src));
+        _resolve(await eval(_src));
       } catch (exc) {
         _reject(exc);
       }
     }
   }
 }
+
+// passed as query string of the page url
+export const plotChannel = window.location.search.substr(1);
 
 // source of incoming commands may reference this as well as other scripts can
 // import it
@@ -90,6 +110,40 @@ export const mcc2Root = new McClient(
   new HazeLander(),
   // extra info for the connection
   {
-    plotChannel: window.location.search.substr(1),
+    plotChannel: plotChannel,
   }
 );
+
+// Bokeh stuffs should be injected by page html
+const bkh = window.Bokeh,
+  plt = bkh.Plotting;
+
+// central store for intermediate data of this plot window
+const plotData = {};
+
+function receiveDataSource(dsName, colNames, colDtypes) {
+  // arm a fresh new sink to receive the stream of column data
+  const dataSink = mcc2Root.peer.armChannel("data");
+
+  // don't continue landing following commands until dataSink gets looped,
+  // or there's race condition for some column data to be missed.
+  return new Promise(async (resolve, _reject) => {
+    const colCntr = 0,
+      cdsData = {};
+
+    for await (const colData of dataSink.runProducer(async () => {
+      resolve(true);
+    })) {
+      cdsData[colNames[colCntr]] = new (dtype2ArrayCtor(colDtypes[colCntr]))(
+        colData
+      );
+      if (++colCntr >= colNames.length) {
+        break;
+      }
+    }
+
+    plotData[dsName] = new bkh.ColumnDataSource({
+      data: cdsData,
+    });
+  });
+}
