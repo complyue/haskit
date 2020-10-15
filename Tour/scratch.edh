@@ -57,4 +57,10 @@ clientsEachDo $ wsPeer => {
 
 
 # %%
-sink|id|str
+dataField$ js!expr sin
+
+# %%
+dataValue$ '#1122cc'
+
+# %%
+dataValue$ 0.7

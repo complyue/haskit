@@ -7,6 +7,8 @@ hd = { import * 'dim' }
 # support for dtypes etc. are effectful
 effect import * 'dim/effects'
 
+import * 'haskit'
+
 
 # %%
 nPoints = 500
@@ -26,6 +28,23 @@ plot( hski, 'demoPlotGroup1', () => {
     perform plotWindow( 'demoPlotWin1', () => {
         ds = perform defineDataSource(
           x= x, sin= ySin, cos= yCos,
+        )
+
+        perform figure(
+          title= 'SIN Figure',
+          toolbar_location= 'left',
+          sizing_mode= 'stretch_both',
+          () => {
+            perform addGlyph( 'line', ds, (
+                x= dataField$ js!expr x,
+                y= dataField$ js!expr sin,
+                color= dataValue$ '#1122cc',
+                alpha= dataValue$ 0.7,
+                legend= dataValue$ 'SIN Curve',
+            ) )
+            perform linkFigAxis( js!expr x_range, sharedX )
+            perform linkFigAxis( js!expr y_range, sharedY )
+          }
         )
 
     } )

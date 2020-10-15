@@ -2,6 +2,22 @@
  # plotting procedures
  #}
 
+
+export data dataField ( x ) {
+  method __repr__() {
+    repr$ js!expr { field: {$ this.x|str $} }
+  }
+  __str__ = __repr__
+}
+
+export data dataValue ( x ) {
+  method __repr__() {
+    repr$ js!expr { value: {$ this.x $} }
+  }
+  __str__ = __repr__
+}
+
+
 plot :: ( HaskItServer, Any as 'the plot group id',
   # these effects materialized in module `haskit/web/ws/__main__.edh`
   { effect {
@@ -38,7 +54,7 @@ export method plot( hski, pgid, grpPlotScript ) {
       plotChannel = str( UUID() )
       plotSink = rootWsPeer.armChannel( plotChannel )
       for ack from producer _ () {
-        rootWsPeer.postCommand( expr {
+        rootWsPeer.postCommand( js!expr {
             openPlotWindow( {$ pgid $}, {$ pwid$}, {$ plotChannel$} )
         } )
       } ( outlet=plotSink ) do {
@@ -58,19 +74,23 @@ export method plot( hski, pgid, grpPlotScript ) {
 
         colNames = [] =< for ( k, _v ) from cols do k
         colDtypes = [] =< for ( _k, v ) from cols do v.dtype|str
-        rootWsPeer.p2c( plotChannel, expr {
-            'plotCmd' : {$ repr$expr {
-                receiveDataSource(
-                  {$ dsName $}, {$ colNames $}, {$ colDtypes $},
-                )
-            } $}
+        rootWsPeer.p2c( plotChannel, js!expr {
+            'plotCmd' : {$ str$ js!expr
+              receiveDataSource(
+                {$ dsName $}, {$ colNames $}, {$ colDtypes $},
+              )
+            $}
         } )
         for ( _k, v ) from cols do {
           rootWsPeer.p2c( plotChannel, { 'nextDir' : 'data' } )
-          rootWsPeer.p2c( plotChannel, v )
+          rootWsPeer.p2c( plotChannel, v|blob )
         }
 
         return dsName
+      }
+
+      effect method figure() {
+
       }
 
       winPlotScript()
