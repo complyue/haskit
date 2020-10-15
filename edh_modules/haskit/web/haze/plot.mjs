@@ -121,6 +121,13 @@ const bkh = window.Bokeh,
 // central store for intermediate data of this plot window
 const plotData = {};
 
+/*
+// current figure during the run.
+// js being strict-eval'ed can't create vars survive between eval invocations,
+// define vars to be persisted here beforehand.
+let fig = null;
+*/
+
 function receiveDataSource(dsName, colNames, colDtypes) {
   // arm a fresh new sink to receive the stream of column data
   const dataSink = mcc2Root.peer.armChannel("data");

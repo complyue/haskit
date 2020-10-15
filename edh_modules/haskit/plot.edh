@@ -89,8 +89,11 @@ export method plot( hski, pgid, grpPlotScript ) {
         return dsName
       }
 
-      effect method figure() {
-
+      effect method postJsCode( jsExpr ) {
+        rootWsPeer.p2c( plotChannel, js!expr {
+            'plotCmd' : {$ str$ jsExpr
+            $}
+        } )
       }
 
       winPlotScript()
