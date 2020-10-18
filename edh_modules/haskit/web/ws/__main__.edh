@@ -17,6 +17,9 @@ effect import * 'net/effects'
 peer ?= Peer()
 
 console.debug<| 'WebSocket client connected - ' ++ peer
+defer {
+  console.debug<| 'Disconnecting ws client ' ++ peer
+}
 
 # define various effectful artifacts used for communication with this
 # connected consumer client session, with `@netPeer` and `@dataSink` the
@@ -39,12 +42,12 @@ effect {
   hskiPeer = peer
 }
 
-# register this root window connection as a web client
-hskiServer.registerWebClient( peer )
-
 
 # keep landing commands from browser over WebSocket
 {
+  # register this root window connection as a web client
+  hskiServer.registerWebClient( peer )
+
   while peer.eol() is false {
     case peer.readCommand() of {@
       { cmdVal } -> {
@@ -52,10 +55,7 @@ hskiServer.registerWebClient( peer )
       }
     @}
   }
-} @=> {
-  { exc } -> {
-    console.error<| 'Disconnecting ws client ' ++ peer
-    ++ ' for error: ' ++ exc
-  }
-  console.debug<| 'Disconnecting ws client ' ++ peer
+} $=> { exc } -> {
+  console.error<| 'Exception by ws client ' ++ peer
+  ++ ' error: ' ++ show( exc )
 }

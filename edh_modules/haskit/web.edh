@@ -25,7 +25,7 @@ export class HaskItServer {
   # WebSocket connection established with the root browser window of the client
   method registerWebClient( wsPeer ) {
     perceive this.wcaSink { wcAction } -> {
-      wcAction( wsPeer )
+      void wcAction( wsPeer )
     }
   }
 
