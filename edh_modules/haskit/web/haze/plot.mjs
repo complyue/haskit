@@ -135,11 +135,11 @@ function receiveDataSource(dsName, colNames, colDtypes) {
   // don't continue landing following commands until dataSink gets looped,
   // or there's race condition for some column data to be missed.
   return new Promise(async (resolve, _reject) => {
-    const colCntr = 0,
-      cdsData = {};
+    const cdsData = {};
+    let colCntr = 0;
 
     for await (const colData of dataSink.runProducer(async () => {
-      resolve(true);
+      resolve(undefined);
     })) {
       cdsData[colNames[colCntr]] = new (dtype2ArrayCtor(colDtypes[colCntr]))(
         colData

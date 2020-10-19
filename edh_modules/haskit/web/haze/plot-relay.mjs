@@ -54,13 +54,16 @@ export function setupPlotRelay(hskiCurrPeer) {
     "plot",
     () => new PlotRelayLander(),
     ({ plotChannel }, mcPeer) => {
-      const chIncoming = hskiCurrPeer().armChannel(plotChannel);
+      const wsPeer = hskiCurrPeer();
+      const chIncoming = wsPeer.armChannel(plotChannel);
       const chOutgoing = mcPeer.armChannel(plotChannel);
 
-      // spawn the [ hskiServer => plotWin ] cmd pump
-      (async () => {
+      const incomingReady = new Promise(async (resolveIncoming, _) => {
+        // spawn the [ hskiServer => plotWin ] cmd pump
         let chLctr = null;
-        for await (const cmdPayload of chIncoming.stream()) {
+        for await (const cmdPayload of chIncoming.runProducer(async () =>
+          resolveIncoming(true)
+        )) {
           const dir = chLctr;
           chLctr = null;
           if (null !== dir) {
@@ -80,26 +83,32 @@ export function setupPlotRelay(hskiCurrPeer) {
             mcPeer.postCommand(plotCmd);
           }
         }
-      })().catch(console.error);
+      });
 
-      // spawn the [ plotWin => hskiServer ] cmd pump
-      (async () => {
-        for await (const cmdPayload of chOutgoing.stream()) {
+      const outgoingReady = new Promise(async (resolveOutgoing, _) => {
+        // spawn the [ plotWin => hskiServer ] cmd pump
+        for await (const cmdPayload of chOutgoing.runProducer(async () =>
+          resolveOutgoing(true)
+        )) {
           const cmdOut =
             "string" === typeof cmdPayload
               ? JSON.stringify(cmdPayload)
               : cmdPayload;
           hskiCurrPeer().p2c(plotChannel, cmdOut);
         }
-      })().catch(console.error);
+      });
 
-      // act to server the window is open now
-      hskiCurrPeer().p2c(plotChannel, '"plot-win-open"');
+      (async () => {
+        await incomingReady;
+        await outgoingReady;
+        // act to hski server that the window is open now
+        wsPeer.p2c(plotChannel, '"plot-win-open"');
+      })().catch(console.error);
     }
   );
 
   return function openPlotWindow(pgid, pwid, plotChannel) {
-    const winName = "plot#" + pgid + "/" + pwid + "@" + plotChannel;
+    const winName = "plot#" + pgid + "/" + pwid; // + "@" + plotChannel;
     window.open("/haze/plot.html?" + plotChannel, winName);
     return winName;
   };

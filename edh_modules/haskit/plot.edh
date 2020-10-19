@@ -33,6 +33,8 @@ plot :: ( HaskItServer, Any as 'the plot group id',
   } } => () -> Any as 'the group plot script',
 ) -> nil
 export method plot( hski, pgid, grpPlotScript ) {
+  # note outer most curly braces are being interpreted as markers of a
+  # block of code in js `eval`, need to get it parenthese quoted
 
   # intermediate data for the plot group
   namespace pgData( pgid= pgid, ) {
@@ -55,11 +57,12 @@ export method plot( hski, pgid, grpPlotScript ) {
       plotSink = rootWsPeer.armChannel( plotChannel )
       for ack from ( outlet=plotSink ) | () =>* {
         rootWsPeer.postCommand( js!expr {
-            void openPlotWindow( {$ pgid $}, {$ pwid$}, {$ plotChannel$} )
+            void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
         } )
       } do {
         if ack is not 'plot-win-open'
         then error$ 'bug: bad handshake, check haze/plot-relay.mjs'
+
         break
       }
 
@@ -74,26 +77,25 @@ export method plot( hski, pgid, grpPlotScript ) {
 
         colNames = [] =< for ( k, _v ) from cols do k
         colDtypes = [] =< for ( _k, v ) from cols do v.dtype|str
-        rootWsPeer.p2c( plotChannel, js!expr {
-            'plotCmd' : {$ str$ js!expr
-              receiveDataSource(
-                {$ dsName $}, {$ colNames $}, {$ colDtypes $},
-              )
-            $}
-        } )
+        rootWsPeer.p2c( plotChannel, js!expr ( {
+              plotCmd : {$ str$ js!expr
+                receiveDataSource(
+                  {$ dsName $}, {$ colNames $}, {$ colDtypes $},
+                )
+              $}
+        } ) )
         for ( _k, v ) from cols do {
-          rootWsPeer.p2c( plotChannel, { 'nextDir' : 'data' } )
-          rootWsPeer.p2c( plotChannel, v|blob )
+          rootWsPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
+          rootWsPeer.p2c( plotChannel, blob$ v )
         }
 
         return dsName
       }
 
       effect method postJsCode( jsExpr ) {
-        rootWsPeer.p2c( plotChannel, js!expr {
-            'plotCmd' : {$ str$ jsExpr
-            $}
-        } )
+        rootWsPeer.p2c( plotChannel, js!expr ( {
+              plotCmd : {$ str$ jsExpr $}
+        } ) )
       }
 
       winPlotScript()

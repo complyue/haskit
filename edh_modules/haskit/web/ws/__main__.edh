@@ -45,8 +45,13 @@ effect {
 
 # keep landing commands from browser over WebSocket
 {
-  # register this root window connection as a web client
-  hskiServer.registerWebClient( peer )
+  # host web client actions with the effectful context here
+  perceive hskiServer.wcaSink { wcAction } -> {
+    # carry out such an action asynchronously, as some of them should block
+    # wait for some data stream (i.e. channel) of this connection
+    go wcAction( peer )
+  }
+
 
   while peer.eol() is false {
     case peer.readCommand() of {@
@@ -57,5 +62,5 @@ effect {
   }
 } $=> { exc } -> {
   console.error<| 'Exception by ws client ' ++ peer
-  ++ ' error: ' ++ show( exc )
+  ++ ' error: ' ++ desc( exc )
 }
