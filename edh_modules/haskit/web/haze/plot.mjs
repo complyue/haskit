@@ -27,7 +27,7 @@ export function syncRange(rng, axisName) {
       end: rd[1],
     });
   };
-  rng.callback = () => {
+  rng.on_change([rng.properties.start, rng.properties.end], () => {
     if (null !== announceTimer) {
       return; // already scheduled
     }
@@ -36,7 +36,7 @@ export function syncRange(rng, axisName) {
       const rd = [rng.start, rng.end];
       ch.postMessage(rd);
     }, 1000); // announce at most 1Hz
-  };
+  });
 }
 
 /**

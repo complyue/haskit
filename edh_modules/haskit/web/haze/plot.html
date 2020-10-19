@@ -38,6 +38,11 @@
     Bokeh.settings.dev = true;
   </script>
 
+  <script type="module">
+    // make it easy to find by title
+    document.title = window.name;
+  </script>
+
   <script type="module" src="./plot.mjs"></script>
 
   <!-- be the last to assume highest precedence, 
