@@ -1,13 +1,4 @@
 
-# import hasdim this way so:
-#  *) all exported artifacts are directly available
-#  *) all module level artifacts are available via `hd`
-#  *) monkey-patching to the module object is possible
-hd = { import * 'dim' }
-# support for dtypes etc. are effectful
-effect import * 'dim/effects'
-
-
 # %{
 {@
   # %%
@@ -23,44 +14,39 @@ effect import * 'dim/effects'
 @}
 
 # %%
-clientsEachDo $ wsPeer => {
-  # note this runs in each client's ws serving thread, not synchronously
-  wsPeer.postCommand(
-    # we can interpolate an expression as for JavaScript source here, only if
-    # if parses as valid Edh source (thus syntax highlighted as such), it'll
-    # run as JavaScript source in the browser window, and we craft it that way.
-    expr
-    console.log( 'xxx: ', 'utc nanos=' + {$ console.now() $} )
+clientsEachDo $ crPeer => {
+  # note this runs in separate thread, not synchronously
+
+  # we can construct some expression as for JavaScript source here, only if
+  # it parses as valid Edh source (thus syntax highlighted as such), it'll
+  # run as JavaScript source in the browser window, and we craft it that way.
+  crPeer.postCommand( js!expr {
+      console.log( 'xxx: ', 'utc nanos=' + {$ console.now() $} )
+
+      {$ jsSnippet$ '''
+// js code with syntax incompatible with Edh can be interpolated like this
+for(let n of [3, 2, 5]) {
+  console.info('arbitrary js code says: ' + n)
+}
+''' $}
+    }
   )
 }
 
 # %%
-clientsEachDo $ wsPeer => {
-  wsPeer.postCommand( expr
+# client root peer is a WsPeer object, whose lander environment hosts our
+# expression, we can call any function exposed there, we can access constants
+# and variables there. but note due to JavaScript strict evaluation, we can
+# not introduce new variables there (via var/let/const).
+clientsEachDo $ crPeer => {
+  crPeer.postCommand( js!expr
     clearLog()
   )
 }
 
 # %%
-clientsEachDo $ wsPeer => {
-  wsPeer.postCommand( expr
+clientsEachDo $ crPeer => {
+  crPeer.postCommand( js!expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
 }
-
-# %%
-clientsEachDo $ wsPeer => {
-  wsPeer.postCommand( expr {
-      let hw = window.open( '/haze/plot.html', 'aplotwin' )
-  } )
-}
-
-
-# %%
-dataField$ js!expr sin
-
-# %%
-dataValue$ '#1122cc'
-
-# %%
-dataValue$ 0.7

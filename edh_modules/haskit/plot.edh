@@ -8,20 +8,6 @@ export data jsSnippet ( jsSrc ) {
   __str__ = __repr__
 }
 
-export data dataField ( x ) {
-  method __repr__() {
-    repr$ js!expr { field: {$ this.x|str $} }
-  }
-  __str__ = __repr__
-}
-
-export data dataValue ( x ) {
-  method __repr__() {
-    repr$ js!expr { value: {$ this.x $} }
-  }
-  __str__ = __repr__
-}
-
 
 plot :: ( HaskItServer, Any as 'the plot group id',
   # these effects materialized in module `haskit/web/ws/__main__.edh`
@@ -46,7 +32,7 @@ export method plot( hski, pgid, grpPlotScript ) {
     naxes = 0
   }
 
-  hski.clientsEachDo $ rootWsPeer => {
+  hski.clientsEachDo $ crPeer => {
 
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
@@ -59,9 +45,9 @@ export method plot( hski, pgid, grpPlotScript ) {
       # open a new plot window from this root client window, establish the
       # comm channel to it
       plotChannel = str( UUID() )
-      plotSink = rootWsPeer.armChannel( plotChannel )
+      plotSink = crPeer.armChannel( plotChannel )
       for ack from ( outlet=plotSink ) | () =>* {
-        rootWsPeer.postCommand( js!expr {
+        crPeer.postCommand( js!expr {
             void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
         } )
       } do {
@@ -82,7 +68,7 @@ export method plot( hski, pgid, grpPlotScript ) {
 
         colNames = [] =< for ( k, _v ) from cols do k
         colDtypes = [] =< for ( _k, v ) from cols do v.dtype|str
-        rootWsPeer.p2c( plotChannel, js!expr ( {
+        crPeer.p2c( plotChannel, js!expr ( {
               plotCmd : {$ str$ js!expr
                 receiveDataSource(
                   {$ dsName $}, {$ colNames $}, {$ colDtypes $},
@@ -90,15 +76,15 @@ export method plot( hski, pgid, grpPlotScript ) {
               $}
         } ) )
         for ( _k, v ) from cols do {
-          rootWsPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
-          rootWsPeer.p2c( plotChannel, blob$ v )
+          crPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
+          crPeer.p2c( plotChannel, blob$ v )
         }
 
         return dsName
       }
 
       effect method postJsCode( jsExpr ) {
-        rootWsPeer.p2c( plotChannel, js!expr ( {
+        crPeer.p2c( plotChannel, js!expr ( {
               plotCmd : {$ str$ jsExpr $}
         } ) )
       }
