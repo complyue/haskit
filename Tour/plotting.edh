@@ -40,14 +40,16 @@ plot( hski, 'demoPlotGroup1', () => {
                 source: plotData[ {$ ds $} ],
                 x: { field: 'x' },
                 y: { field: 'sin' },
-                color: { value: '#1122cc' },
-                alpha: { value: 0.7 },
-                legend: { value: 'SIN Curve' },
+                color: '#1122cc',
+                alpha: 0.7,
+                legend: 'SIN Curve',
             } )
             syncRange( fig.x_range, {$ sharedX $} )
             syncRange( fig.y_range, {$ sharedY $} )
 
             plt.show( fig, document.body )
+
+            void 0
         } )
 
     } )
