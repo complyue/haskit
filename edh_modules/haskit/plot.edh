@@ -44,7 +44,7 @@ export method plot( hski, pgid, grpPlotScript ) {
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
       # synchronizing axes with eachothers
-      axisNum = ai pgData.naxis+=1
+      axisNum = ai pgData.naxes+=1
       return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
     }
 
@@ -53,11 +53,11 @@ export method plot( hski, pgid, grpPlotScript ) {
       # comm channel to it
       plotChannel = str( UUID() )
       plotSink = rootWsPeer.armChannel( plotChannel )
-      for ack from producer _ () {
+      for ack from ( outlet=plotSink ) | () =>* {
         rootWsPeer.postCommand( js!expr {
-            openPlotWindow( {$ pgid $}, {$ pwid$}, {$ plotChannel$} )
+            void openPlotWindow( {$ pgid $}, {$ pwid$}, {$ plotChannel$} )
         } )
-      } ( outlet=plotSink ) do {
+      } do {
         if ack is not 'plot-win-open'
         then error$ 'bug: bad handshake, check haze/plot-relay.mjs'
         break

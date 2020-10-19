@@ -61,13 +61,17 @@ export function setupPlotRelay(hskiCurrPeer) {
       (async () => {
         let chLctr = null;
         for await (const cmdPayload of chIncoming.stream()) {
-          const dir = chLctr,
-            chLctr = null;
+          const dir = chLctr;
+          chLctr = null;
           if (null !== dir) {
             mcPeer.p2c(dir, cmdPayload);
             continue;
           }
 
+          if (null === cmdPayload) {
+            debugger;
+            throw Error("bad usage: hski server posted null packet");
+          }
           const { nextDir, plotCmd } = cmdPayload;
           if (undefined !== nextDir) {
             chLctr = nextDir;
