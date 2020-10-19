@@ -3,6 +3,11 @@
  #}
 
 
+export data jsSnippet ( jsSrc ) {
+  method __repr__() this.jsSrc
+  __str__ = __repr__
+}
+
 export data dataField ( x ) {
   method __repr__() {
     repr$ js!expr { field: {$ this.x|str $} }

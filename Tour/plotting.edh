@@ -31,12 +31,12 @@ plot( hski, 'demoPlotGroup1', () => {
         )
 
         perform postJsCode( js!expr {
-            let fig = plt.figure( {
+            const f1 = plt.figure( {
                 title: 'SIN Figure',
                 toolbar_location: 'left',
                 sizing_mode: 'stretch_both',
             } )
-            fig.line( {
+            f1.line( {
                 source: plotData[ {$ ds $} ],
                 x: { field: 'x' },
                 y: { field: 'sin' },
@@ -44,10 +44,35 @@ plot( hski, 'demoPlotGroup1', () => {
                 alpha: 0.7,
                 legend: 'SIN Curve',
             } )
-            syncRange( fig.x_range, {$ sharedX $} )
-            syncRange( fig.y_range, {$ sharedY $} )
+            syncRange( f1.x_range, {$ sharedX $} )
+            syncRange( f1.y_range, {$ sharedY $} )
 
-            plt.show( fig, document.body )
+            const f2 = plt.figure( {
+                title: 'COS Figure',
+                toolbar_location: 'right',
+                sizing_mode: 'stretch_both',
+            } )
+            f2.line( {
+                source: plotData[ {$ ds $} ],
+                x: { field: 'x' },
+                y: { field: 'cos' },
+                color: '#11cc22',
+                alpha: 0.7,
+                legend: 'COS Curve',
+            } )
+            {$ jsSnippet$ 'for ( let g of f2.select( bkh.Legend ) )' $} {
+              g.location = 'top_left'
+              g.click_policy = 'hide'
+              g.background_fill_alpha = 0.6
+            }
+            syncRange( f2.x_range, {$ sharedX $} )
+            syncRange( f2.y_range, {$ sharedY $} )
+
+            plt.show( plt.gridplot(
+                [ [ f1 ], [ f2 ] ], {
+                  merge_tools: false,
+                  sizing_mode: 'stretch_both',
+              } ), document.body )
 
             void 0
         } )
