@@ -1,8 +1,25 @@
-# HaskIt Đ - Haskell software, fast Iterations
+# HaskIt Đ - Haskell Software, Fast Iterations
 
-[Haskell](https://haskell.org)
-makes the wrong stuff harder to build, if not the right
-things easier to form.
+> Get Quality from
+> [Haskell](https://haskell.org),
+> Get Bullshit Done Quickly with
+> [Đ (Edh)](https://github.com/e-wrks/edh)
+
+[Haskell](https://haskell.org) means all good things with respect to
+programming, except the steep learning curve compared to other mainstream
+languages.
+
+Although your software develoopment team should really be solving programming
+problems, fast iterations in development of computer powered systems don't
+merely require programmers to write code fast, but ideas and assessments
+should continuously get exchanged, explored and evaluated, together with
+other teams e.g. business development, sales, marketing etc. Where excessive
+use of jargons in software engineering will actually slow things down.
+
+High level programming lanugages like [Python](https://python.org) have
+verified some vocabularies that could make it easier for people with all kinds
+of backgrounds to talk about code of computer programs efficiently, they
+normally have flat learning curves.
 
 Programming in **Haskell**, it is actually harder, for you to progress,
 before you come (back, likely at times, with your love) with a sufficient
