@@ -5,49 +5,55 @@
 > Get Bullshit Done Quickly with
 > [Đ (Edh)](https://github.com/e-wrks/edh)
 
-[Haskell](https://haskell.org) means all good things with respect to
-programming, except the steep learning curve compared to other mainstream
-languages.
+Undoubtedly, [Haskell](https://haskell.org) means all good things with respect
+to software development, except a steeper learning curve compared to other
+mainstream languages.
 
 Although your software develoopment team should really be solving programming
 problems, fast iterations in development of computer powered systems don't
-merely require programmers to write code fast, but ideas and assessments
-should continuously get exchanged, explored and evaluated, together with
-other teams e.g. business development, sales, marketing etc. Where excessive
-use of jargons in software engineering will actually slow things down.
+merely require programmers to write code fast, more importantly, ideas and
+assessments should continuously get exchanged, explored and evaluated,
+interactively by all teams including management, business development,
+operation, product engineering, sales, marketing etc. Where excessive use of
+jargons in software engineering or mathematics will actually slow things down.
 
-High level programming lanugages like [Python](https://python.org) have
-verified some vocabularies that could make it easier for people with all kinds
-of backgrounds to talk about code of computer programs efficiently, they
-normally have flat learning curves.
+Some high level programming lanugages like [Python](https://python.org) have
+verified some vocabularies and idioms with zen, that could be easier for
+people with all kinds of backgrounds to efficiently talk about business logics
+in form of source code of computer programs. While some low level programming
+languages like [Go](https://golang.org) have demonstrated the success in
+erasing certain quirks in programming tooling, e.g. it enables message passing
+style concurrency/parallelism programming, while keeping the language and
+dev/ops workflows simple and easy to handle.
+All these programming languages impose a relative flat learning curve for
+beginners, so people working on other disciplines of an organization would
+feel welcomed to collaborate with development of the software systems driving
+the business.
 
-Programming in **Haskell**, it is actually harder, for you to progress,
-before you come (back, likely at times, with your love) with a sufficient
-understanding of your problem,
-[in mathematical ways](https://arxiv.org/abs/1904.07968),
-this is one of the reasons why **Haskell** software usually bear high
-quality and the language is so great.
+**Haskell** software usually bear high quality, one of the reasons must be
+that it's harder to write working **Haskell** code before you come with a
+sufficient understanding of the problem
+[in mathematical ways](https://arxiv.org/abs/1904.07968).
+But at times, that's not for a few individual persons or even a small number
+of departments in an organization to come solely with understanding of the
+business needs, organization wide experiments are required to
+facilitate and further optimize the business. Software systems can play a
+critical role in such practices, while collaboration and iterations are
+essential to its success.
 
-At times, you just can **not** gain understandings of that grade, without
-trials, i.e. experiments with your data and workflows for currently
-running business, that might include your users and even your suppliers.
+In software engineering & development, there are purposeful choices of
+different programming languages & frameworks, e.g.
 
-And that normally involve some pieces of software powering the run of
-your trials. With respect to programming languages, there you have plenty,
-practical choices:
-
-- boring **Haskell** for true love
+- [Boring **Haskell**](https://www.snoyman.com/blog/2019/11/boring-haskell-manifesto)
+  for mathematical minds
 - **Rust**, **C/C++** for raw machine performance
-- **Python**, **Ruby** for fast iterations
-- **Julia** for both above
-- **Go** for collaboration between commponents
+- **Python**, **Ruby** for human collaboration
+- **Julia** for all above
+- **Go** for integration of massive commponents
 - **JavaScript** for Web technology based UI, and everything else with extra love
-- many others in the mix
+- And plenty other ideas
 
-But why not start benefitting from **Haskell**, before you feel comfortable
-to use it directly, if you have the choice?
-
-Here is this offer:
+Here is yet another offer:
 
 - **HaskIt** (this package)
 
@@ -61,8 +67,8 @@ Here is this offer:
 - [Sedh](https://github.com/e-wrks/sedh)
 
   Run jobs those need parallel computing power, with your own swarms of
-  servers, including those high-dimensional parts as efficiently shared
-  ND arrays.
+  servers on premise, including those high-dimensional parts as efficiently
+  shared ND arrays.
 
   Think of even easier parallelism in spirit of
   [MPI](https://www.mpi-forum.org),
@@ -85,5 +91,13 @@ Here is this offer:
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
   An **Object** layer (or otherwise a parasitic programming language)
-  powered by **Haskell** ([GHC](https://haskell.org/ghc)), especially
+  on top of **Haskell** ([GHC](https://haskell.org/ghc)), especially
   [Software Transactional Memory](http://hackage.haskell.org/package/stm).
+
+  It feels familar to **Python**, **Go**, **JavaScript** (and maybe
+  **Haskell** too), and comes with some unique features on its own rights,
+  including:
+
+  - Dynamic Scoped Effects
+  - Compositional Classes
+  - Event Sinks and Perceivers
