@@ -77,14 +77,16 @@ export function currPeer() {
 }
 
 export default async function livePeer() {
+  const wsUrl = await getWsUrl();
   switch (_livePeer ? _livePeer.ws.readyState : WebSocket.CLOSED) {
     case WebSocket.OPEN:
       return _livePeer; // already established
     case WebSocket.CONNECTING:
       break; // connecting inprogress
     default:
+      uiLog("Dialing HaskIt backend ...");
       // to establish new WebSocket connection with Nedh semantics
-      _livePeer = new HaskItPeer(await getWsUrl(), new HaskItLander());
+      _livePeer = new HaskItPeer(wsUrl, new HaskItLander());
   }
   // wait until really connected, as well as get connection error if any
   await _livePeer.opened;
@@ -94,7 +96,6 @@ export default async function livePeer() {
 
 $(async function () {
   try {
-    uiLog("Dialing HaskIt backend ...");
     await livePeer();
     uiLog("Connected with HaskIt backend.");
   } catch (err) {
