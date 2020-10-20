@@ -1,6 +1,22 @@
 
 export class HaskItServer {
 
+  # a stack of overlayed edh modules providing web resources
+  WEB_MODULES = (
+    'haskit/web', # from haskit
+    'dim/web', # from hasdim
+    'swarm/web', # from sedh
+    'net/web', # from nedh
+    'web', # from edh
+  )
+
+  # WebSocket serving module
+  WS_MODULE = 'haskit/web/ws'
+
+  # extra routes by url
+  URL_ROUTES = ()
+
+
   clientsEachDo :: ( { effect {
         # bound server instance of this method
         hski :: HaskItServer
@@ -19,6 +35,7 @@ export class HaskItServer {
     return nil
   }
 
+
   method __init__(
     netInterface= '127.0.0.1',
     httpPort= 3780,
@@ -33,7 +50,7 @@ export class HaskItServer {
     import * 'net'
 
     this.ws = WsServer(
-      'haskit/web/ws', netInterface, wsPort,
+      that.WS_MODULE, netInterface, wsPort,
       port'max= wsPort+numAltPorts,
       init= modu => {
         modu.hskiServer = this
@@ -48,17 +65,12 @@ export class HaskItServer {
     }
 
     this.http = HttpServer(
-      ( # a stack of overlayed edh modules providing web resources
-        'haskit/web', # from haskit
-        'dim/web', # from hasdim
-        'swarm/web', # from sedh
-        'net/web', # from nedh
-        'web', # from edh
-      ),
-      netInterface, httpPort, routes= (
-        # tell web browser our port of WebSocket at uri `/:`
-        ( ":", '' ++ wsAddr.port(), mime= 'text/plain' ),
-      ), port'max= httpPort+numAltPorts,
+      that.WEB_MODULES,
+      netInterface, httpPort, routes=
+      # tell web browser our port of WebSocket at uri `/:`
+      ( ":", '' ++ wsAddr.port(), mime= 'text/plain' )
+      :> that.URL_ROUTES,
+      port'max= httpPort+numAltPorts,
     )
     case this.http.addrs() of {
       { httpAddr :> _extraHttpAddrs } -> {
