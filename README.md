@@ -110,10 +110,28 @@ Here is yet another offer:
   [Software Transactional Memory](http://hackage.haskell.org/package/stm)
   to great extent.
 
-  It feels familar to **Python**, **Go**, **JavaScript** (and in some way
-  **Haskell** too), and comes with some unique features on its own rights,
-  including:
+  It feels familar to **Python**, **Go**, **JavaScript**, and in some way
+  **Haskell** too, also comes with features on its own rights, including:
 
   - Dynamic Scoped Effects
   - Compositional Classes
   - Event Sinks and Perceivers
+
+  **Đ (Edh)** is seamlessly integrated with **Haskell**:
+
+  - You can write **Haskell** functions[[1]](#f1) just taking arguments and returning[[2]](#f2)
+    values of **Đ** types, then simply expose them to be callable by
+    **Đ** scripting code
+
+  - You can call **Đ** procedures directly from **Haskell** functions[[1]](#f1)
+
+> [<b id="f1">1</b>]
+> Access to the
+> [STM](http://hackage.haskell.org/package/stm/docs/Control-Monad-STM.html#t:STM)
+> or **IO** monad is mandated for **Haskell** functions to interact with **Đ**
+> code
+
+> [<b id="f2">2</b>]
+> With (Edh Host Interface) in **Haskell**, returning from a host procedure is
+> in form of
+> [CPS](https://en.wikibooks.org/wiki/Haskell/Continuation_passing_style)
