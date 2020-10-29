@@ -14,12 +14,13 @@ to software development, but with shortcomings (though few):
 - The ecosystem is geared toward writing highly abstract code to solve whole
   categories of problems, which although is good for exploitative work based
   on well established disciplines, it can make exploratory work harder to carry
-  out or even get started. The overall ergonomics would probably drop below
-  average in attempts to write **Haskell** code only solving specific problems,
-  e.g. generating plenty varity of reporting sheets ever changing in weekly
-  manners.
+  out or even fail to get started (e.g. unable to come to agreement on which
+  monad stack to start with). The overall ergonomics could possibly drop
+  below average in attempts to write **Haskell** code only solving specific
+  problems, e.g. generating plenty varity of reporting sheets ever changing
+  in weekly manners.
 
-Your software development team should really be solving programming problems,
+Your software development team should really be at solving programming problems,
 while translating business goals into such programming problems is critical to
 the success of your organization. It is usually not very clear within an
 organisation who is in charge of that, as well as it is seldom realized the
@@ -85,7 +86,7 @@ Here is yet another set of offers:
   Do **Object Oriented**
   [Dimensional Modeling](https://en.wikipedia.org/wiki/Dimensional_modeling)
   of your data and processes, with **Vectorized High Performance Numeric
-  Computing**, as [NVM](https://en.wikipedia.org/wiki/Non-volatile_memory)
+  Computing**, where [NVM](https://en.wikipedia.org/wiki/Non-volatile_memory)
   (e.g. disk) backed, [SIMD](https://en.wikipedia.org/wiki/SIMD) ready arrays
   are the norm.
 
@@ -100,7 +101,7 @@ Here is yet another set of offers:
   **Haskell** based **Đ (Edh)** works, forming heterogeneous pipelines, where
   the same copies of
   [NVM](https://en.wikipedia.org/wiki/Non-volatile_memory)
-  (e.g. disk) backed ND Arrays are shared and pipelined amongst arbitrary
+  (e.g. disk) backed ND arrays are shared and pipelined amongst arbitrary
   components.
 
   Think of even easier parallelism in spirit of
@@ -118,7 +119,7 @@ Here is yet another set of offers:
 
   Think of something like **TCP** services with **UDP** discoveries, where
   [Head-of-Line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking)
-  is resolved by arbitrary number of named, concurrent command channels, with
+  is resolved with arbitrary number of named, concurrent command channels, by
   each channel conveying its own stream of business instructions w/ data.
 
   You'll find [QUIC](https://en.wikipedia.org/wiki/QUIC)
@@ -153,7 +154,8 @@ Here is yet another set of offers:
     - Object system
 
       - class based (while being prototype based at the same time)
-      - multiple inheritance with **C3 linearization**
+      - multiple inheritance with
+        [C3 linearization](https://en.wikipedia.org/wiki/C3_linearization)
       - property by getter / setter methods
       - magic methods
 
@@ -201,12 +203,6 @@ Here is yet another set of offers:
       `return default <formulae>` in order for objects to be able to override
       it with magic methods for more meaningful, superior implementations.
 
-      And a subclass' magic method assumes higher priority than those from some
-      super classes, so a class can `return` `default <expr>` to prefer super
-      implementation while providing a fail-safe implementation. This is more
-      useful when multiple inheritance is in consideration, and as the choice
-      being dynamically decidable.
-
       E.g. the `++` and `+` operator come with default batteries are meant
       to do string concatenation (as for non-numeric values in case of `+`
       operator) after both operands converted with `str()`, but obviously the
@@ -218,35 +214,85 @@ Here is yet another set of offers:
       vectorized High Performance Numeric Computation against **SIMD** ready
       data stored for a column object.
 
-    - decorators (`$` is used to express decorators in Edh, while it is
-      actually more general than **Python** decorator syntax, `property$`
+      Then a subclass' magic method assumes higher priority than those from some
+      super classes, so a class can `return` `default <expr>` to prefer super
+      implementation while providing a fail-safe implementation. This is more
+      useful when multiple inheritance is in consideration, and as the choice
+      being dynamically decidable.
+
+    - decorators
+
+      `$` is used to express decorators in **Đ (Edh)** (through it is actually
+      a general procedure-call operator with low precedence), `property$`
       and `setter$` e.g. are there for exactly the same semantics as
-      `@property` and `@setter` in **Python**)
+      `@property` and `@setter` in **Python**
+
     - data classes ([PEP557](https://www.python.org/dev/peps/pep-0557))
+
+      `data` is a dedicated keyword in **Đ (Edh)** to define a class in ways
+      almost the same as [PEP557](https://www.python.org/dev/peps/pep-0557)
+      manifests.
+
     - asynchronous constructs (
       [PEP492](https://www.python.org/dev/peps/pep-0492)
       [PEP525](https://www.python.org/dev/peps/pep-0525)
       [PEP530](https://www.python.org/dev/peps/pep-0530)
       )
-    - seamless integration with the host language / runtime (**Haskell** as for
-      **Edh** to **C/C++** as for **Python**)
-    - namespace modules and entry modules (`__init__.edh` to `__init__.py`,
-      `__main__.edh` to `__main__.py`)
-    - reflective meta data (`__name__` `__file__` etc.)
+    - seamless integration with the host language / runtime
+
+      **Haskell** as for **Đ (Edh)** to **C/C++** as for **Python**
+
+      In a sense you can regard **Python** as a surface language for **C/C++**
+      as well.
+
+    - namespace modules and entry modules
+
+      `__init__.edh` to `__init__.py`
+
+      `__main__.edh` to `__main__.py`
+
+    - reflective meta data
+
+      `__name__`, `__file__` etc.
+
     - **Sphinx** based auto documentation
     - nice **REPL**
 
   - familar to **Go** in
 
-    - goroutines (a.k.a. **Edh** threads atop **GHC** threads)
-    - Compositional Classes (as to composition of **struct**s, with embedding
-      enabled method resolution)
-    - Sharing by Communicating (event sink as to channel)
-    - IDE focus (Language Server, formatter, dedicated syntax themes)
-    - format on save by default, with a canonical code formatter -- parser get
-      greatly simplified, as the formatter enforces indentation rules, the
-      syntax remains brace based, with less indentation necessarities imposed
-    - other tooling concepts (e.g. `epm` as to `go get`)
+    - goroutines (a.k.a. **Đ** threads atop **GHC** threads)
+    - Object system
+
+      An **Đ (Edh)** object of a class with inheritance hierarchy is actually
+      a composition of multiple object instances, with 1:1 mapping of object to
+      class in the inheritance structure. This is pretty much like the
+      composition of **struct**s in **Go** (with pointer embedding especially).
+
+      While embedding of (pointers to) **struct**s in **Go** enables method
+      resolution automatically, it is almost the same (logical) machinery
+      and semantics as in **Đ (Edh)**, for a class to `extends` other classes
+      or an object to `extends` other objects.
+
+      **Đ (Edh)** gives an extra in providing `that` reference for a super
+      method to refer to the end object (thus to access it), while **Go**
+      doesn't have an equivalent construct.
+
+    - Sharing by Communicating
+      - event sink as to channel
+      - the same `<-` operator
+    - IDE focus
+      - Language Server
+      - formatter
+      - dedicated syntax themes
+    - format on save by default
+
+      **Đ (Edh)** has a canonical code formatter from the very beginning,
+      a similar success as **Go** is that, the formatter enforces indentation
+      rules aggressively, so while the language syntax remains brace based (
+      thus the parser greatly simplified) most advantage of an identation based
+      language is obtained, with even less indentation necessarities imposed.
+
+    - other tooling concepts (e.g. `epm` to `go get`)
 
   - familar to **JavaScript** / **TypeScript** in
 
@@ -256,7 +302,8 @@ Here is yet another set of offers:
       - dot notation - e.g. `obj.attr`, `obj.attr = 3*7`
       - indexing - e.g. `obj[idx]`, `obj[idx] = 3*7`
       - etc. etc.
-    - first class procedures (including `=>` arrows functions)
+    - first class procedures (including `=>` with exactly same syntax and
+      semantic)
     - dynamicity
     - Object system
       - prototype based (while being class based at the same time)
@@ -279,13 +326,12 @@ Here is yet another set of offers:
     - low precedence call (function application) operator - `$`, `&`
     - majority of value types are immutable
     - pattern matching (case-of with branches)
-    - custom defined operators (thus magic methods for objects), with custom
-      precedence
+    - custom defined operators, with custom precedence
     - expression oriented (if-then-else etc.)
     - Algebraic Data Type (simulated with data classes)
     - nice **REPL**
 
-  It also comes with features on its own rights:
+  It also comes with features on its own right:
 
   - Dynamic Scoped Effects
   - Compositional Classes
@@ -294,7 +340,7 @@ Here is yet another set of offers:
   **Đ (Edh)** is seamlessly integrated with **Haskell**:
 
   - You can write **Haskell** functions[[1]](#f1) just taking arguments and returning[[2]](#f2)
-    values of **Đ** types, then simply expose them to be callable by
+    values of **Đ** types, then simply expose them to be callable from
     **Đ** scripting code
 
   - You can call **Đ** procedures directly from **Haskell** functions[[1]](#f1)
@@ -306,6 +352,6 @@ Here is yet another set of offers:
 > code
 
 > [<b id="f2">2</b>]
-> With (Edh Host Interface) in **Haskell**, returning from a host procedure is
-> in form of
+> With (Edh Host Interface) in **Haskell**, returning from a host procedure
+> ought in form of
 > [CPS](https://en.wikibooks.org/wiki/Haskell/Continuation_passing_style)
