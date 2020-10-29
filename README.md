@@ -134,17 +134,28 @@ Here is yet another set of offers:
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
   An **Object** layer, or otherwise a _Parasitic Programming Language_, on top
-  of **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
-  [Software Transactional Memory](http://hackage.haskell.org/package/stm),
-  together with **GHC**'s _M:N_ concurrent / parallel scheduler to great extent,
-  and it feels:
+  of **Haskell** ([GHC](https://haskell.org/ghc)), to a great extent, leveraging
+  [Software Transactional Memory](http://hackage.haskell.org/package/stm)
+  together with **GHC**'s _M:N_ concurrent / parallel scheduler. And it feels:
 
   - familar to **Python** in
 
     - Zen
-    - first class procedures (functions)
+    - first class procedures (including `=>` to `lambda` functions)
     - dynamicity
     - Object system
+
+      - class based (while being prototype based at the same time)
+      - multiple inheritance with **C3 linearization**
+
+      class definition syntax and semantics in **Edh** are vastly the
+      same as in **Python**, e.g. `__init__()`, `__str__()`, `__repr__()`
+      methods have exactly the same semantics)
+
+    - decorators (`$` is used to express decorators in Edh, while it is
+      actually more general than **Python** decorator syntax, `property$`
+      and `setter$` e.g. are there for exactly the same semantics as
+      `@property` and `@setter` in **Python**)
     - asynchronous constructs (
       [PEP492](https://www.python.org/dev/peps/pep-0492)
       [PEP525](https://www.python.org/dev/peps/pep-0525)
@@ -153,6 +164,9 @@ Here is yet another set of offers:
     - data classes ([PEP557](https://www.python.org/dev/peps/pep-0557))
     - seamless integration with the host language / runtime (**Haskell** as for
       **Edh** to **C/C++** as for **Python**)
+    - namespace modules and entry modules (`__init__.edh` to `__init__.py`,
+      `__main__.edh` to `__main__.py`)
+    - reflective meta data (`__name__` `__file__` etc.)
     - **Sphinx** based auto documentation
 
   - familar to **Go** in
@@ -167,15 +181,17 @@ Here is yet another set of offers:
       syntax remains brace based, with less indentation necessarities imposed
     - other tooling concepts (e.g. `epm` as to `go get`)
 
-  - familar to **JavaScript** in
+  - familar to **JavaScript** / **TypeScript** in
 
-    - first class procedures (functions)
+    - first class procedures (including `=>` arrows functions)
     - dynamicity
-    - Object system
+    - Object system (Edh **OO** is both prototype based and class based at the
+      same time)
     - asynchronous constructs (including
       [for-await...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of))
-    - modularity, composable packages (`edh_modules` to `node_modules`, `epm` to
-      `npm`)
+    - namespace construct (_TypeScript_)
+    - modularity, dependency architecture with multiple versions of the same
+      package composable (`edh_modules` to `node_modules`, `epm` to `npm`)
 
   - familar to **Haskell** in
 
