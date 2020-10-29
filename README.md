@@ -6,16 +6,30 @@
 > [Đ (Edh)](https://github.com/e-wrks/edh)
 
 Undoubtedly, [Haskell](https://haskell.org) means all good things with respect
-to software development, except a steeper learning curve compared to other
-mainstream languages.
+to software development, with shortcomings though few:
 
-Although your software develoopment team should really be solving programming
-problems, fast iterations in development of computer powered systems don't
+- A steeper learning curve compared to other mainstream languages, which is bad
+  for hiring and team-building
+- Tendency to write highly abstract code to solve whole categories of
+  problems, which although is good for exploitative work based on well
+  established disciplines, can make exploratory work harder to carry out or
+  even get started
+
+Your software development team should really be solving programming problems,
+while translating business goals into such programming problems is critical to
+the success of your organization. It is usually not very clear within an
+organisation who is in charge of that, as well as it is seldom realized the
+essential difficulties in doing that. Disagreements on responsibility to tell
+& expect reasonably, at times, lead to flame wars between e.g. Dev & Ops.
+
+Fast iterations in development of computer powered systems don't
 merely require programmers to write code fast, more importantly, ideas and
 assessments should continuously get exchanged, explored and evaluated,
 interactively by all teams including management, business development,
-operation, product engineering, sales, marketing etc. Where excessive use of
-jargons in software engineering or mathematics will actually slow things down.
+operation, product engineering, sales, marketing etc.
+
+Where excessive use of jargons in software engineering or mathematics will
+actually slow things down.
 
 Some high level programming lanugages like [Python](https://python.org) have
 verified some vocabularies and idioms with zen, that could be easier for
@@ -35,8 +49,8 @@ that it's harder to write working **Haskell** code before you come with a
 sufficient understanding of the problem
 [in mathematical ways](https://arxiv.org/abs/1904.07968).
 But at times, that's not for a few individual persons or even a small number
-of departments in an organization to come solely with understanding of the
-business needs, organization wide experiments are required to
+of departments in an organization solely to come with understandings of the
+business needs, organizational wide experiments are required to
 facilitate and further optimize the business. Software systems can play a
 critical role in such practices, while collaboration and iterations are
 essential to its success.
@@ -47,11 +61,12 @@ different programming languages & frameworks, e.g.
 - [Boring **Haskell**](https://www.snoyman.com/blog/2019/11/boring-haskell-manifesto)
   for mathematical minds
 - **Rust**, **C/C++** for raw machine performance
+- **LLVM**, **CUDA** for even accelerated machine performance
 - **Python**, **Ruby** for human collaboration
 - **Julia** for all above
 - **Go** for integration of massive commponents
 - **JavaScript** for Web technology based UI, and everything else with extra love
-- And plenty other ideas
+- And plenty of other options
 
 Here is yet another offer:
 
@@ -62,7 +77,7 @@ Here is yet another offer:
 
 - [HasDim](https://github.com/e-wrks/hasdim)
 
-  Do dimensional modeling of your data and processes.
+  Do **Object Oriented** dimensional modeling of your data and processes.
 
 - [Sedh](https://github.com/e-wrks/sedh)
 
@@ -91,10 +106,11 @@ Here is yet another offer:
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
   An **Object** layer (or otherwise a parasitic programming language)
-  on top of **Haskell** ([GHC](https://haskell.org/ghc)), especially
-  [Software Transactional Memory](http://hackage.haskell.org/package/stm).
+  on top of **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
+  [Software Transactional Memory](http://hackage.haskell.org/package/stm)
+  to great extent.
 
-  It feels familar to **Python**, **Go**, **JavaScript** (and maybe
+  It feels familar to **Python**, **Go**, **JavaScript** (and in some way
   **Haskell** too), and comes with some unique features on its own rights,
   including:
 
