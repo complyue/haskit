@@ -6,14 +6,18 @@
 > [Đ (Edh)](https://github.com/e-wrks/edh)
 
 Undoubtedly, [Haskell](https://haskell.org) means all good things with respect
-to software development, with shortcomings though few:
+to software development, but with shortcomings (though few):
 
 - A steeper learning curve compared to other mainstream languages, which is bad
-  for hiring and team-building
-- Tendency to write highly abstract code to solve whole categories of
-  problems, which although is good for exploitative work based on well
-  established disciplines, can make exploratory work harder to carry out or
-  even get started
+  for hiring and team-building.
+
+- The ecosystem is geared toward writing highly abstract code to solve whole
+  categories of problems, which although is good for exploitative work based
+  on well established disciplines, it can make exploratory work harder to carry
+  out or even get started. The overall ergonomics would probably drop below
+  average in attempts to write **Haskell** code only solving specific problems,
+  e.g. generating plenty varity of reporting sheets ever changing in weekly
+  manners.
 
 Your software development team should really be solving programming problems,
 while translating business goals into such programming problems is critical to
