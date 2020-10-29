@@ -76,8 +76,9 @@ Here is yet another set of offers:
 
 - [HaskIt](https://github.com/e-wrks/haskit) (this package)
 
-  Interactive workbench with easy yet powerful visualizations, for Data / Idea
-  Exploration / Exposition.
+  Interactive workbench with easy yet powerful visualizations (powered by
+  [BokehJS](https://docs.bokeh.org/en/latest/docs/dev_guide/bokehjs.html)
+  ), for Data / Idea · Exploration / Exposition.
 
 - [HasDim](https://github.com/e-wrks/hasdim)
 
