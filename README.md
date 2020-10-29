@@ -53,7 +53,7 @@ that it's harder to write working **Haskell** code before you come with a
 sufficient understanding of the problem
 [in mathematical ways](https://arxiv.org/abs/1904.07968).
 But at times, that's not for a few individual persons or even a small number
-of departments in an organization solely to come with understandings of the
+of departments in an organization can solely come with understandings of the
 business needs, organizational wide experiments are required to
 facilitate and further optimize the business. Software systems can play a
 critical role in such practices, while collaboration and iterations are
@@ -74,7 +74,7 @@ different programming languages & frameworks, e.g.
 
 Here is yet another offer:
 
-- **HaskIt** (this package)
+- [HaskIt](https://github.com/e-wrks/haskit) (this package)
 
   Interactive workbench with easy yet powerful visualizations, for data/idea
   exploration.
@@ -83,7 +83,7 @@ Here is yet another offer:
 
   Do **Object Oriented** dimensional modeling of your data and processes.
 
-- [Sedh](https://github.com/e-wrks/sedh)
+- [Sedh](https://github.com/e-wrks/sedh) - Swarmed Edh
 
   Run jobs those need parallel computing power, with your own swarms of
   servers on premise, including those high-dimensional parts as efficiently
@@ -94,7 +94,7 @@ Here is yet another offer:
   with the bonus that jobs are atomatically scheduled with respect to
   priority and headcount specification as submitted.
 
-- [Nedh](https://github.com/e-wrks/nedh)
+- [Nedh](https://github.com/e-wrks/nedh) - Networked Edh
 
   Yet another abstraction of networking for
   [IPC](https://en.wikipedia.org/wiki/Inter-process_communication)
@@ -107,10 +107,14 @@ Here is yet another offer:
   is resolved by arbitrary number of named, concurrent command channels, with
   each channel conveying its own stream of business instructions w/ data.
 
+- [EPM](https://github.com/e-wrks/epm) - Edh Package Manager
+
+  Establish simple yet flexible WIP / Release Engineering workflows
+
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
-  An **Object** layer (or otherwise a parasitic programming language)
-  on top of **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
+  An **Object** layer, or otherwise a Parasitic Programming Language, on top of
+  **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
   [Software Transactional Memory](http://hackage.haskell.org/package/stm)
   to great extent.
 
