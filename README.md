@@ -72,16 +72,18 @@ different programming languages & frameworks, e.g.
 - **JavaScript** for Web technology based UI, and everything else with extra love
 - And plenty of other options
 
-Here is yet another offer:
+Here is yet another set of offers:
 
 - [HaskIt](https://github.com/e-wrks/haskit) (this package)
 
-  Interactive workbench with easy yet powerful visualizations, for data / idea
-  exploration.
+  Interactive workbench with easy yet powerful visualizations, for Data / Idea
+  Exploration / Exposition.
 
 - [HasDim](https://github.com/e-wrks/hasdim)
 
-  Do **Object Oriented** dimensional modeling of your data and processes.
+  Do **Object Oriented**
+  [Dimensional Modeling](https://en.wikipedia.org/wiki/Dimensional_modeling)
+  of your data and processes.
 
 - [Sedh](https://github.com/e-wrks/sedh) - Swarmed Edh
 
