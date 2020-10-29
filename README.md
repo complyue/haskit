@@ -141,33 +141,93 @@ Here is yet another set of offers:
   - familar to **Python** in
 
     - Zen
+    - overall syntax
+      - call operator - e.g. `f( g( x, y ) )`, where `new` keyword is not
+        needed for constructor call (but can be there for compatibility with
+        **JavaScript** etc.)
+      - dot notation - e.g. `obj.attr`, `obj.attr = 3*7`
+      - indexing - e.g. `obj[idx]`, `obj[idx] = 3*7`
+      - etc. etc.
     - first class procedures (including `=>` to `lambda` functions)
     - dynamicity
     - Object system
 
       - class based (while being prototype based at the same time)
       - multiple inheritance with **C3 linearization**
+      - magic methods
 
-      class definition syntax and semantics in **Edh** are vastly the
-      same as in **Python**, e.g. `__init__()`, `__str__()`, `__repr__()`
-      methods have exactly the same semantics)
+      Class definition syntax and semantics in **Edh** are vastly the
+      same as in **Python**, e.g. the magic methods `__init__()`, `__str__()`,
+      `__repr__()` have exactly the same semantics.
+
+      While in **Python** you can rely on the language to translate `obj + val`
+      to `obj.__add__(val)`, `val + obj` to `obj.__radd__(val)`, in **Edh**
+      the same surface syntax is translated to `obj.(+)(val)` and
+      `obj.(+@)(val)` respectively. More examples:
+
+      | Surface Syntax   | Python Translation          | Đ (Edh) Translation   |
+      | ---------------- | --------------------------- | --------------------- |
+      | `obj - val`      | `obj.__sub__(val)`          | `obj.(-)(val)`        |
+      | `val - obj`      | `obj.__rsub__(val)`         | `obj.(-@)(val)`       |
+      | `obj(x, y)`      | `obj.__call__(x, y)`        | `obj.__call__(x, y)`  |
+      | `obj[idx]`       | `obj.__getitem__(idx)`      | `obj.([])(idx)`       |
+      | `obj[idx] = val` | `obj.__setitem__(idx, val)` | `obj.([=])(idx, val)` |
+      | `obj += val`     | `obj.__iadd__(val)`         | `obj.(+=)(val)`       |
+
+      While you are limited to operators defined by the language as with  
+      **Python**, all operators in **Đ (Edh)** are custom operators - some come
+      with the default batteries, while it is open for all **Đ** programmers to
+      define arbitrary operators as they see fit, then all operators get  
+      automatically translated to magic methods for objects, making it vastly
+      more extensible than **Python**.
+
+    - conditional operator implementation
+
+      **Đ (Edh)** supports the notation of `return default <expr>`, at par to
+      **Python**'s
+      [NotImplemented](https://docs.python.org/3/library/constants.html#NotImplemented)
+      semantic, but it is more powerful in that an inferior implementation can
+      be supplied (as the `<expr>`), instead of refusal in entirety.
+      `return default nil` carries the same semantic as
+      [NotImplemented](https://docs.python.org/3/library/constants.html#NotImplemented)
+      , while there is a literal constant `NA` (stands for **Not/Applicable**)
+      in **Đ (Edh)** for that.
+
+      A standalone operator procedure in **Đ (Edh)** assumes higher
+      priority than a magic method from any of the operand objects, it is
+      vital for such standalone operators (**Python** doesn't have an
+      equivelant) to `return default <formulae>` in order for objects to be
+      able to override it with magic methods for more meaningful, superior
+      implementations.
+
+      E.g. the `++` and `+` operator come with default batteries are meant
+      to do string concatenation (as for non-numeric values in case of `+`
+      operator) after both operands converted with `str()`, but obviously the
+      `Vector` class wants to override them to return vectorized result with
+      element-wise operations applied.
+
+      And **HasDim** defined `Column` class which is for array objects similar
+      to 1d **Numpy** `ndarray`, it performs similar overrides to do
+      vectorized High Performance Numeric Computation against **SIMD** ready
+      data stored for a column object.
 
     - decorators (`$` is used to express decorators in Edh, while it is
       actually more general than **Python** decorator syntax, `property$`
       and `setter$` e.g. are there for exactly the same semantics as
       `@property` and `@setter` in **Python**)
+    - data classes ([PEP557](https://www.python.org/dev/peps/pep-0557))
     - asynchronous constructs (
       [PEP492](https://www.python.org/dev/peps/pep-0492)
       [PEP525](https://www.python.org/dev/peps/pep-0525)
       [PEP530](https://www.python.org/dev/peps/pep-0530)
       )
-    - data classes ([PEP557](https://www.python.org/dev/peps/pep-0557))
     - seamless integration with the host language / runtime (**Haskell** as for
       **Edh** to **C/C++** as for **Python**)
     - namespace modules and entry modules (`__init__.edh` to `__init__.py`,
       `__main__.edh` to `__main__.py`)
     - reflective meta data (`__name__` `__file__` etc.)
     - **Sphinx** based auto documentation
+    - nice **REPL**
 
   - familar to **Go** in
 
@@ -183,24 +243,33 @@ Here is yet another set of offers:
 
   - familar to **JavaScript** / **TypeScript** in
 
+    - overall syntax
+      - call operator - e.g. `f( g( x, y ) )`, where `new` keyword is optional
+        for constructor call (for compatibility with **Python** etc.)
+      - dot notation - e.g. `obj.attr`, `obj.attr = 3*7`
+      - indexing - e.g. `obj[idx]`, `obj[idx] = 3*7`
+      - etc. etc.
     - first class procedures (including `=>` arrows functions)
     - dynamicity
-    - Object system (Edh **OO** is both prototype based and class based at the
-      same time)
+    - Object system (prototype based, while being class based at the same time)
     - asynchronous constructs (including
       [for-await...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of))
     - namespace construct (_TypeScript_)
     - modularity, dependency architecture with multiple versions of the same
       package composable (`edh_modules` to `node_modules`, `epm` to `npm`)
+    - nice **REPL**
 
   - familar to **Haskell** in
 
     - first class procedures (functions)
+    - low precedence call (function application) operator - `$`, `&`
     - majority of value types are immutable
     - pattern matching (case-of with branches)
-    - custom defined operators with custom precedence
+    - custom defined operators (thus magic methods for objects), with custom
+      precedence
     - expression oriented (if-then-else etc.)
     - Algebraic Data Type (simulated with data classes)
+    - nice **REPL**
 
   It also comes with features on its own rights:
 
