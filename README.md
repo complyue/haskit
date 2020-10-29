@@ -41,7 +41,7 @@ people with all kinds of backgrounds to efficiently talk about business logics
 in form of source code of computer programs. While some low level programming
 languages like [Go](https://golang.org) have demonstrated the success in
 erasing certain quirks in programming tooling, e.g. it enables message passing
-style concurrency/parallelism programming, while keeping the language and
+style concurrency / parallelism programming, while keeping the language and
 dev/ops workflows simple and easy to handle.
 All these programming languages impose a relative flat learning curve for
 beginners, so people working on other disciplines of an organization would
@@ -76,7 +76,7 @@ Here is yet another offer:
 
 - [HaskIt](https://github.com/e-wrks/haskit) (this package)
 
-  Interactive workbench with easy yet powerful visualizations, for data/idea
+  Interactive workbench with easy yet powerful visualizations, for data / idea
   exploration.
 
 - [HasDim](https://github.com/e-wrks/hasdim)
@@ -86,8 +86,8 @@ Here is yet another offer:
 - [Sedh](https://github.com/e-wrks/sedh) - Swarmed Edh
 
   Run jobs those need parallel computing power, with your own swarms of
-  servers on premise, including those high-dimensional parts as efficiently
-  shared ND arrays.
+  servers on premise, with possibily high-dimensional data efficiently shared
+  as ND arrays.
 
   Think of even easier parallelism in spirit of
   [MPI](https://www.mpi-forum.org),
@@ -106,6 +106,11 @@ Here is yet another offer:
   [Head-of-Line blocking](https://en.wikipedia.org/wiki/Head-of-line_blocking)
   is resolved by arbitrary number of named, concurrent command channels, with
   each channel conveying its own stream of business instructions w/ data.
+
+  You'll find [QUIC](https://en.wikipedia.org/wiki/QUIC)
+  a.k.a. [HTTP/3](https://en.wikipedia.org/wiki/HTTP/3) be solving the same
+  problems (with older network technologies) at transport layer, **Nedh** will
+  naturally leverage that to be even more performant, when it comes mature.
 
 - [EPM](https://github.com/e-wrks/epm) - Edh Package Manager
 
