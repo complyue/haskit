@@ -84,7 +84,10 @@ Here is yet another set of offers:
 
   Do **Object Oriented**
   [Dimensional Modeling](https://en.wikipedia.org/wiki/Dimensional_modeling)
-  of your data and processes.
+  of your data and processes, with **Vectorized High Performance Numeric
+  Computing**, as [NVM](https://en.wikipedia.org/wiki/Non-volatile_memory)
+  (e.g. disk) backed, [SIMD](https://en.wikipedia.org/wiki/SIMD) ready arrays
+  are the norm.
 
 - [Sedh](https://github.com/e-wrks/sedh) - Swarmed Edh
 
@@ -92,9 +95,17 @@ Here is yet another set of offers:
   servers on premise, with possibily high-dimensional data efficiently shared
   as ND arrays.
 
+  It is capable of scheduling **Pandas** / **Numpy** / **C/C++** based
+  **Python** works, as well as [HasDim](https://github.com/e-wrks/hasdim) /
+  **Haskell** based **Đ (Edh)** works, forming heterogeneous pipelines, where
+  the same copies of
+  [NVM](https://en.wikipedia.org/wiki/Non-volatile_memory)
+  (e.g. disk) backed ND Arrays are shared and pipelined amongst arbitrary
+  components.
+
   Think of even easier parallelism in spirit of
   [MPI](https://www.mpi-forum.org),
-  with the bonus that jobs are atomatically scheduled with respect to
+  with the bonus that jobs are atomatically queued with respect to
   priority and headcount specification as submitted.
 
 - [Nedh](https://github.com/e-wrks/nedh) - Networked Edh
@@ -117,17 +128,65 @@ Here is yet another set of offers:
 
 - [EPM](https://github.com/e-wrks/epm) - Edh Package Manager
 
-  Establish simple yet flexible WIP / Release Engineering workflows
+  Establish simple yet flexible WIP / Release Engineering workflows upon the
+  **Đ (Edh)** / **Haskell** ecosystem.
 
 - [Đ (Edh)](https://github.com/e-wrks/edh)
 
-  An **Object** layer, or otherwise a Parasitic Programming Language, on top of
-  **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
-  [Software Transactional Memory](http://hackage.haskell.org/package/stm)
-  to great extent.
+  An **Object** layer, or otherwise a _Parasitic Programming Language_, on top
+  of **Haskell** ([GHC](https://haskell.org/ghc)), leveraging
+  [Software Transactional Memory](http://hackage.haskell.org/package/stm),
+  together with **GHC**'s _M:N_ concurrent / parallel scheduler to great extent,
+  and it feels:
 
-  It feels familar to **Python**, **Go**, **JavaScript**, and in some way
-  **Haskell** too, also comes with features on its own rights, including:
+  - familar to **Python** in
+
+    - Zen
+    - first class procedures (functions)
+    - dynamicity
+    - Object system
+    - asynchronous constructs (
+      [PEP492](https://www.python.org/dev/peps/pep-0492)
+      [PEP525](https://www.python.org/dev/peps/pep-0525)
+      [PEP530](https://www.python.org/dev/peps/pep-0530)
+      )
+    - data classes ([PEP557](https://www.python.org/dev/peps/pep-0557))
+    - seamless integration with the host language / runtime (**Haskell** as for
+      **Edh** to **C/C++** as for **Python**)
+    - **Sphinx** based auto documentation
+
+  - familar to **Go** in
+
+    - goroutines (a.k.a. **Edh** threads atop **GHC** threads)
+    - Compositional Classes (as to composition of **struct**s, with embedding
+      enabled method resolution)
+    - Sharing by Communicating (event sink as to channel)
+    - IDE focus (Language Server, formatter, dedicated syntax themes)
+    - format on save by default, with a canonical code formatter -- parser get
+      greatly simplified, as the formatter enforces indentation rules, the
+      syntax remains brace based, with less indentation necessarities imposed
+    - other tooling concepts (e.g. `epm` as to `go get`)
+
+  - familar to **JavaScript** in
+
+    - first class procedures (functions)
+    - dynamicity
+    - Object system
+    - asynchronous constructs (including
+      [for-await...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of))
+    - modularity, composable packages (`edh_modules` to `node_modules`, `epm` to
+      `npm`)
+
+  - familar to **Haskell** in
+
+    - first class procedures (functions)
+    - majority of value types are immutable
+    - pattern matching (case-of with branches)
+    - custom defined operators with custom precedence
+    - expression oriented (if-then-else etc.)
+    - Algebraic Data Type (simulated with data classes)
+
+  It also comes with features on its own rights:
 
   - Dynamic Scoped Effects
   - Compositional Classes
