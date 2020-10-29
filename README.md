@@ -154,14 +154,15 @@ Here is yet another set of offers:
 
       - class based (while being prototype based at the same time)
       - multiple inheritance with **C3 linearization**
+      - property by getter / setter methods
       - magic methods
 
-      Class definition syntax and semantics in **Edh** are vastly the
+      Class definition syntax and semantics in **Đ (Edh)** are vastly the
       same as in **Python**, e.g. the magic methods `__init__()`, `__str__()`,
       `__repr__()` have exactly the same semantics.
 
       While in **Python** you can rely on the language to translate `obj + val`
-      to `obj.__add__(val)`, `val + obj` to `obj.__radd__(val)`, in **Edh**
+      to `obj.__add__(val)`, `val + obj` to `obj.__radd__(val)`, in **Đ (Edh)**
       the same surface syntax is translated to `obj.(+)(val)` and
       `obj.(+@)(val)` respectively. More examples:
 
@@ -183,22 +184,28 @@ Here is yet another set of offers:
 
     - conditional operator implementation
 
-      **Đ (Edh)** supports the notation of `return default <expr>`, at par to
-      **Python**'s
+      **Đ (Edh)** supports the idiom of `return`ing `default <expr>` from an
+      operator's implementing method (whether standalone or being some object's
+      magic method), this is at par to **Python**'s
       [NotImplemented](https://docs.python.org/3/library/constants.html#NotImplemented)
-      semantic, but it is more powerful in that an inferior implementation can
-      be supplied (as the `<expr>`), instead of refusal in entirety.
-      `return default nil` carries the same semantic as
+      semantic, but it is more powerful in that instead of refusal in entirety,
+      an inferior implementation can be supplied as the `<expr>` as well.
+      `default nil` carries the same semantic as
       [NotImplemented](https://docs.python.org/3/library/constants.html#NotImplemented)
       , while there is a literal constant `NA` (stands for **Not/Applicable**)
-      in **Đ (Edh)** for that.
+      in **Đ (Edh)** being equivalent to `default nil`.
 
-      A standalone operator procedure in **Đ (Edh)** assumes higher
-      priority than a magic method from any of the operand objects, it is
-      vital for such standalone operators (**Python** doesn't have an
-      equivelant) to `return default <formulae>` in order for objects to be
-      able to override it with magic methods for more meaningful, superior
-      implementations.
+      A standalone operator procedure in **Đ (Edh)** (which **Python** doesn't
+      have an equivelant) assumes higher priority than a magic method from any
+      of the operand objects, it is vital for such standalone operators to
+      `return default <formulae>` in order for objects to be able to override
+      it with magic methods for more meaningful, superior implementations.
+
+      And a subclass' magic method assumes higher priority than those from some
+      super classes, so a class can `return` `default <expr>` to prefer super
+      implementation while providing a fail-safe implementation. This is more
+      useful when multiple inheritance is in consideration, and as the choice
+      being dynamically decidable.
 
       E.g. the `++` and `+` operator come with default batteries are meant
       to do string concatenation (as for non-numeric values in case of `+`
@@ -251,7 +258,14 @@ Here is yet another set of offers:
       - etc. etc.
     - first class procedures (including `=>` arrows functions)
     - dynamicity
-    - Object system (prototype based, while being class based at the same time)
+    - Object system
+      - prototype based (while being class based at the same time)
+      - property by getter / setter methods
+    - [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
+
+      A more robust namespacing mechanism, for up-scaling of number of software
+      component vendors
+
     - asynchronous constructs (including
       [for-await...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of))
     - namespace construct (_TypeScript_)
