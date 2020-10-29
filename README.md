@@ -16,13 +16,14 @@ to software development, but with shortcomings (though few):
   on well established disciplines, it can make exploratory work harder to carry
   out or even fail to get started (e.g. unable to come to agreement on which
   monad stack to start with). The overall ergonomics could possibly drop
-  below average in attempts to write **Haskell** code only solving specific
+  below average in attempts to write **Haskell** code merely solving specific
   problems, e.g. generating plenty varity of reporting sheets ever changing
   in weekly manners.
 
-Your software development team should really be at solving programming problems,
-while translating business goals into such programming problems is critical to
-the success of your organization. It is usually not very clear within an
+Your software development team should really be at solving programming problems.
+
+While translating business goals into such programming problems is critical to
+the success of your organization, it is usually not very clear within an
 organisation who is in charge of that, as well as it is seldom realized the
 essential difficulties in doing that. Disagreements on responsibility to tell
 & expect reasonably, at times, lead to flame wars between e.g. Dev & Ops.
