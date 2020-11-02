@@ -207,12 +207,14 @@ Here is yet another set of offers:
   - familar to **Haskell** in
 
     - first class procedures (functions)
-    - low precedence call (function application) operator - `$`, `&`
+    - low precedence call (function application) operator - `$` (pity to be
+      left-associative by far), `&`
     - majority of value types are immutable
     - pattern matching (case-of with branches)
     - custom defined operators, with custom precedence
     - expression oriented (if-then-else etc.)
-    - Algebraic Data Type (simulated with data classes)
+    - data classes to simulate Algebraic Data Type (though open thus incapable
+      of exhaustiveness detection)
     - nice **REPL**
 
   It also comes with features on its own right:
