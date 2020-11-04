@@ -222,6 +222,7 @@ Here is yet another set of offers:
   - Dynamic Scoped Effects
   - Compositional Classes
   - Event Sinks and Perceivers
+  - Native Sandbox
 
   **Đ (Edh)** is seamlessly integrated with **Haskell**:
 
