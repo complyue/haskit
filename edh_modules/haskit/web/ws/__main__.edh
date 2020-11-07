@@ -45,6 +45,7 @@ effect {
 
 # keep landing commands from browser over WebSocket
 {
+
   # host web client actions with the effectful context here
   perceive hskiServer.wcaSink { wcAction } -> {
     # carry out such an action asynchronously, as some of them should block
@@ -53,13 +54,12 @@ effect {
   }
 
 
-  while peer.eol() is false {
-    case peer.readCommand() of {@
-      { cmdVal } -> {
-        console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )
-      }
-    @}
-  }
+  while peer.eol() is false case peer.readCommand() of {@
+    { cmdVal } -> {
+      console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )
+    }
+  @}
+
 } $=> { exc } -> {
   console.error<| 'Exception by ws client ' ++ peer
   ++ ' error: ' ++ desc( exc )
