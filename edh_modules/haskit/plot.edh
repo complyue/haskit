@@ -46,7 +46,7 @@ export method plot( hski, pgid, grpPlotScript ) {
       # comm channel to it
       plotChannel = str( UUID() )
       plotSink = crPeer.armChannel( plotChannel )
-      for ack from ( outlet=plotSink ) | () =>* {
+      for ack from ( outlet= plotSink ) | () =>* {
         crPeer.postCommand( js!expr {
             void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
         } )
