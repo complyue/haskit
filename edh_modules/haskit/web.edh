@@ -24,9 +24,9 @@ export class HaskItServer {
         # same as the peer object passed to the action
         hskiPeer :: Peer
         # standard data channel sink by Nedh convention
-        @dataSink :: EventSink
+        ; @dataSink :: EventSink
         # also the same peer object as `hskiPeer`, by Nedh convention
-        @netPeer :: Peer
+        ; @netPeer :: Peer
     } } => Peer -> Any ) -> nil
   # send the specified action to be perceived thus performed on each web
   # client's serving thread (goroutine)

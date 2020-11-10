@@ -18,9 +18,9 @@ plot :: ( HaskItServer, Any as 'the plot group id',
       # from root window of the web client
       hskiPeer :: Peer
       # standard data channel sink by Nedh convention
-      @dataSink :: EventSink
+      ; @dataSink :: EventSink
       # also the same peer object as `hskiPeer`, by Nedh convention
-      @netPeer :: Peer
+      ; @netPeer :: Peer
   } } => () -> Any as 'the group plot script',
 ) -> nil
 export method plot( hski, pgid, grpPlotScript ) {
