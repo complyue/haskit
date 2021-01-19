@@ -9,20 +9,21 @@ export data jsSnippet ( jsSrc ) {
 }
 
 
-plot :: ( HaskItServer, Any as 'the plot group id',
+PlotScript :=: {
   # these effects materialized in module `haskit/web/ws/__main__.edh`
-  { effect {
-      # will be the HaskItServer passed in
-      hski :: HaskItServer
-      # the peer object connected through WebSocket,
-      # from root window of the web client
-      hskiPeer :: Peer
-      # standard data channel sink by Nedh convention
-      ; @dataSink :: EventSink
-      # also the same peer object as `hskiPeer`, by Nedh convention
-      ; @netPeer :: Peer
-  } } => () -> Any as 'the group plot script',
-) -> nil
+  effect {
+    # will be the HaskItServer passed in
+    hski :: HaskItServer
+    # the peer object connected through WebSocket,
+    # from root window of the web client
+    hskiPeer :: Peer
+    # standard data channel sink by Nedh convention
+    ; @dataSink :: EventSink
+    # also the same peer object as `hskiPeer`, by Nedh convention
+    ; @netPeer :: Peer
+  }
+} => () -> 'the group plot script'!Any
+plot :: ( HaskItServer, 'the plot group id'!Any, PlotScript, ) -> nil
 export method plot( hski, pgid, grpPlotScript ) {
   # note outer most curly braces are being interpreted as markers of a
   # block of code in js `eval`, need to get it parenthese quoted
@@ -67,7 +68,7 @@ export method plot( hski, pgid, grpPlotScript ) {
         dsName = 'ds' + dsNum
 
         colNames = [] =< for ( k, _v ) from cols do k
-        colDtypes = [] =< for ( _k, v ) from cols do v.dtype|str
+        colDtypes = [] =< for ( _k, v ) from cols do str( v.dtype )
         crPeer.p2c( plotChannel, js!expr ( {
               plotCmd : {$ str$ js!expr
                 receiveDataSource(

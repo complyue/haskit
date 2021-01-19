@@ -44,7 +44,7 @@ export class HaskItServer {
   ) {
 
     # the sink for web client actions to be performed on demand
-    this.wcaSink = sink?subseq
+    this.wcaSink = sink.subseq
 
     # locally import Nedh stuff, not needed elsewhere
     import * 'net'
