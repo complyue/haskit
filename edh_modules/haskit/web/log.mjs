@@ -2,7 +2,7 @@
  * logging functions directing messages to some box in UI
  */
 
-import NaiveDate from "/ts.mjs ";
+import { NaiveDate } from "haskit";
 
 let logBox = $(".LogBox"),
   logArea = logBox.closest(".LogArea");

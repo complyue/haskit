@@ -1,4 +1,18 @@
 
+import * 'haskit'
+
+# %%
+if run'alone!false then {
+  # the enclosing script file is meant to run per cell-by-cell basis, against
+  # an HaskIt Đ terminal within VSCode IDE, which should have been started with
+  # cmdl `stack run hski` or alike, and the entry module script actually being
+  # `edh_modules/haskit/__main__.edh`, from where the `hski` instance should
+  # have been created
+  hski ?= HaskItServer()
+}
+
+# %%
+
 # import hasdim this way so:
 #  *) all exported artifacts are directly available
 #  *) all module level artifacts are available via `hd`
@@ -6,8 +20,6 @@
 hd = { import * 'dim' }
 # import effectful support for dtypes etc.
 effect import * 'dim/effects'
-
-import * 'haskit'
 
 
 # %%

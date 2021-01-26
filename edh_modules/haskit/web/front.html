@@ -10,14 +10,18 @@
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
 
-  <!-- this requires Chrome, with flag `Experimental Productivity Features`
-       enabled for the time being 2020/10
+  <!-- this requires Chrome
+        Older version:
+          enable flag `Experimental Productivity Features`
+        Version 87+:
+          chrome://flags/#enable-experimental-web-platform-features
     -->
   <script type="importmap">
     {
       "imports": {
         "edh": "/edh/index.mjs",
-        "nedh": "/nedh/index.mjs"
+        "nedh": "/nedh/index.mjs",
+        "haskit": "/haskit/index.mjs"
       }
     }
   </script>
@@ -45,4 +49,18 @@
   <div class="LogArea">
     <div class="LogBox"></div>
   </div>
+
+  You need Chrome and
+  <a
+    href="about://flags/#enable-experimental-web-platform-features"
+    target="_blank"
+  >
+    Experimental Web Platform features
+  </a>
+  enabled.
+  <br />
+  It can not be opened directly, copy & paste to address bar:
+  <b style="font-family: monospace"
+    >about://flags/#enable-experimental-web-platform-features</b
+  >
 </body>

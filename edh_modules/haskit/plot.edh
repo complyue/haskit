@@ -2,6 +2,8 @@
  # plotting procedures
  #}
 
+import * 'haskit'
+
 
 export data jsSnippet ( jsSrc ) {
   method __repr__() this.jsSrc
@@ -25,6 +27,8 @@ PlotScript :=: {
 } => () -> 'the group plot script'!Any
 plot :: ( HaskItServer, 'the plot group id'!Any, PlotScript, ) -> nil
 export method plot( hski, pgid, grpPlotScript ) {
+  hski ?= HaskItServer() # hinting VSCode for code navigation
+
   # note outer most curly braces are being interpreted as markers of a
   # block of code in js `eval`, need to get it parenthese quoted
 

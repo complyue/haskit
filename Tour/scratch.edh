@@ -1,20 +1,21 @@
 
-# %{
-{@
-  # %%
-  ss = str( 3*7 )
-
-  # %#
-  this :: ( is whatever not an executable cell )
-
-  # %%
-  xx = 'xx'
-
-  # %}
-@}
+import * 'net'
+import * 'haskit'
+import * 'haskit/plot'
 
 # %%
-clientsEachDo $ crPeer => {
+if run'alone!false then {
+  # the enclosing script file is meant to run per cell-by-cell basis, against
+  # an HaskIt Đ terminal within VSCode IDE, which should have been started with
+  # cmdl `stack run hski` or alike, and the entry module script actually being
+  # `edh_modules/haskit/__main__.edh`, from where the `hski` instance should
+  # have been created
+  hski ?= HaskItServer()
+}
+
+# %%
+hski.clientsEachDo $ crPeer => {
+  crPeer ?= Peer()
   # note this runs in separate thread, not synchronously
 
   # we can construct some expression as for JavaScript source here, only if
@@ -38,14 +39,18 @@ for(let n of [3, 2, 5]) {
 # expression, we can call any function exposed there, we can access constants
 # and variables there. but note due to JavaScript strict evaluation, we can
 # not introduce new variables there (via var/let/const).
-clientsEachDo $ crPeer => {
+hski.clientsEachDo $ crPeer => {
+  crPeer ?= Peer()
+
   crPeer.postCommand( js!expr
     clearLog()
   )
 }
 
 # %%
-clientsEachDo $ crPeer => {
+hski.clientsEachDo $ crPeer => {
+  crPeer ?= Peer()
+
   crPeer.postCommand( js!expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
