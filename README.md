@@ -91,7 +91,7 @@ Here is yet another set of offers:
   (e.g. disk) backed, [SIMD](https://en.wikipedia.org/wiki/SIMD) ready arrays
   are the norm.
 
-- [Sedh](https://github.com/e-wrks/sedh) - Swarmed Edh
+- [Sedh](https://github.com/e-wrks/sedh) - Swarming Edh
 
   Run jobs those need parallel computing power, with your own swarms of
   servers on premise, with possibily high-dimensional data efficiently shared
