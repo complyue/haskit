@@ -1,5 +1,6 @@
 {
   "edh.terminal.cmdl": [
+    "hski",
     "stack run hski",
     "cabal run haskit:hski"
   ]
