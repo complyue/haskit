@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2012 - 2020, Anaconda, Inc., and Bokeh Contributors
+ * Copyright (c) 2012 - 2021, Anaconda, Inc., and Bokeh Contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,9 +27,9 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 (function(root, factory) {
-  factory(root["Bokeh"], "2.2.1");
+  factory(root["Bokeh"], "2.3.1");
 })(this, function(Bokeh, version) {
   var define;
   return (function(modules, entry, aliases, externals) {
@@ -41,38 +41,38 @@
     }
   })
 ({
-393: /* api/main.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+408: /* api/main.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    tslib_1.__exportStar(require(394) /* ./index */, exports);
+    tslib_1.__exportStar(require(409) /* ./index */, exports);
 },
-394: /* api/index.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+409: /* api/index.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    const LinAlg = tslib_1.__importStar(require(442) /* ./linalg */);
+    const LinAlg = tslib_1.__importStar(require(410) /* ./linalg */);
     exports.LinAlg = LinAlg;
-    const Charts = tslib_1.__importStar(require(397) /* ./charts */);
+    const Charts = tslib_1.__importStar(require(412) /* ./charts */);
     exports.Charts = Charts;
-    const Plotting = tslib_1.__importStar(require(400) /* ./plotting */);
+    const Plotting = tslib_1.__importStar(require(415) /* ./plotting */);
     exports.Plotting = Plotting;
     var document_1 = require(5) /* ../document */;
-    exports.Document = document_1.Document;
-    var templating_1 = require(187) /* ../core/util/templating */;
-    exports.sprintf = templating_1.sprintf;
-    tslib_1.__exportStar(require(399) /* ./models */, exports);
+    __esExport("Document", document_1.Document);
+    var templating_1 = require(183) /* ../core/util/templating */;
+    __esExport("sprintf", templating_1.sprintf);
+    tslib_1.__exportStar(require(414) /* ./models */, exports);
 },
-442: /* api/linalg.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+410: /* api/linalg.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
     tslib_1.__exportStar(require(13) /* ../core/util/object */, exports);
     tslib_1.__exportStar(require(9) /* ../core/util/array */, exports);
-    tslib_1.__exportStar(require(29) /* ../core/util/string */, exports);
-    tslib_1.__exportStar(require(443) /* ../core/util/random */, exports);
+    tslib_1.__exportStar(require(34) /* ../core/util/string */, exports);
+    tslib_1.__exportStar(require(411) /* ../core/util/random */, exports);
     tslib_1.__exportStar(require(8) /* ../core/util/types */, exports);
-    tslib_1.__exportStar(require(25) /* ../core/util/eq */, exports);
+    tslib_1.__exportStar(require(26) /* ../core/util/eq */, exports);
 },
-443: /* core/util/random.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+411: /* core/util/random.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const MAX_INT32 = 2147483647;
     // Park-Miller LCG
     class Random {
@@ -88,10 +88,18 @@
         float() {
             return (this.integer() - 1) / (MAX_INT32 - 1);
         }
-        floats(n) {
+        floats(n, a = 0, b = 1) {
             const result = new Array(n);
             for (let i = 0; i < n; i++) {
-                result[i] = this.float();
+                result[i] = a + this.float() * (b - a);
+            }
+            return result;
+        }
+        choices(n, items) {
+            const k = items.length;
+            const result = new Array(n);
+            for (let i = 0; i < n; i++) {
+                result[i] = items[this.integer() % k];
             }
             return result;
         }
@@ -100,35 +108,20 @@
     Random.__name__ = "Random";
     exports.random = new Random(Date.now());
 },
-397: /* api/charts.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+412: /* api/charts.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    const palettes = tslib_1.__importStar(require(398) /* ./palettes */);
+    const palettes = tslib_1.__importStar(require(413) /* ./palettes */);
+    const color_1 = require(22) /* ../core/util/color */;
     const array_1 = require(9) /* ../core/util/array */;
     const types_1 = require(8) /* ../core/util/types */;
-    const templating_1 = require(187) /* ../core/util/templating */;
-    const models_1 = require(399) /* ./models */;
-    function num2hexcolor(num) {
-        return templating_1.sprintf("#%06x", num);
-    }
-    function hexcolor2rgb(color) {
-        const r = parseInt(color.substr(1, 2), 16);
-        const g = parseInt(color.substr(3, 2), 16);
-        const b = parseInt(color.substr(5, 2), 16);
-        return [r, g, b];
-    }
-    function is_dark([r, g, b]) {
-        const l = 1 - (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        return l >= 0.6;
-    }
-    function norm_palette(palette = "Spectral11") {
-        if (types_1.isArray(palette))
-            return palette;
-        else {
-            return palettes[palette].map(num2hexcolor);
-        }
+    const templating_1 = require(183) /* ../core/util/templating */;
+    const models_1 = require(414) /* ./models */;
+    function resolve_palette(palette = "Spectral11") {
+        return types_1.isArray(palette) ? palette : palettes[palette];
     }
     function pie(data, opts = {}) {
+        var _a;
         const labels = [];
         const values = [];
         for (let i = 0; i < Math.min(data.labels.length, data.values.length); i++) {
@@ -163,11 +156,11 @@
         }
         const inner_radius = opts.inner_radius != null ? opts.inner_radius : 0;
         const outer_radius = opts.outer_radius != null ? opts.outer_radius : 1;
-        const palette = norm_palette(opts.palette);
+        const palette = resolve_palette(opts.palette);
         const colors = [];
         for (let i = 0; i < normalized_values.length; i++)
             colors.push(palette[i % palette.length]);
-        const text_colors = colors.map((c) => is_dark(hexcolor2rgb(c)) ? "white" : "black");
+        const text_colors = colors.map((c) => color_1.is_dark(color_1.color2rgba(c)) ? "white" : "black");
         function to_cartesian(r, alpha) {
             return [r * Math.cos(alpha), r * Math.sin(alpha)];
         }
@@ -214,7 +207,7 @@
         });
         const g2 = new models_1.Text({
             x: { field: "text_cx" }, y: { field: "text_cy" },
-            text: { field: opts.slice_labels || "labels" },
+            text: { field: (_a = opts.slice_labels) !== null && _a !== void 0 ? _a : "labels" },
             angle: { field: "text_angles" },
             text_align: "center", text_baseline: "middle",
             text_color: { field: "text_colors" }, text_font_size: "12px",
@@ -226,10 +219,6 @@
         const xdr = new models_1.DataRange1d({ renderers: [r1], range_padding: 0.2 });
         const ydr = new models_1.DataRange1d({ renderers: [r1], range_padding: 0.2 });
         const plot = new models_1.Plot({ x_range: xdr, y_range: ydr });
-        if (opts.width != null)
-            plot.plot_width = opts.width;
-        if (opts.height != null)
-            plot.plot_height = opts.height;
         plot.add_renderers(r1, r2);
         const tooltip = "<div>@labels</div><div><b>@values</b> (@percentages)</div>";
         const hover = new models_1.HoverTool({ renderers: [r1], tooltips: tooltip });
@@ -254,7 +243,7 @@
         let xaxis = new models_1.LinearAxis({ formatter: xformatter });
         let xdr = new models_1.DataRange1d({ start: 0 });
         let xscale = new models_1.LinearScale();
-        const palette = norm_palette(opts.palette);
+        const palette = resolve_palette(opts.palette);
         const stacked = opts.stacked != null ? opts.stacked : false;
         const orientation = opts.orientation != null ? opts.orientation : "horizontal";
         const renderers = [];
@@ -342,10 +331,6 @@
             }
         }
         const plot = new models_1.Plot({ x_range: xdr, y_range: ydr, x_scale: xscale, y_scale: yscale });
-        if (opts.width != null)
-            plot.plot_width = opts.width;
-        if (opts.height != null)
-            plot.plot_height = opts.height;
         plot.add_renderers(...renderers);
         plot.add_layout(yaxis, "left");
         plot.add_layout(xaxis, "below");
@@ -372,8 +357,16 @@
     }
     exports.bar = bar;
 },
-398: /* api/palettes.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+413: /* api/palettes.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    exports.Greens4 = exports.Greens3 = exports.Blues9 = exports.Blues8 = exports.Blues7 = exports.Blues6 = exports.Blues5 = exports.Blues4 = exports.Blues3 = exports.Purples9 = exports.Purples8 = exports.Purples7 = exports.Purples6 = exports.Purples5 = exports.Purples4 = exports.Purples3 = exports.YlOrBr9 = exports.YlOrBr8 = exports.YlOrBr7 = exports.YlOrBr6 = exports.YlOrBr5 = exports.YlOrBr4 = exports.YlOrBr3 = exports.YlOrRd9 = exports.YlOrRd8 = exports.YlOrRd7 = exports.YlOrRd6 = exports.YlOrRd5 = exports.YlOrRd4 = exports.YlOrRd3 = exports.OrRd9 = exports.OrRd8 = exports.OrRd7 = exports.OrRd6 = exports.OrRd5 = exports.OrRd4 = exports.OrRd3 = exports.PuRd9 = exports.PuRd8 = exports.PuRd7 = exports.PuRd6 = exports.PuRd5 = exports.PuRd4 = exports.PuRd3 = exports.RdPu9 = exports.RdPu8 = exports.RdPu7 = exports.RdPu6 = exports.RdPu5 = exports.RdPu4 = void 0;
+    exports.PRGn5 = exports.PRGn4 = exports.PRGn3 = exports.BrBG11 = exports.BrBG10 = exports.BrBG9 = exports.BrBG8 = exports.BrBG7 = exports.BrBG6 = exports.BrBG5 = exports.BrBG4 = exports.BrBG3 = exports.PuOr11 = exports.PuOr10 = exports.PuOr9 = exports.PuOr8 = exports.PuOr7 = exports.PuOr6 = exports.PuOr5 = exports.PuOr4 = exports.PuOr3 = exports.Greys256 = exports.Greys11 = exports.Greys10 = exports.Greys9 = exports.Greys8 = exports.Greys7 = exports.Greys6 = exports.Greys5 = exports.Greys4 = exports.Greys3 = exports.Reds9 = exports.Reds8 = exports.Reds7 = exports.Reds6 = exports.Reds5 = exports.Reds4 = exports.Reds3 = exports.Oranges9 = exports.Oranges8 = exports.Oranges7 = exports.Oranges6 = exports.Oranges5 = exports.Oranges4 = exports.Oranges3 = exports.Greens9 = exports.Greens8 = exports.Greens7 = exports.Greens6 = exports.Greens5 = void 0;
+    exports.Spectral10 = exports.Spectral9 = exports.Spectral8 = exports.Spectral7 = exports.Spectral6 = exports.Spectral5 = exports.Spectral4 = exports.Spectral3 = exports.RdYlBu11 = exports.RdYlBu10 = exports.RdYlBu9 = exports.RdYlBu8 = exports.RdYlBu7 = exports.RdYlBu6 = exports.RdYlBu5 = exports.RdYlBu4 = exports.RdYlBu3 = exports.RdGy11 = exports.RdGy10 = exports.RdGy9 = exports.RdGy8 = exports.RdGy7 = exports.RdGy6 = exports.RdGy5 = exports.RdGy4 = exports.RdGy3 = exports.RdBu11 = exports.RdBu10 = exports.RdBu9 = exports.RdBu8 = exports.RdBu7 = exports.RdBu6 = exports.RdBu5 = exports.RdBu4 = exports.RdBu3 = exports.PiYG11 = exports.PiYG10 = exports.PiYG9 = exports.PiYG8 = exports.PiYG7 = exports.PiYG6 = exports.PiYG5 = exports.PiYG4 = exports.PiYG3 = exports.PRGn11 = exports.PRGn10 = exports.PRGn9 = exports.PRGn8 = exports.PRGn7 = exports.PRGn6 = void 0;
+    exports.Viridis256 = exports.Viridis11 = exports.Viridis10 = exports.Viridis9 = exports.Viridis8 = exports.Viridis7 = exports.Viridis6 = exports.Viridis5 = exports.Viridis4 = exports.Viridis3 = exports.Plasma256 = exports.Plasma11 = exports.Plasma10 = exports.Plasma9 = exports.Plasma8 = exports.Plasma7 = exports.Plasma6 = exports.Plasma5 = exports.Plasma4 = exports.Plasma3 = exports.Magma256 = exports.Magma11 = exports.Magma10 = exports.Magma9 = exports.Magma8 = exports.Magma7 = exports.Magma6 = exports.Magma5 = exports.Magma4 = exports.Magma3 = exports.Inferno256 = exports.Inferno11 = exports.Inferno10 = exports.Inferno9 = exports.Inferno8 = exports.Inferno7 = exports.Inferno6 = exports.Inferno5 = exports.Inferno4 = exports.Inferno3 = exports.RdYlGn11 = exports.RdYlGn10 = exports.RdYlGn9 = exports.RdYlGn8 = exports.RdYlGn7 = exports.RdYlGn6 = exports.RdYlGn5 = exports.RdYlGn4 = exports.RdYlGn3 = exports.Spectral11 = void 0;
+    exports.Set3_4 = exports.Set3_3 = exports.Set2_8 = exports.Set2_7 = exports.Set2_6 = exports.Set2_5 = exports.Set2_4 = exports.Set2_3 = exports.Set1_9 = exports.Set1_8 = exports.Set1_7 = exports.Set1_6 = exports.Set1_5 = exports.Set1_4 = exports.Set1_3 = exports.Pastel2_8 = exports.Pastel2_7 = exports.Pastel2_6 = exports.Pastel2_5 = exports.Pastel2_4 = exports.Pastel2_3 = exports.Pastel1_9 = exports.Pastel1_8 = exports.Pastel1_7 = exports.Pastel1_6 = exports.Pastel1_5 = exports.Pastel1_4 = exports.Pastel1_3 = exports.Paired12 = exports.Paired11 = exports.Paired10 = exports.Paired9 = exports.Paired8 = exports.Paired7 = exports.Paired6 = exports.Paired5 = exports.Paired4 = exports.Paired3 = exports.Dark2_8 = exports.Dark2_7 = exports.Dark2_6 = exports.Dark2_5 = exports.Dark2_4 = exports.Dark2_3 = exports.Accent8 = exports.Accent7 = exports.Accent6 = exports.Accent5 = exports.Accent4 = exports.Accent3 = void 0;
+    exports.Category20b_18 = exports.Category20b_17 = exports.Category20b_16 = exports.Category20b_15 = exports.Category20b_14 = exports.Category20b_13 = exports.Category20b_12 = exports.Category20b_11 = exports.Category20b_10 = exports.Category20b_9 = exports.Category20b_8 = exports.Category20b_7 = exports.Category20b_6 = exports.Category20b_5 = exports.Category20b_4 = exports.Category20b_3 = exports.Category20_20 = exports.Category20_19 = exports.Category20_18 = exports.Category20_17 = exports.Category20_16 = exports.Category20_15 = exports.Category20_14 = exports.Category20_13 = exports.Category20_12 = exports.Category20_11 = exports.Category20_10 = exports.Category20_9 = exports.Category20_8 = exports.Category20_7 = exports.Category20_6 = exports.Category20_5 = exports.Category20_4 = exports.Category20_3 = exports.Category10_10 = exports.Category10_9 = exports.Category10_8 = exports.Category10_7 = exports.Category10_6 = exports.Category10_5 = exports.Category10_4 = exports.Category10_3 = exports.Set3_12 = exports.Set3_11 = exports.Set3_10 = exports.Set3_9 = exports.Set3_8 = exports.Set3_7 = exports.Set3_6 = exports.Set3_5 = void 0;
+    exports.RdGy = exports.RdBu = exports.PiYG = exports.PRGn = exports.BrBG = exports.PuOr = exports.Greys = exports.Reds = exports.Oranges = exports.Greens = exports.Blues = exports.Purples = exports.YlOrBr = exports.YlOrRd = exports.OrRd = exports.PuRd = exports.RdPu = exports.BuPu = exports.PuBu = exports.PuBuGn = exports.BuGn = exports.GnBu = exports.YlGnBu = exports.YlGn = exports.Colorblind8 = exports.Colorblind7 = exports.Colorblind6 = exports.Colorblind5 = exports.Colorblind4 = exports.Colorblind3 = exports.Category20c_20 = exports.Category20c_19 = exports.Category20c_18 = exports.Category20c_17 = exports.Category20c_16 = exports.Category20c_15 = exports.Category20c_14 = exports.Category20c_13 = exports.Category20c_12 = exports.Category20c_11 = exports.Category20c_10 = exports.Category20c_9 = exports.Category20c_8 = exports.Category20c_7 = exports.Category20c_6 = exports.Category20c_5 = exports.Category20c_4 = exports.Category20c_3 = exports.Category20b_20 = exports.Category20b_19 = void 0;
+    exports.Colorblind = exports.Category20c = exports.Category20b = exports.Category20 = exports.Category10 = exports.Set3 = exports.Set2 = exports.Set1 = exports.Pastel2 = exports.Pastel1 = exports.Paired = exports.Dark2 = exports.Accent = exports.Viridis = exports.Plasma = exports.Magma = exports.Inferno = exports.RdYlGn = exports.Spectral = exports.RdYlBu = void 0;
     exports.YlGn3 = [0x31a354ff, 0xaddd8eff, 0xf7fcb9ff];
     exports.YlGn4 = [0x238443ff, 0x78c679ff, 0xc2e699ff, 0xffffccff];
     exports.YlGn5 = [0x006837ff, 0x31a354ff, 0x78c679ff, 0xc2e699ff, 0xffffccff];
@@ -930,30 +923,34 @@
     exports.Category20c = { Category20c_3: exports.Category20c_3, Category20c_4: exports.Category20c_4, Category20c_5: exports.Category20c_5, Category20c_6: exports.Category20c_6, Category20c_7: exports.Category20c_7, Category20c_8: exports.Category20c_8, Category20c_9: exports.Category20c_9, Category20c_10: exports.Category20c_10, Category20c_11: exports.Category20c_11, Category20c_12: exports.Category20c_12, Category20c_13: exports.Category20c_13, Category20c_14: exports.Category20c_14, Category20c_15: exports.Category20c_15, Category20c_16: exports.Category20c_16, Category20c_17: exports.Category20c_17, Category20c_18: exports.Category20c_18, Category20c_19: exports.Category20c_19, Category20c_20: exports.Category20c_20 };
     exports.Colorblind = { Colorblind3: exports.Colorblind3, Colorblind4: exports.Colorblind4, Colorblind5: exports.Colorblind5, Colorblind6: exports.Colorblind6, Colorblind7: exports.Colorblind7, Colorblind8: exports.Colorblind8 };
 },
-399: /* api/models.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+414: /* api/models.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    tslib_1.__exportStar(require(34) /* ../models */, exports);
+    tslib_1.__exportStar(require(38) /* ../models */, exports);
 },
-400: /* api/plotting.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+415: /* api/plotting.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
     const document_1 = require(5) /* ../document */;
     const embed = tslib_1.__importStar(require(4) /* ../embed */);
-    const models = tslib_1.__importStar(require(399) /* ./models */);
     const properties_1 = require(18) /* ../core/properties */;
-    const string_1 = require(29) /* ../core/util/string */;
-    const eq_1 = require(25) /* ../core/util/eq */;
+    const string_1 = require(34) /* ../core/util/string */;
+    const eq_1 = require(26) /* ../core/util/eq */;
     const array_1 = require(9) /* ../core/util/array */;
     const object_1 = require(13) /* ../core/util/object */;
     const types_1 = require(8) /* ../core/util/types */;
-    const iterator_1 = require(303) /* ../core/util/iterator */;
-    const models_1 = require(399) /* ./models */;
-    const legend_1 = require(163) /* ../models/annotations/legend */;
-    var gridplot_1 = require(401) /* ./gridplot */;
-    exports.gridplot = gridplot_1.gridplot;
+    const dom_1 = require(43) /* ../core/dom */;
+    const iterator_1 = require(246) /* ../core/util/iterator */;
+    const nd = tslib_1.__importStar(require(29) /* ../core/util/ndarray */);
+    const models_1 = require(414) /* ./models */;
+    const glyphs_1 = require(278) /* ../models/glyphs */;
+    const legend_1 = require(229) /* ../models/annotations/legend */;
+    const legend_item_1 = require(230) /* ../models/annotations/legend_item */;
+    var gridplot_1 = require(416) /* ./gridplot */;
+    __esExport("gridplot", gridplot_1.gridplot);
     var color_1 = require(22) /* ../core/util/color */;
-    exports.color = color_1.rgb2hex;
+    __esExport("color", color_1.color2css);
+    const { hasOwnProperty } = Object.prototype;
     const _default_tools = ["pan", "wheel_zoom", "box_zoom", "save", "reset", "help"];
     const _default_color = "#1f77b4";
     const _default_alpha = 1.0;
@@ -1019,166 +1016,178 @@
             }
         }
         annular_wedge(...args) {
-            return this._glyph(models.AnnularWedge, "x,y,inner_radius,outer_radius,start_angle,end_angle", args);
+            return this._glyph(glyphs_1.AnnularWedge, "x,y,inner_radius,outer_radius,start_angle,end_angle", args);
         }
         annulus(...args) {
-            return this._glyph(models.Annulus, "x,y,inner_radius,outer_radius", args);
+            return this._glyph(glyphs_1.Annulus, "x,y,inner_radius,outer_radius", args);
         }
         arc(...args) {
-            return this._glyph(models.Arc, "x,y,radius,start_angle,end_angle", args);
+            return this._glyph(glyphs_1.Arc, "x,y,radius,start_angle,end_angle", args);
         }
         bezier(...args) {
-            return this._glyph(models.Bezier, "x0,y0,x1,y1,cx0,cy0,cx1,cy1", args);
+            return this._glyph(glyphs_1.Bezier, "x0,y0,x1,y1,cx0,cy0,cx1,cy1", args);
         }
         circle(...args) {
-            return this._glyph(models.Circle, "x,y", args);
+            return this._glyph(glyphs_1.Circle, "x,y", args);
         }
         ellipse(...args) {
-            return this._glyph(models.Ellipse, "x,y,width,height", args);
+            return this._glyph(glyphs_1.Ellipse, "x,y,width,height", args);
         }
         harea(...args) {
-            return this._glyph(models.HArea, "x1,x2,y", args);
+            return this._glyph(glyphs_1.HArea, "x1,x2,y", args);
         }
         hbar(...args) {
-            return this._glyph(models.HBar, "y,height,right,left", args);
+            return this._glyph(glyphs_1.HBar, "y,height,right,left", args);
         }
         hex_tile(...args) {
-            return this._glyph(models.HexTile, "q,r", args);
+            return this._glyph(glyphs_1.HexTile, "q,r", args);
         }
         image(...args) {
-            return this._glyph(models.Image, "color_mapper,image,rows,cols,x,y,dw,dh", args);
+            return this._glyph(glyphs_1.Image, "color_mapper,image,rows,cols,x,y,dw,dh", args);
         }
         image_rgba(...args) {
-            return this._glyph(models.ImageRGBA, "image,rows,cols,x,y,dw,dh", args);
+            return this._glyph(glyphs_1.ImageRGBA, "image,rows,cols,x,y,dw,dh", args);
         }
         image_url(...args) {
-            return this._glyph(models.ImageURL, "url,x,y,w,h", args);
+            return this._glyph(glyphs_1.ImageURL, "url,x,y,w,h", args);
         }
         line(...args) {
-            return this._glyph(models.Line, "x,y", args);
+            return this._glyph(glyphs_1.Line, "x,y", args);
         }
         multi_line(...args) {
-            return this._glyph(models.MultiLine, "xs,ys", args);
+            return this._glyph(glyphs_1.MultiLine, "xs,ys", args);
         }
         multi_polygons(...args) {
-            return this._glyph(models.MultiPolygons, "xs,ys", args);
+            return this._glyph(glyphs_1.MultiPolygons, "xs,ys", args);
         }
         oval(...args) {
-            return this._glyph(models.Oval, "x,y,width,height", args);
+            return this._glyph(glyphs_1.Oval, "x,y,width,height", args);
         }
         patch(...args) {
-            return this._glyph(models.Patch, "x,y", args);
+            return this._glyph(glyphs_1.Patch, "x,y", args);
         }
         patches(...args) {
-            return this._glyph(models.Patches, "xs,ys", args);
+            return this._glyph(glyphs_1.Patches, "xs,ys", args);
         }
         quad(...args) {
-            return this._glyph(models.Quad, "left,right,bottom,top", args);
+            return this._glyph(glyphs_1.Quad, "left,right,bottom,top", args);
         }
         quadratic(...args) {
-            return this._glyph(models.Quadratic, "x0,y0,x1,y1,cx,cy", args);
+            return this._glyph(glyphs_1.Quadratic, "x0,y0,x1,y1,cx,cy", args);
         }
         ray(...args) {
-            return this._glyph(models.Ray, "x,y,length", args);
+            return this._glyph(glyphs_1.Ray, "x,y,length", args);
         }
         rect(...args) {
-            return this._glyph(models.Rect, "x,y,width,height", args);
+            return this._glyph(glyphs_1.Rect, "x,y,width,height", args);
         }
         segment(...args) {
-            return this._glyph(models.Segment, "x0,y0,x1,y1", args);
+            return this._glyph(glyphs_1.Segment, "x0,y0,x1,y1", args);
+        }
+        spline(...args) {
+            return this._glyph(glyphs_1.Spline, "x,y", args);
         }
         step(...args) {
-            return this._glyph(models.Step, "x,y,mode", args);
+            return this._glyph(glyphs_1.Step, "x,y,mode", args);
         }
         text(...args) {
-            return this._glyph(models.Text, "x,y,text", args);
+            return this._glyph(glyphs_1.Text, "x,y,text", args);
         }
         varea(...args) {
-            return this._glyph(models.VArea, "x,y1,y2", args);
+            return this._glyph(glyphs_1.VArea, "x,y1,y2", args);
         }
         vbar(...args) {
-            return this._glyph(models.VBar, "x,width,top,bottom", args);
+            return this._glyph(glyphs_1.VBar, "x,width,top,bottom", args);
         }
         wedge(...args) {
-            return this._glyph(models.Wedge, "x,y,radius,start_angle,end_angle", args);
+            return this._glyph(glyphs_1.Wedge, "x,y,radius,start_angle,end_angle", args);
         }
-        asterisk(...args) {
-            return this._marker(models.Asterisk, args);
-        }
-        circle_cross(...args) {
-            return this._marker(models.CircleCross, args);
-        }
-        circle_dot(...args) {
-            return this._marker(models.CircleDot, args);
-        }
-        circle_x(...args) {
-            return this._marker(models.CircleX, args);
-        }
-        circle_y(...args) {
-            return this._marker(models.CircleY, args);
-        }
-        cross(...args) {
-            return this._marker(models.Cross, args);
-        }
-        dash(...args) {
-            return this._marker(models.Dash, args);
-        }
-        diamond(...args) {
-            return this._marker(models.Diamond, args);
-        }
-        diamond_cross(...args) {
-            return this._marker(models.DiamondCross, args);
-        }
-        diamond_dot(...args) {
-            return this._marker(models.DiamondDot, args);
-        }
-        dot(...args) {
-            return this._marker(models.Dot, args);
-        }
-        hex(...args) {
-            return this._marker(models.Hex, args);
-        }
-        hex_dot(...args) {
-            return this._marker(models.HexDot, args);
-        }
-        inverted_triangle(...args) {
-            return this._marker(models.InvertedTriangle, args);
-        }
-        plus(...args) {
-            return this._marker(models.Plus, args);
-        }
-        square(...args) {
-            return this._marker(models.Square, args);
-        }
-        square_cross(...args) {
-            return this._marker(models.SquareCross, args);
-        }
-        square_dot(...args) {
-            return this._marker(models.SquareDot, args);
-        }
-        square_pin(...args) {
-            return this._marker(models.SquarePin, args);
-        }
-        square_x(...args) {
-            return this._marker(models.SquareX, args);
-        }
-        triangle(...args) {
-            return this._marker(models.Triangle, args);
-        }
-        triangle_dot(...args) {
-            return this._marker(models.TriangleDot, args);
-        }
-        triangle_pin(...args) {
-            return this._marker(models.TrianglePin, args);
-        }
-        x(...args) {
-            return this._marker(models.X, args);
-        }
-        y(...args) {
-            return this._marker(models.Y, args);
+        _scatter(args, marker) {
+            return this._glyph(glyphs_1.Scatter, "x,y", args, marker != null ? { marker } : undefined);
         }
         scatter(...args) {
-            return this._marker(models.Scatter, args);
+            return this._scatter(args);
+        }
+        asterisk(...args) {
+            return this._scatter(args, "asterisk");
+        }
+        circle_cross(...args) {
+            return this._scatter(args, "circle_cross");
+        }
+        circle_dot(...args) {
+            return this._scatter(args, "circle_dot");
+        }
+        circle_x(...args) {
+            return this._scatter(args, "circle_x");
+        }
+        circle_y(...args) {
+            return this._scatter(args, "circle_y");
+        }
+        cross(...args) {
+            return this._scatter(args, "cross");
+        }
+        dash(...args) {
+            return this._scatter(args, "dash");
+        }
+        diamond(...args) {
+            return this._scatter(args, "diamond");
+        }
+        diamond_cross(...args) {
+            return this._scatter(args, "diamond_cross");
+        }
+        diamond_dot(...args) {
+            return this._scatter(args, "diamond_dot");
+        }
+        dot(...args) {
+            return this._scatter(args, "dot");
+        }
+        hex(...args) {
+            return this._scatter(args, "hex");
+        }
+        hex_dot(...args) {
+            return this._scatter(args, "hex_dot");
+        }
+        inverted_triangle(...args) {
+            return this._scatter(args, "inverted_triangle");
+        }
+        plus(...args) {
+            return this._scatter(args, "plus");
+        }
+        square(...args) {
+            return this._scatter(args, "square");
+        }
+        square_cross(...args) {
+            return this._scatter(args, "square_cross");
+        }
+        square_dot(...args) {
+            return this._scatter(args, "square_dot");
+        }
+        square_pin(...args) {
+            return this._scatter(args, "square_pin");
+        }
+        square_x(...args) {
+            return this._scatter(args, "square_x");
+        }
+        star(...args) {
+            return this._scatter(args, "star");
+        }
+        star_dot(...args) {
+            return this._scatter(args, "star_dot");
+        }
+        triangle(...args) {
+            return this._scatter(args, "triangle");
+        }
+        triangle_dot(...args) {
+            return this._scatter(args, "triangle_dot");
+        }
+        triangle_pin(...args) {
+            return this._scatter(args, "triangle_pin");
+        }
+        x(...args) {
+            return this._scatter(args, "x");
+        }
+        y(...args) {
+            return this._scatter(args, "y");
         }
         _pop_visuals(cls, props, prefix = "", defaults = {}, override_defaults = {}) {
             const _split_feature_trait = function (ft) {
@@ -1195,14 +1204,14 @@
                 return array_1.includes(['line', 'fill', 'text', 'global'], feature) && (trait !== '');
             };
             defaults = Object.assign({}, defaults);
-            if (!defaults.hasOwnProperty('text_color')) {
+            if (!hasOwnProperty.call(defaults, 'text_color')) {
                 defaults.text_color = 'black';
             }
             const trait_defaults = {};
-            if (!trait_defaults.hasOwnProperty('color')) {
+            if (!hasOwnProperty.call(trait_defaults, 'color')) {
                 trait_defaults.color = _default_color;
             }
-            if (!trait_defaults.hasOwnProperty('alpha')) {
+            if (!hasOwnProperty.call(trait_defaults, 'alpha')) {
                 trait_defaults.alpha = _default_alpha;
             }
             const result = {};
@@ -1210,23 +1219,23 @@
             for (const pname of object_1.keys(cls.prototype._props)) {
                 if (_is_visual(pname)) {
                     const trait = _split_feature_trait(pname)[1];
-                    if (props.hasOwnProperty(prefix + pname)) {
+                    if (hasOwnProperty.call(props, prefix + pname)) {
                         result[pname] = props[prefix + pname];
                         delete props[prefix + pname];
                     }
-                    else if (!cls.prototype._props.hasOwnProperty(trait) && props.hasOwnProperty(prefix + trait)) {
+                    else if (!hasOwnProperty.call(cls.prototype._props, trait) && hasOwnProperty.call(props, prefix + trait)) {
                         result[pname] = props[prefix + trait];
                     }
-                    else if (override_defaults.hasOwnProperty(trait)) {
+                    else if (hasOwnProperty.call(override_defaults, trait)) {
                         result[pname] = override_defaults[trait];
                     }
-                    else if (defaults.hasOwnProperty(pname)) {
+                    else if (hasOwnProperty.call(defaults, pname)) {
                         result[pname] = defaults[pname];
                     }
-                    else if (trait_defaults.hasOwnProperty(trait)) {
+                    else if (hasOwnProperty.call(trait_defaults, trait)) {
                         result[pname] = trait_defaults[trait];
                     }
-                    if (!cls.prototype._props.hasOwnProperty(trait)) {
+                    if (!hasOwnProperty.call(cls.prototype._props, trait)) {
                         traits.add(trait);
                     }
                 }
@@ -1254,7 +1263,7 @@
                 if (prop != null) {
                     if (prop.type.prototype instanceof properties_1.VectorSpec) {
                         if (value != null) {
-                            if (types_1.isArray(value)) {
+                            if (types_1.isArray(value) || nd.is_NDArray(value)) {
                                 let field;
                                 if (data[name] != null) {
                                     if (data[name] !== value) {
@@ -1279,7 +1288,7 @@
                 }
             }
         }
-        _glyph(cls, params_string, args) {
+        _glyph(cls, params_string, args, overrides) {
             const params = params_string.split(",");
             let attrs;
             if (args.length == 0) {
@@ -1297,13 +1306,26 @@
                     attrs[param] = args[i];
                 }
             }
-            const source = attrs.source != null ? attrs.source : new models.ColumnDataSource();
+            if (overrides != null) {
+                attrs = Object.assign(Object.assign({}, attrs), overrides);
+            }
+            const source = (() => {
+                const { source } = attrs;
+                if (source == null)
+                    return new models_1.ColumnDataSource();
+                else if (source instanceof models_1.ColumnarDataSource)
+                    return source;
+                else
+                    return new models_1.ColumnDataSource({ data: source });
+            })();
             const data = object_1.clone(source.data);
             delete attrs.source;
             const view = attrs.view != null ? attrs.view : new models_1.CDSView({ source });
             delete attrs.view;
             const legend = this._process_legend(attrs.legend, source);
             delete attrs.legend;
+            const level = attrs.level;
+            delete attrs.level;
             const has_sglyph = array_1.some(Object.keys(attrs), key => string_1.startsWith(key, "selection_"));
             const has_hglyph = array_1.some(Object.keys(attrs), key => string_1.startsWith(key, "hover_"));
             const glyph_ca = this._pop_visuals(cls, attrs);
@@ -1330,6 +1352,7 @@
                 nonselection_glyph: nsglyph,
                 selection_glyph: sglyph,
                 hover_glyph: hglyph,
+                level,
             });
             if (legend != null) {
                 this._update_legend(legend, glyph_renderer);
@@ -1337,65 +1360,62 @@
             this.add_renderers(glyph_renderer);
             return glyph_renderer;
         }
-        _marker(cls, args) {
-            return this._glyph(cls, "x,y", args);
-        }
         static _get_range(range) {
             if (range == null) {
-                return new models.DataRange1d();
+                return new models_1.DataRange1d();
             }
-            if (range instanceof models.Range) {
+            if (range instanceof models_1.Range) {
                 return range;
             }
             if (types_1.isArray(range)) {
-                if (array_1.every(range, types_1.isString)) {
+                if (types_1.isArrayOf(range, types_1.isString)) {
                     const factors = range;
-                    return new models.FactorRange({ factors });
+                    return new models_1.FactorRange({ factors });
                 }
-                if (range.length == 2) {
+                else {
                     const [start, end] = range;
-                    return new models.Range1d({ start, end });
+                    return new models_1.Range1d({ start, end });
                 }
             }
             throw new Error(`unable to determine proper range for: '${range}'`);
         }
         static _get_scale(range_input, axis_type) {
-            if (range_input instanceof models.DataRange1d ||
-                range_input instanceof models.Range1d) {
+            if (range_input instanceof models_1.DataRange1d ||
+                range_input instanceof models_1.Range1d) {
                 switch (axis_type) {
                     case null:
                     case "auto":
                     case "linear":
                     case "datetime":
                     case "mercator":
-                        return new models.LinearScale();
+                        return new models_1.LinearScale();
                     case "log":
-                        return new models.LogScale();
+                        return new models_1.LogScale();
                 }
             }
-            if (range_input instanceof models.FactorRange) {
-                return new models.CategoricalScale();
+            if (range_input instanceof models_1.FactorRange) {
+                return new models_1.CategoricalScale();
             }
             throw new Error(`unable to determine proper scale for: '${range_input}'`);
         }
         _process_axis_and_grid(axis_type, axis_location, minor_ticks, axis_label, rng, dim) {
             const axis = this._get_axis(axis_type, rng, dim);
             if (axis != null) {
-                if (axis instanceof models.LogAxis) {
+                if (axis instanceof models_1.LogAxis) {
                     if (dim == 0) {
-                        this.x_scale = new models.LogScale();
+                        this.x_scale = new models_1.LogScale();
                     }
                     else {
-                        this.y_scale = new models.LogScale();
+                        this.y_scale = new models_1.LogScale();
                     }
                 }
-                if (axis.ticker instanceof models.ContinuousTicker) {
+                if (axis.ticker instanceof models_1.ContinuousTicker) {
                     axis.ticker.num_minor_ticks = this._get_num_minor_ticks(axis, minor_ticks);
                 }
                 if (axis_label.length !== 0) {
                     axis.axis_label = axis_label;
                 }
-                const grid = new models.Grid({ dimension: dim, ticker: axis.ticker });
+                const grid = new models_1.Grid({ dimension: dim, ticker: axis.ticker });
                 if (axis_location !== null) {
                     this.add_layout(axis, axis_location);
                 }
@@ -1407,23 +1427,23 @@
                 case null:
                     return null;
                 case "linear":
-                    return new models.LinearAxis();
+                    return new models_1.LinearAxis();
                 case "log":
-                    return new models.LogAxis();
+                    return new models_1.LogAxis();
                 case "datetime":
-                    return new models.DatetimeAxis();
+                    return new models_1.DatetimeAxis();
                 case "mercator": {
-                    const axis = new models.MercatorAxis();
+                    const axis = new models_1.MercatorAxis();
                     const dimension = dim == 0 ? "lon" : "lat";
                     axis.ticker.dimension = dimension;
                     axis.formatter.dimension = dimension;
                     return axis;
                 }
                 case "auto":
-                    if (range instanceof models.FactorRange)
-                        return new models.CategoricalAxis();
+                    if (range instanceof models_1.FactorRange)
+                        return new models_1.CategoricalAxis();
                     else
-                        return new models.LinearAxis(); // TODO: return models.DatetimeAxis (Date type)
+                        return new models_1.LinearAxis(); // TODO: return DatetimeAxis (Date type)
                 default:
                     throw new Error("shouldn't have happened");
             }
@@ -1439,7 +1459,7 @@
                 return 0;
             }
             if (num_minor_ticks === "auto") {
-                return axis instanceof models.LogAxis ? 10 : 5;
+                return axis instanceof models_1.LogAxis ? 10 : 5;
             }
             throw new Error("shouldn't have happened");
         }
@@ -1469,7 +1489,7 @@
             const { legend } = this;
             let added = false;
             for (const item of legend.items) {
-                if (item.label != null && eq_1.isEqual(item.label, legend_item_label)) {
+                if (item.label != null && eq_1.is_equal(item.label, legend_item_label)) {
                     // XXX: remove this when vectorable properties are refined
                     const label = item.label;
                     if ("value" in label) {
@@ -1485,7 +1505,7 @@
                 }
             }
             if (!added) {
-                const new_item = new models.LegendItem({ label: legend_item_label, renderers: [glyph_renderer] });
+                const new_item = new legend_item_1.LegendItem({ label: legend_item_label, renderers: [glyph_renderer] });
                 legend.items.push(new_item);
             }
         }
@@ -1500,6 +1520,7 @@
         const doc = new document_1.Document();
         for (const item of types_1.isArray(obj) ? obj : [obj])
             doc.add_root(item);
+        await dom_1.dom_ready();
         let element;
         if (target == null) {
             element = document.body;
@@ -1531,10 +1552,10 @@
     }
     exports.show = show;
 },
-401: /* api/gridplot.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const models_1 = require(399) /* ./models */;
-    const data_structures_1 = require(26) /* ../core/util/data_structures */;
+416: /* api/gridplot.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const models_1 = require(414) /* ./models */;
+    const matrix_1 = require(417) /* ../core/util/matrix */;
     function or_else(value, default_value) {
         if (value === undefined)
             return default_value;
@@ -1545,7 +1566,7 @@
         const toolbar_location = or_else(options.toolbar_location, "above");
         const merge_tools = or_else(options.merge_tools, true);
         const sizing_mode = or_else(options.sizing_mode, null);
-        const matrix = data_structures_1.Matrix.from(children);
+        const matrix = matrix_1.Matrix.from(children);
         const items = [];
         const toolbars = [];
         for (const [item, row, col] of matrix) {
@@ -1587,7 +1608,70 @@
     }
     exports.gridplot = gridplot;
 },
-}, 393, {"api/main":393,"api/index":394,"api/linalg":442,"core/util/random":443,"api/charts":397,"api/palettes":398,"api/models":399,"api/plotting":400,"api/gridplot":401}, {});
-})
-
+417: /* core/util/matrix.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const array_1 = require(9) /* ./array */;
+    class Matrix {
+        constructor(nrows, ncols, init) {
+            this.nrows = nrows;
+            this.ncols = ncols;
+            this._matrix = new Array(nrows);
+            for (let y = 0; y < nrows; y++) {
+                this._matrix[y] = new Array(ncols);
+                for (let x = 0; x < ncols; x++) {
+                    this._matrix[y][x] = init(y, x);
+                }
+            }
+        }
+        at(row, col) {
+            return this._matrix[row][col];
+        }
+        *[Symbol.iterator]() {
+            for (let y = 0; y < this.nrows; y++) {
+                for (let x = 0; x < this.ncols; x++) {
+                    const value = this._matrix[y][x];
+                    yield [value, y, x];
+                }
+            }
+        }
+        *values() {
+            for (const [item] of this) {
+                yield item;
+            }
+        }
+        map(fn) {
+            return new Matrix(this.nrows, this.ncols, (row, col) => fn(this.at(row, col), row, col));
+        }
+        apply(obj) {
+            const fn = Matrix.from(obj);
+            const { nrows, ncols } = this;
+            if (nrows == fn.nrows && ncols == fn.ncols)
+                return new Matrix(nrows, ncols, (row, col) => fn.at(row, col)(this.at(row, col), row, col));
+            else
+                throw new Error("dimensions don't match");
+        }
+        to_sparse() {
+            return [...this];
+        }
+        static from(obj, ncols) {
+            if (obj instanceof Matrix) {
+                return obj;
+            }
+            else if (ncols != null) {
+                const entries = obj;
+                const nrows = Math.floor(entries.length / ncols);
+                return new Matrix(nrows, ncols, (row, col) => entries[row * ncols + col]);
+            }
+            else {
+                const arrays = obj;
+                const nrows = obj.length;
+                const ncols = array_1.min(arrays.map((row) => row.length));
+                return new Matrix(nrows, ncols, (row, col) => arrays[row][col]);
+            }
+        }
+    }
+    exports.Matrix = Matrix;
+    Matrix.__name__ = "Matrix";
+},
+}, 408, {"api/main":408,"api/index":409,"api/linalg":410,"core/util/random":411,"api/charts":412,"api/palettes":413,"api/models":414,"api/plotting":415,"api/gridplot":416,"core/util/matrix":417}, {});});
 //# sourceMappingURL=bokeh-api.js.map

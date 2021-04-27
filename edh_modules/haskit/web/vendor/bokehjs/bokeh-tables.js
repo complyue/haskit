@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2012 - 2020, Anaconda, Inc., and Bokeh Contributors
+ * Copyright (c) 2012 - 2021, Anaconda, Inc., and Bokeh Contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,9 +27,9 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 (function(root, factory) {
-  factory(root["Bokeh"], "2.2.1");
+  factory(root["Bokeh"], "2.3.1");
 })(this, function(Bokeh, version) {
   var define;
   return (function(modules, entry, aliases, externals) {
@@ -41,43 +41,42 @@
     }
   })
 ({
-453: /* models/widgets/tables/main.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+472: /* models/widgets/tables/main.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    const Tables = tslib_1.__importStar(require(454) /* ./index */);
+    const Tables = tslib_1.__importStar(require(473) /* ./index */);
     exports.Tables = Tables;
     const base_1 = require(7) /* ../../../base */;
     base_1.register_models(Tables);
 },
-454: /* models/widgets/tables/index.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+473: /* models/widgets/tables/index.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    tslib_1.__exportStar(require(455) /* ./cell_editors */, exports);
-    tslib_1.__exportStar(require(475) /* ./cell_formatters */, exports);
-    var data_table_1 = require(456) /* ./data_table */;
-    exports.DataTable = data_table_1.DataTable;
-    var table_column_1 = require(474) /* ./table_column */;
-    exports.TableColumn = table_column_1.TableColumn;
-    var table_widget_1 = require(473) /* ./table_widget */;
-    exports.TableWidget = table_widget_1.TableWidget;
-    var row_aggregators_1 = require(481) /* ./row_aggregators */;
-    exports.AvgAggregator = row_aggregators_1.AvgAggregator;
-    exports.MinAggregator = row_aggregators_1.MinAggregator;
-    exports.MaxAggregator = row_aggregators_1.MaxAggregator;
-    exports.SumAggregator = row_aggregators_1.SumAggregator;
-    var data_cube_1 = require(482) /* ./data_cube */;
-    exports.GroupingInfo = data_cube_1.GroupingInfo;
-    exports.DataCube = data_cube_1.DataCube;
+    tslib_1.__exportStar(require(474) /* ./cell_editors */, exports);
+    tslib_1.__exportStar(require(477) /* ./cell_formatters */, exports);
+    var data_table_1 = require(480) /* ./data_table */;
+    __esExport("DataTable", data_table_1.DataTable);
+    var table_column_1 = require(498) /* ./table_column */;
+    __esExport("TableColumn", table_column_1.TableColumn);
+    var table_widget_1 = require(497) /* ./table_widget */;
+    __esExport("TableWidget", table_widget_1.TableWidget);
+    var row_aggregators_1 = require(500) /* ./row_aggregators */;
+    __esExport("AvgAggregator", row_aggregators_1.AvgAggregator);
+    __esExport("MinAggregator", row_aggregators_1.MinAggregator);
+    __esExport("MaxAggregator", row_aggregators_1.MaxAggregator);
+    __esExport("SumAggregator", row_aggregators_1.SumAggregator);
+    var data_cube_1 = require(501) /* ./data_cube */;
+    __esExport("GroupingInfo", data_cube_1.GroupingInfo);
+    __esExport("DataCube", data_cube_1.DataCube);
 },
-455: /* models/widgets/tables/cell_editors.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+474: /* models/widgets/tables/cell_editors.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
-    const dom_1 = require(72) /* ../../../core/dom */;
-    const dom_view_1 = require(78) /* ../../../core/dom_view */;
-    const model_1 = require(81) /* ../../../model */;
-    const data_table_1 = require(456) /* ./data_table */;
-    const tables_1 = require(478) /* ../../../styles/widgets/tables */;
+    const dom_1 = require(43) /* ../../../core/dom */;
+    const dom_view_1 = require(241) /* ../../../core/dom_view */;
+    const model_1 = require(53) /* ../../../model */;
+    const definitions_1 = require(475) /* ./definitions */;
+    const tables = tslib_1.__importStar(require(476) /* ../../../styles/widgets/tables.css */);
     class CellEditorView extends dom_view_1.DOMView {
         constructor(options) {
             const { model, parent } = options.column;
@@ -98,7 +97,7 @@
             throw new Error("unsupported");
         }
         css_classes() {
-            return super.css_classes().concat(tables_1.bk_cell_editor);
+            return super.css_classes().concat(tables.cell_editor);
         }
         render() {
             super.render();
@@ -109,6 +108,7 @@
         }
         renderEditor() { }
         disableNavigation() {
+            // XXX: without cast `event` is of non-specific type `Event`
             this.inputEl.addEventListener("keydown", (event) => {
                 switch (event.keyCode) {
                     case dom_1.Keys.Left:
@@ -144,7 +144,7 @@
         }
         applyValue(item, state) {
             const grid_data = this.args.grid.getData();
-            const offset = grid_data.index.indexOf(item[data_table_1.DTINDEX_NAME]);
+            const offset = grid_data.index.indexOf(item[definitions_1.DTINDEX_NAME]);
             grid_data.setField(offset, this.args.column.field, state);
         }
         loadValue(item) {
@@ -198,9 +198,9 @@
     class StringEditor extends CellEditor {
         static init_StringEditor() {
             this.prototype.default_view = StringEditorView;
-            this.define({
-                completions: [p.Array, []],
-            });
+            this.define(({ String, Array }) => ({
+                completions: [Array(String), []],
+            }));
         }
     }
     exports.StringEditor = StringEditor;
@@ -241,9 +241,9 @@
     class SelectEditor extends CellEditor {
         static init_SelectEditor() {
             this.prototype.default_view = SelectEditorView;
-            this.define({
-                options: [p.Array, []],
-            });
+            this.define(({ String, Array }) => ({
+                options: [Array(String), []],
+            }));
         }
     }
     exports.SelectEditor = SelectEditor;
@@ -303,7 +303,8 @@
             super.remove();
         }
         serializeValue() {
-            return parseInt(this.getValue(), 10) || 0;
+            var _a;
+            return (_a = parseInt(this.getValue(), 10)) !== null && _a !== void 0 ? _a : 0;
         }
         loadValue(item) {
             super.loadValue(item);
@@ -322,9 +323,9 @@
     class IntEditor extends CellEditor {
         static init_IntEditor() {
             this.prototype.default_view = IntEditorView;
-            this.define({
-                step: [p.Number, 1],
-            });
+            this.define(({ Int }) => ({
+                step: [Int, 1],
+            }));
         }
     }
     exports.IntEditor = IntEditor;
@@ -344,7 +345,8 @@
             super.remove();
         }
         serializeValue() {
-            return parseFloat(this.getValue()) || 0.0;
+            var _a;
+            return (_a = parseFloat(this.getValue())) !== null && _a !== void 0 ? _a : 0.0;
         }
         loadValue(item) {
             super.loadValue(item);
@@ -363,9 +365,9 @@
     class NumberEditor extends CellEditor {
         static init_NumberEditor() {
             this.prototype.default_view = NumberEditorView;
-            this.define({
-                step: [p.Number, 0.01],
-            });
+            this.define(({ Number }) => ({
+                step: [Number, 0.01],
+            }));
         }
     }
     exports.NumberEditor = NumberEditor;
@@ -445,38 +447,484 @@
     DateEditor.__name__ = "DateEditor";
     DateEditor.init_DateEditor();
 },
-456: /* models/widgets/tables/data_table.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
+475: /* models/widgets/tables/definitions.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    exports.DTINDEX_NAME = "__bkdt_internal_index__";
+},
+476: /* styles/widgets/tables.css.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    exports.root = "bk-root";
+    exports.data_table = "bk-data-table";
+    exports.cell_special_defaults = "bk-cell-special-defaults";
+    exports.cell_select = "bk-cell-select";
+    exports.cell_index = "bk-cell-index";
+    exports.header_index = "bk-header-index";
+    exports.cell_editor = "bk-cell-editor";
+    exports.cell_editor_completion = "bk-cell-editor-completion";
+    exports.default = `.bk-root .bk-data-table{box-sizing:content-box;font-size:11px;}.bk-root .bk-data-table input[type="checkbox"]{margin-left:4px;margin-right:4px;}.bk-root .bk-cell-special-defaults{border-right-color:silver;border-right-style:solid;background:#f5f5f5;}.bk-root .bk-cell-select{border-right-color:silver;border-right-style:solid;background:#f5f5f5;}.bk-root .slick-cell.bk-cell-index{border-right-color:silver;border-right-style:solid;background:#f5f5f5;text-align:right;background:#f0f0f0;color:#909090;}.bk-root .bk-header-index .slick-column-name{float:right;}.bk-root .slick-row.selected .bk-cell-index{background-color:transparent;}.bk-root .slick-row.odd{background:#f0f0f0;}.bk-root .slick-cell{padding-left:4px;padding-right:4px;border-right-color:transparent;border:0.25px solid transparent;}.bk-root .slick-cell .bk{line-height:inherit;}.bk-root .slick-cell.active{border-style:dashed;}.bk-root .slick-cell.selected{background-color:#F0F8FF;}.bk-root .slick-cell.editable{padding-left:0;padding-right:0;}.bk-root .bk-cell-editor{display:contents;}.bk-root .bk-cell-editor input,.bk-root .bk-cell-editor select{width:100%;height:100%;border:0;margin:0;padding:0;outline:0;background:transparent;vertical-align:baseline;}.bk-root .bk-cell-editor input{padding-left:4px;padding-right:4px;}.bk-root .bk-cell-editor-completion{font-size:11px;}`;
+},
+477: /* models/widgets/tables/cell_formatters.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
     const tslib_1 = require(1) /* tslib */;
-    const slick_rowselectionmodel_1 = require(457) /* @bokeh/slickgrid/plugins/slick.rowselectionmodel */;
-    const slick_checkboxselectcolumn_1 = require(461) /* @bokeh/slickgrid/plugins/slick.checkboxselectcolumn */;
-    const slick_cellexternalcopymanager_1 = require(462) /* @bokeh/slickgrid/plugins/slick.cellexternalcopymanager */;
-    const slickgrid_1 = require(463) /* @bokeh/slickgrid */;
-    const string_1 = require(29) /* ../../../core/util/string */;
+    const timezone_1 = tslib_1.__importDefault(require(182) /* timezone */);
+    const Numbro = tslib_1.__importStar(require(184) /* @bokeh/numbro */);
+    const underscore_template_1 = require(478) /* underscore.template */;
+    const dom_1 = require(43) /* ../../../core/dom */;
+    const enums_1 = require(20) /* ../../../core/enums */;
+    const types_1 = require(8) /* ../../../core/util/types */;
+    const string_1 = require(34) /* ../../../core/util/string */;
+    const color_1 = require(22) /* ../../../core/util/color */;
+    const model_1 = require(53) /* ../../../model */;
+    class CellFormatter extends model_1.Model {
+        constructor(attrs) {
+            super(attrs);
+        }
+        doFormat(_row, _cell, value, _columnDef, _dataContext) {
+            if (value == null)
+                return "";
+            else
+                return (value + "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+    }
+    exports.CellFormatter = CellFormatter;
+    CellFormatter.__name__ = "CellFormatter";
+    class StringFormatter extends CellFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_StringFormatter() {
+            this.define(({ Color, Nullable }) => ({
+                font_style: [enums_1.FontStyle, "normal"],
+                text_align: [enums_1.TextAlign, "left"],
+                text_color: [Nullable(Color), null],
+            }));
+        }
+        doFormat(_row, _cell, value, _columnDef, _dataContext) {
+            const { font_style, text_align, text_color } = this;
+            const text = dom_1.div({}, value == null ? "" : `${value}`);
+            switch (font_style) {
+                case "bold":
+                    text.style.fontWeight = "bold";
+                    break;
+                case "italic":
+                    text.style.fontStyle = "italic";
+                    break;
+            }
+            if (text_align != null)
+                text.style.textAlign = text_align;
+            if (text_color != null)
+                text.style.color = color_1.color2css(text_color);
+            return text.outerHTML;
+        }
+    }
+    exports.StringFormatter = StringFormatter;
+    StringFormatter.__name__ = "StringFormatter";
+    StringFormatter.init_StringFormatter();
+    class ScientificFormatter extends StringFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_ScientificFormatter() {
+            this.define(({ Number, String, Nullable }) => ({
+                nan_format: [Nullable(String), null],
+                precision: [Number, 10],
+                power_limit_high: [Number, 5],
+                power_limit_low: [Number, -3],
+            }));
+        }
+        get scientific_limit_low() {
+            return 10.0 ** this.power_limit_low;
+        }
+        get scientific_limit_high() {
+            return 10.0 ** this.power_limit_high;
+        }
+        doFormat(row, cell, value, columnDef, dataContext) {
+            const need_sci = Math.abs(value) <= this.scientific_limit_low || Math.abs(value) >= this.scientific_limit_high;
+            let precision = this.precision;
+            // toExponential does not handle precision values < 0 correctly
+            if (precision < 1) {
+                precision = 1;
+            }
+            if ((value == null || isNaN(value)) && this.nan_format != null)
+                value = this.nan_format;
+            else if (value == 0)
+                value = string_1.to_fixed(value, 1);
+            else if (need_sci)
+                value = value.toExponential(precision);
+            else
+                value = string_1.to_fixed(value, precision);
+            // add StringFormatter formatting
+            return super.doFormat(row, cell, value, columnDef, dataContext);
+        }
+    }
+    exports.ScientificFormatter = ScientificFormatter;
+    ScientificFormatter.__name__ = "ScientificFormatter";
+    ScientificFormatter.init_ScientificFormatter();
+    class NumberFormatter extends StringFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_NumberFormatter() {
+            this.define(({ String, Nullable }) => ({
+                format: [String, "0,0"],
+                language: [String, "en"],
+                rounding: [enums_1.RoundingFunction, "round"],
+                nan_format: [Nullable(String), null],
+            }));
+        }
+        doFormat(row, cell, value, columnDef, dataContext) {
+            const { format, language, nan_format } = this;
+            const rounding = (() => {
+                switch (this.rounding) {
+                    case "round":
+                    case "nearest": return Math.round;
+                    case "floor":
+                    case "rounddown": return Math.floor;
+                    case "ceil":
+                    case "roundup": return Math.ceil;
+                }
+            })();
+            if ((value == null || isNaN(value)) && nan_format != null)
+                value = nan_format;
+            else
+                value = Numbro.format(value, format, language, rounding);
+            return super.doFormat(row, cell, value, columnDef, dataContext);
+        }
+    }
+    exports.NumberFormatter = NumberFormatter;
+    NumberFormatter.__name__ = "NumberFormatter";
+    NumberFormatter.init_NumberFormatter();
+    class BooleanFormatter extends CellFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_BooleanFormatter() {
+            this.define(({ String }) => ({
+                icon: [String, "check"],
+            }));
+        }
+        doFormat(_row, _cell, value, _columnDef, _dataContext) {
+            return !!value ? dom_1.i({ class: this.icon }).outerHTML : "";
+        }
+    }
+    exports.BooleanFormatter = BooleanFormatter;
+    BooleanFormatter.__name__ = "BooleanFormatter";
+    BooleanFormatter.init_BooleanFormatter();
+    class DateFormatter extends StringFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_DateFormatter() {
+            this.define(({ String, Nullable }) => ({
+                format: [String, "ISO-8601"],
+                nan_format: [Nullable(String), null],
+            }));
+        }
+        getFormat() {
+            // using definitions provided here: https://api.jqueryui.com/datepicker/
+            // except not implementing TICKS
+            switch (this.format) {
+                case "ATOM":
+                case "W3C":
+                case "RFC-3339":
+                case "ISO-8601":
+                    return "%Y-%m-%d";
+                case "COOKIE":
+                    return "%a, %d %b %Y";
+                case "RFC-850":
+                    return "%A, %d-%b-%y";
+                case "RFC-1123":
+                case "RFC-2822":
+                    return "%a, %e %b %Y";
+                case "RSS":
+                case "RFC-822":
+                case "RFC-1036":
+                    return "%a, %e %b %y";
+                case "TIMESTAMP":
+                    return undefined;
+                default:
+                    return this.format;
+            }
+        }
+        doFormat(row, cell, value, columnDef, dataContext) {
+            const { nan_format } = this;
+            value = types_1.isString(value) ? parseInt(value, 10) : value;
+            let date;
+            // Handle null, NaN and NaT
+            if ((value == null || isNaN(value) || value === -9223372036854776) && nan_format != null)
+                date = nan_format;
+            else
+                date = value == null ? '' : timezone_1.default(value, this.getFormat());
+            return super.doFormat(row, cell, date, columnDef, dataContext);
+        }
+    }
+    exports.DateFormatter = DateFormatter;
+    DateFormatter.__name__ = "DateFormatter";
+    DateFormatter.init_DateFormatter();
+    class HTMLTemplateFormatter extends CellFormatter {
+        constructor(attrs) {
+            super(attrs);
+        }
+        static init_HTMLTemplateFormatter() {
+            this.define(({ String }) => ({
+                template: [String, '<%= value %>'],
+            }));
+        }
+        doFormat(_row, _cell, value, _columnDef, dataContext) {
+            const { template } = this;
+            if (value == null)
+                return "";
+            else {
+                const compiled_template = underscore_template_1._.template(template);
+                const context = Object.assign(Object.assign({}, dataContext), { value });
+                return compiled_template(context);
+            }
+        }
+    }
+    exports.HTMLTemplateFormatter = HTMLTemplateFormatter;
+    HTMLTemplateFormatter.__name__ = "HTMLTemplateFormatter";
+    HTMLTemplateFormatter.init_HTMLTemplateFormatter();
+},
+478: /* underscore.template/lib/index.js */ function _(require, module, exports, __esModule, __esExport) {
+    var _ = require(479) /* ./underscore.template */;
+    var UnderscoreTemplate = _.template;
+    function Template(text, data, settings) {
+        return UnderscoreTemplate(text, data, settings);
+    }
+    Template._ = _;
+    module.exports = Template;
+    // If we're in the browser,
+    // define it if we're using AMD, otherwise leak a global.
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return Template;
+        });
+    }
+    else if (typeof window !== 'undefined' || typeof navigator !== 'undefined') {
+        window.UnderscoreTemplate = Template;
+    }
+},
+479: /* underscore.template/lib/underscore.template.js */ function _(require, module, exports, __esModule, __esExport) {
+    //     Underscore.js 1.5.2
+    //     http://underscorejs.org
+    //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+    //     Underscore may be freely distributed under the MIT license.
+    // Establish the object that gets returned to break out of a loop iteration.
+    var breaker = {};
+    // Save bytes in the minified (but not gzipped) version:
+    var ArrayProto = Array.prototype, ObjProto = Object.prototype;
+    // Create quick reference variables for speed access to core prototypes.
+    var slice = ArrayProto.slice, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty;
+    // All **ECMAScript 5** native function implementations that we hope to use
+    // are declared here.
+    var nativeForEach = ArrayProto.forEach, nativeKeys = Object.keys, nativeIsArray = Array.isArray;
+    // Create a safe reference to the Underscore object for use below.
+    var _ = function () { };
+    // Collection Functions
+    // --------------------
+    // The cornerstone, an `each` implementation, aka `forEach`.
+    // Handles objects with the built-in `forEach`, arrays, and raw objects.
+    // Delegates to **ECMAScript 5**'s native `forEach` if available.
+    var each = _.each = _.forEach = function (obj, iterator, context) {
+        if (obj == null)
+            return;
+        if (nativeForEach && obj.forEach === nativeForEach) {
+            obj.forEach(iterator, context);
+        }
+        else if (obj.length === +obj.length) {
+            for (var i = 0, length = obj.length; i < length; i++) {
+                if (iterator.call(context, obj[i], i, obj) === breaker)
+                    return;
+            }
+        }
+        else {
+            var keys = _.keys(obj);
+            for (var i = 0, length = keys.length; i < length; i++) {
+                if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker)
+                    return;
+            }
+        }
+    };
+    // Object Functions
+    // ----------------
+    // Retrieve the names of an object's properties.
+    // Delegates to **ECMAScript 5**'s native `Object.keys`
+    _.keys = nativeKeys || function (obj) {
+        if (obj !== Object(obj))
+            throw new TypeError('Invalid object');
+        var keys = [];
+        for (var key in obj)
+            if (_.has(obj, key))
+                keys.push(key);
+        return keys;
+    };
+    // Fill in a given object with default properties.
+    _.defaults = function (obj) {
+        each(slice.call(arguments, 1), function (source) {
+            if (source) {
+                for (var prop in source) {
+                    if (obj[prop] === void 0)
+                        obj[prop] = source[prop];
+                }
+            }
+        });
+        return obj;
+    };
+    // Is a given value an array?
+    // Delegates to ECMA5's native Array.isArray
+    _.isArray = nativeIsArray || function (obj) {
+        return toString.call(obj) === '[object Array]';
+    };
+    // Shortcut function for checking if an object has a given property directly
+    // on itself (in other words, not on a prototype).
+    _.has = function (obj, path) {
+        if (!_.isArray(path)) {
+            return obj != null && hasOwnProperty.call(obj, path);
+        }
+        var length = path.length;
+        for (var i = 0; i < length; i++) {
+            var key = path[i];
+            if (obj == null || !hasOwnProperty.call(obj, key)) {
+                return false;
+            }
+            obj = obj[key];
+        }
+        return !!length;
+    };
+    // List of HTML entities for escaping.
+    var entityMap = {
+        escape: {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;'
+        }
+    };
+    // Regexes containing the keys and values listed immediately above.
+    var entityRegexes = {
+        escape: new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g')
+    };
+    // Functions for escaping and unescaping strings to/from HTML interpolation.
+    _.each(['escape'], function (method) {
+        _[method] = function (string) {
+            if (string == null)
+                return '';
+            return ('' + string).replace(entityRegexes[method], function (match) {
+                return entityMap[method][match];
+            });
+        };
+    });
+    // By default, Underscore uses ERB-style template delimiters, change the
+    // following template settings to use alternative delimiters.
+    _.templateSettings = {
+        evaluate: /<%([\s\S]+?)%>/g,
+        interpolate: /<%=([\s\S]+?)%>/g,
+        escape: /<%-([\s\S]+?)%>/g
+    };
+    // When customizing `templateSettings`, if you don't want to define an
+    // interpolation, evaluation or escaping regex, we need one that is
+    // guaranteed not to match.
+    var noMatch = /(.)^/;
+    // Certain characters need to be escaped so that they can be put into a
+    // string literal.
+    var escapes = {
+        "'": "'",
+        '\\': '\\',
+        '\r': 'r',
+        '\n': 'n',
+        '\t': 't',
+        '\u2028': 'u2028',
+        '\u2029': 'u2029'
+    };
+    var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+    // JavaScript micro-templating, similar to John Resig's implementation.
+    // Underscore templating handles arbitrary delimiters, preserves whitespace,
+    // and correctly escapes quotes within interpolated code.
+    _.template = function (text, data, settings) {
+        var render;
+        settings = _.defaults({}, settings, _.templateSettings);
+        // Combine delimiters into one regular expression via alternation.
+        var matcher = new RegExp([
+            (settings.escape || noMatch).source,
+            (settings.interpolate || noMatch).source,
+            (settings.evaluate || noMatch).source
+        ].join('|') + '|$', 'g');
+        // Compile the template source, escaping string literals appropriately.
+        var index = 0;
+        var source = "__p+='";
+        text.replace(matcher, function (match, escape, interpolate, evaluate, offset) {
+            source += text.slice(index, offset)
+                .replace(escaper, function (match) { return '\\' + escapes[match]; });
+            if (escape) {
+                source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+            }
+            if (interpolate) {
+                source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+            }
+            if (evaluate) {
+                source += "';\n" + evaluate + "\n__p+='";
+            }
+            index = offset + match.length;
+            return match;
+        });
+        source += "';\n";
+        // If a variable is not specified, place data values in local scope.
+        if (!settings.variable)
+            source = 'with(obj||{}){\n' + source + '}\n';
+        source = "var __t,__p='',__j=Array.prototype.join," +
+            "print=function(){__p+=__j.call(arguments,'');};\n" +
+            source + "return __p;\n";
+        try {
+            render = new Function(settings.variable || 'obj', '_', source);
+        }
+        catch (e) {
+            e.source = source;
+            throw e;
+        }
+        if (data)
+            return render(data, _);
+        var template = function (data) {
+            return render.call(this, data, _);
+        };
+        // Provide the compiled function source as a convenience for precompilation.
+        template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
+        return template;
+    };
+    module.exports = _;
+},
+480: /* models/widgets/tables/data_table.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const tslib_1 = require(1) /* tslib */;
+    const slick_rowselectionmodel_1 = require(481) /* @bokeh/slickgrid/plugins/slick.rowselectionmodel */;
+    const slick_checkboxselectcolumn_1 = require(485) /* @bokeh/slickgrid/plugins/slick.checkboxselectcolumn */;
+    const slick_cellexternalcopymanager_1 = require(486) /* @bokeh/slickgrid/plugins/slick.cellexternalcopymanager */;
+    const slickgrid_1 = require(487) /* @bokeh/slickgrid */;
+    const string_1 = require(34) /* ../../../core/util/string */;
     const types_1 = require(8) /* ../../../core/util/types */;
     const array_1 = require(9) /* ../../../core/util/array */;
     const object_1 = require(13) /* ../../../core/util/object */;
     const logging_1 = require(19) /* ../../../core/logging */;
-    const widget_1 = require(472) /* ../widget */;
-    const table_widget_1 = require(473) /* ./table_widget */;
-    const table_column_1 = require(474) /* ./table_column */;
-    const tables_1 = require(478) /* ../../../styles/widgets/tables */;
-    const slickgrid_css_1 = tslib_1.__importDefault(require(479) /* ../../../styles/widgets/slickgrid.css */);
-    const tables_css_1 = tslib_1.__importDefault(require(480) /* ../../../styles/widgets/tables.css */);
-    exports.DTINDEX_NAME = "__bkdt_internal_index__";
+    const widget_1 = require(496) /* ../widget */;
+    const definitions_1 = require(475) /* ./definitions */;
+    const table_widget_1 = require(497) /* ./table_widget */;
+    const table_column_1 = require(498) /* ./table_column */;
+    const tables_css_1 = tslib_1.__importStar(require(476) /* ../../../styles/widgets/tables.css */), tables = tables_css_1;
+    const slickgrid_css_1 = tslib_1.__importDefault(require(499) /* ../../../styles/widgets/slickgrid.css */);
     exports.AutosizeModes = {
         fit_columns: "FCV",
         fit_viewport: "FVC",
         force_fit: "LFF",
         none: "NOA",
     };
+    let _warned_not_reorderable = false;
     class TableDataProvider {
         constructor(source, view) {
             this.init(source, view);
         }
         init(source, view) {
-            if (exports.DTINDEX_NAME in source.data)
-                throw new Error(`special name ${exports.DTINDEX_NAME} cannot be used as a data table column`);
+            if (definitions_1.DTINDEX_NAME in source.data)
+                throw new Error(`special name ${definitions_1.DTINDEX_NAME} cannot be used as a data table column`);
             this.source = source;
             this.view = view;
             this.index = [...this.view.indices];
@@ -489,12 +937,12 @@
             for (const field of object_1.keys(this.source.data)) {
                 item[field] = this.source.data[field][this.index[offset]];
             }
-            item[exports.DTINDEX_NAME] = this.index[offset];
+            item[definitions_1.DTINDEX_NAME] = this.index[offset];
             return item;
         }
         getField(offset, field) {
             // offset is the
-            if (field == exports.DTINDEX_NAME) {
+            if (field == definitions_1.DTINDEX_NAME) {
                 return this.index[offset];
             }
             return this.source.data[field][this.index[offset]];
@@ -519,7 +967,7 @@
         sort(columns) {
             let cols = columns.map((column) => [column.sortCol.field, column.sortAsc ? 1 : -1]);
             if (cols.length == 0) {
-                cols = [[exports.DTINDEX_NAME, 1]];
+                cols = [[definitions_1.DTINDEX_NAME, 1]];
             }
             const records = this.getRecords();
             const old_index = this.index.slice();
@@ -544,7 +992,6 @@
         constructor() {
             super(...arguments);
             this._in_selection_update = false;
-            this._warned_not_reorderable = false;
             this._width = null;
         }
         connect_signals() {
@@ -633,19 +1080,19 @@
             return {
                 id: string_1.uniqueId(),
                 name: this.model.index_header,
-                field: exports.DTINDEX_NAME,
+                field: definitions_1.DTINDEX_NAME,
                 width: this.model.index_width,
                 behavior: "select",
                 cannotTriggerInsert: true,
                 resizable: false,
                 selectable: false,
                 sortable: true,
-                cssClass: tables_1.bk_cell_index,
-                headerCssClass: tables_1.bk_header_index,
+                cssClass: tables.cell_index,
+                headerCssClass: tables.header_index,
             };
         }
         css_classes() {
-            return super.css_classes().concat(tables_1.bk_data_table);
+            return super.css_classes().concat(tables.data_table);
         }
         get autosize() {
             let autosize;
@@ -664,7 +1111,7 @@
             });
             let checkbox_selector = null;
             if (this.model.selectable == "checkbox") {
-                checkbox_selector = new slick_checkboxselectcolumn_1.CheckboxSelectColumn({ cssClass: tables_1.bk_cell_select });
+                checkbox_selector = new slick_checkboxselectcolumn_1.CheckboxSelectColumn({ cssClass: tables.cell_select });
                 columns.unshift(checkbox_selector.getColumnDefinition());
             }
             if (this.model.index_position != null) {
@@ -681,9 +1128,9 @@
             }
             let { reorderable } = this.model;
             if (reorderable && !(typeof $ !== "undefined" && $.fn != null && $.fn.sortable != null)) {
-                if (!this._warned_not_reorderable) {
+                if (!_warned_not_reorderable) {
                     logging_1.logger.warn("jquery-ui is required to enable DataTable.reorderable");
-                    this._warned_not_reorderable = true;
+                    _warned_not_reorderable = true;
                 }
                 reorderable = false;
             }
@@ -782,18 +1229,18 @@
         }
         static init_DataTable() {
             this.prototype.default_view = DataTableView;
-            this.define(({ Array, Boolean, Int, Ref, String, Enum, Or, Null }) => ({
+            this.define(({ Array, Boolean, Int, Ref, String, Enum, Or, Nullable }) => ({
                 autosize_mode: [Enum("fit_columns", "fit_viewport", "none", "force_fit"), "force_fit"],
                 auto_edit: [Boolean, false],
                 columns: [Array(Ref(table_column_1.TableColumn)), []],
-                fit_columns: [Or(Boolean, Null), null],
-                frozen_columns: [Or(Int, Null), null],
-                frozen_rows: [Or(Int, Null), null],
+                fit_columns: [Nullable(Boolean), null],
+                frozen_columns: [Nullable(Int), null],
+                frozen_rows: [Nullable(Int), null],
                 sortable: [Boolean, true],
                 reorderable: [Boolean, true],
                 editable: [Boolean, false],
                 selectable: [Or(Boolean, Enum("checkbox")), true],
-                index_position: [Or(Int, Null), 0],
+                index_position: [Nullable(Int), 0],
                 index_header: [String, "#"],
                 index_width: [Int, 40],
                 scroll_to_selection: [Boolean, true],
@@ -821,9 +1268,9 @@
     DataTable.__name__ = "DataTable";
     DataTable.init_DataTable();
 },
-457: /* @bokeh/slickgrid/plugins/slick.rowselectionmodel.js */ function _(require, module, exports) {
-    var $ = require(458) /* ../slick.jquery */;
-    var Slick = require(460) /* ../slick.core */;
+481: /* @bokeh/slickgrid/plugins/slick.rowselectionmodel.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ../slick.jquery */;
+    var Slick = require(484) /* ../slick.core */;
     function RowSelectionModel(options) {
         var _grid;
         var _ranges = [];
@@ -985,22 +1432,22 @@
         "RowSelectionModel": RowSelectionModel
     };
 },
-458: /* @bokeh/slickgrid/slick.jquery.js */ function _(require, module, exports) {
-    module.exports = typeof $ !== "undefined" ? $ : require(459) /* jquery */;
+482: /* @bokeh/slickgrid/slick.jquery.js */ function _(require, module, exports, __esModule, __esExport) {
+    module.exports = typeof $ !== "undefined" ? $ : require(483) /* jquery */;
 },
-459: /* jquery/dist/jquery.js */ function _(require, module, exports) {
+483: /* jquery/dist/jquery.js */ function _(require, module, exports, __esModule, __esExport) {
     /*!
-     * jQuery JavaScript Library v3.5.1
+     * jQuery JavaScript Library v3.6.0
      * https://jquery.com/
      *
      * Includes Sizzle.js
      * https://sizzlejs.com/
      *
-     * Copyright JS Foundation and other contributors
+     * Copyright OpenJS Foundation and other contributors
      * Released under the MIT license
      * https://jquery.org/license
      *
-     * Date: 2020-05-04T22:49Z
+     * Date: 2021-03-02T17:08Z
      */
     (function (global, factory) {
         "use strict";
@@ -1052,7 +1499,11 @@
             // In some browsers, typeof returns "function" for HTML <object> elements
             // (i.e., `typeof document.createElement( "object" ) === "function"`).
             // We don't want to classify *any* DOM node as a function.
-            return typeof obj === "function" && typeof obj.nodeType !== "number";
+            // Support: QtWeb <=3.8.5, WebKit <=534.34, wkhtmltopdf tool <=0.12.5
+            // Plus for old WebKit, typeof returns "function" for HTML collections
+            // (e.g., `typeof document.getElementsByTagName("div") === "function"`). (gh-4756)
+            return typeof obj === "function" && typeof obj.nodeType !== "number" &&
+                typeof obj.item !== "function";
         };
         var isWindow = function isWindow(obj) {
             return obj != null && obj === obj.window;
@@ -1100,7 +1551,7 @@
         /* global Symbol */
         // Defining this global in .eslintrc.json would create a danger of using the global
         // unguarded in another place, it seems safer to define global only for this module
-        var version = "3.5.1", 
+        var version = "3.6.0", 
         // Define a local copy of jQuery
         jQuery = function (selector, context) {
             // The jQuery object is actually just the init constructor 'enhanced'
@@ -1381,14 +1832,14 @@
         }
         var Sizzle = 
         /*!
-         * Sizzle CSS Selector Engine v2.3.5
+         * Sizzle CSS Selector Engine v2.3.6
          * https://sizzlejs.com/
          *
          * Copyright JS Foundation and other contributors
          * Released under the MIT license
          * https://js.foundation/
          *
-         * Date: 2020-03-14
+         * Date: 2021-02-16
          */
         (function (window) {
             var i, support, Expr, getText, isXML, tokenize, compile, select, outermostContext, sortInput, hasDuplicate, 
@@ -1823,7 +2274,7 @@
              * @returns {Boolean} True iff elem is a non-HTML XML node
              */
             isXML = Sizzle.isXML = function (elem) {
-                var namespace = elem.namespaceURI, docElem = (elem.ownerDocument || elem).documentElement;
+                var namespace = elem && elem.namespaceURI, docElem = elem && (elem.ownerDocument || elem).documentElement;
                 // Support: IE <=8
                 // Assume HTML when documentElement doesn't yet exist, such as inside loading iframes
                 // https://bugs.jquery.com/ticket/4833
@@ -3321,7 +3772,6 @@
         function nodeName(elem, name) {
             return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
         }
-        ;
         var rsingleTag = (/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i);
         // Implement the identical functionality for filter and not
         function winnow(elements, qualifier, not) {
@@ -4072,32 +4522,32 @@
                 i = remaining, 
                 // subordinate fulfillment data
                 resolveContexts = Array(i), resolveValues = slice.call(arguments), 
-                // the master Deferred
-                master = jQuery.Deferred(), 
+                // the primary Deferred
+                primary = jQuery.Deferred(), 
                 // subordinate callback factory
                 updateFunc = function (i) {
                     return function (value) {
                         resolveContexts[i] = this;
                         resolveValues[i] = arguments.length > 1 ? slice.call(arguments) : value;
                         if (!(--remaining)) {
-                            master.resolveWith(resolveContexts, resolveValues);
+                            primary.resolveWith(resolveContexts, resolveValues);
                         }
                     };
                 };
                 // Single- and empty arguments are adopted like Promise.resolve
                 if (remaining <= 1) {
-                    adoptValue(singleValue, master.done(updateFunc(i)).resolve, master.reject, !remaining);
+                    adoptValue(singleValue, primary.done(updateFunc(i)).resolve, primary.reject, !remaining);
                     // Use .then() to unwrap secondary thenables (cf. gh-3000)
-                    if (master.state() === "pending" ||
+                    if (primary.state() === "pending" ||
                         isFunction(resolveValues[i] && resolveValues[i].then)) {
-                        return master.then();
+                        return primary.then();
                     }
                 }
                 // Multiple arguments are aggregated like Promise.all array elements
                 while (i--) {
-                    adoptValue(resolveValues[i], updateFunc(i), master.reject);
+                    adoptValue(resolveValues[i], updateFunc(i), primary.reject);
                 }
-                return master.promise();
+                return primary.promise();
             }
         });
         // These usually indicate a programmer mistake during development,
@@ -4902,7 +5352,7 @@
             }
             return fragment;
         }
-        var rkeyEvent = /^key/, rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/, rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
+        var rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
         function returnTrue() {
             return true;
         }
@@ -5352,7 +5802,12 @@
                                 // Cancel the outer synthetic event
                                 event.stopImmediatePropagation();
                                 event.preventDefault();
-                                return result.value;
+                                // Support: Chrome 86+
+                                // In Chrome, if an element having a focusout handler is blurred by
+                                // clicking outside of it, it invokes the handler synchronously. If
+                                // that handler calls `.remove()` on the element, the data is cleared,
+                                // leaving `result` undefined. We need to guard against this.
+                                return result && result.value;
                             }
                             // If this is an inner synthetic event for an event with a bubbling surrogate
                             // (focus or blur), assume that the surrogate already propagated from triggering the
@@ -5489,27 +5944,7 @@
             targetTouches: true,
             toElement: true,
             touches: true,
-            which: function (event) {
-                var button = event.button;
-                // Add which for key events
-                if (event.which == null && rkeyEvent.test(event.type)) {
-                    return event.charCode != null ? event.charCode : event.keyCode;
-                }
-                // Add which for click: 1 === left; 2 === middle; 3 === right
-                if (!event.which && button !== undefined && rmouseEvent.test(event.type)) {
-                    if (button & 1) {
-                        return 1;
-                    }
-                    if (button & 2) {
-                        return 3;
-                    }
-                    if (button & 4) {
-                        return 2;
-                    }
-                    return 0;
-                }
-                return event.which;
-            }
+            which: true
         }, jQuery.event.addProp);
         jQuery.each({ focus: "focusin", blur: "focusout" }, function (type, delegateType) {
             jQuery.event.special[type] = {
@@ -5526,6 +5961,11 @@
                     // Force setup before trigger
                     leverageNative(this, type);
                     // Return non-false to allow normal event-path propagation
+                    return true;
+                },
+                // Suppress native focus or blur as it's already being fired
+                // in leverageNative.
+                _default: function () {
                     return true;
                 },
                 delegateType: delegateType
@@ -6047,21 +6487,38 @@
                 // set in CSS while `offset*` properties report correct values.
                 // Behavior in IE 9 is more subtle than in newer versions & it passes
                 // some versions of this test; make sure not to make it pass there!
+                //
+                // Support: Firefox 70+
+                // Only Firefox includes border widths
+                // in computed dimensions. (gh-4529)
                 reliableTrDimensions: function () {
                     var table, tr, trChild, trStyle;
                     if (reliableTrDimensionsVal == null) {
                         table = document.createElement("table");
                         tr = document.createElement("tr");
                         trChild = document.createElement("div");
-                        table.style.cssText = "position:absolute;left:-11111px";
+                        table.style.cssText = "position:absolute;left:-11111px;border-collapse:separate";
+                        tr.style.cssText = "border:1px solid";
+                        // Support: Chrome 86+
+                        // Height set through cssText does not get applied.
+                        // Computed height then comes back as 0.
                         tr.style.height = "1px";
                         trChild.style.height = "9px";
+                        // Support: Android 8 Chrome 86+
+                        // In our bodyBackground.html iframe,
+                        // display for all div elements is set to "inline",
+                        // which causes a problem only in Android 8 Chrome 86.
+                        // Ensuring the div is display: block
+                        // gets around this issue.
+                        trChild.style.display = "block";
                         documentElement
                             .appendChild(table)
                             .appendChild(tr)
                             .appendChild(trChild);
                         trStyle = window.getComputedStyle(tr);
-                        reliableTrDimensionsVal = parseInt(trStyle.height) > 3;
+                        reliableTrDimensionsVal = (parseInt(trStyle.height, 10) +
+                            parseInt(trStyle.borderTopWidth, 10) +
+                            parseInt(trStyle.borderBottomWidth, 10)) === tr.offsetHeight;
                         documentElement.removeChild(table);
                     }
                     return reliableTrDimensionsVal;
@@ -7826,7 +8283,7 @@
         var rquery = (/\?/);
         // Cross-browser xml parsing
         jQuery.parseXML = function (data) {
-            var xml;
+            var xml, parserErrorElem;
             if (!data || typeof data !== "string") {
                 return null;
             }
@@ -7835,11 +8292,14 @@
             try {
                 xml = (new window.DOMParser()).parseFromString(data, "text/xml");
             }
-            catch (e) {
-                xml = undefined;
-            }
-            if (!xml || xml.getElementsByTagName("parsererror").length) {
-                jQuery.error("Invalid XML: " + data);
+            catch (e) { }
+            parserErrorElem = xml && xml.getElementsByTagName("parsererror")[0];
+            if (!xml || parserErrorElem) {
+                jQuery.error("Invalid XML: " + (parserErrorElem ?
+                    jQuery.map(parserErrorElem.childNodes, function (el) {
+                        return el.textContent;
+                    }).join("\n") :
+                    data));
             }
             return xml;
         };
@@ -7910,15 +8370,13 @@
                     // Can add propHook for "elements" to filter or add form elements
                     var elements = jQuery.prop(this, "elements");
                     return elements ? jQuery.makeArray(elements) : this;
-                })
-                    .filter(function () {
+                }).filter(function () {
                     var type = this.type;
                     // Use .is( ":disabled" ) so that fieldset[disabled] works
                     return this.name && !jQuery(this).is(":disabled") &&
                         rsubmittable.test(this.nodeName) && !rsubmitterTypes.test(type) &&
                         (this.checked || !rcheckableType.test(type));
-                })
-                    .map(function (_i, elem) {
+                }).map(function (_i, elem) {
                     var val = jQuery(this).val();
                     if (val == null) {
                         return null;
@@ -8507,8 +8965,10 @@
                     if (responses) {
                         response = ajaxHandleResponses(s, jqXHR, responses);
                     }
-                    // Use a noop converter for missing script
-                    if (!isSuccess && jQuery.inArray("script", s.dataTypes) > -1) {
+                    // Use a noop converter for missing script but not if jsonp
+                    if (!isSuccess &&
+                        jQuery.inArray("script", s.dataTypes) > -1 &&
+                        jQuery.inArray("json", s.dataTypes) < 0) {
                         s.converters["text script"] = function () { };
                     }
                     // Convert no matter what (that way responseXXX fields are always set)
@@ -9090,12 +9550,6 @@
                     options.using.call(elem, props);
                 }
                 else {
-                    if (typeof props.top === "number") {
-                        props.top += "px";
-                    }
-                    if (typeof props.left === "number") {
-                        props.left += "px";
-                    }
                     curElem.css(props);
                 }
             }
@@ -9230,7 +9684,11 @@
         });
         // Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
         jQuery.each({ Height: "height", Width: "width" }, function (name, type) {
-            jQuery.each({ padding: "inner" + name, content: type, "": "outer" + name }, function (defaultExtra, funcName) {
+            jQuery.each({
+                padding: "inner" + name,
+                content: type,
+                "": "outer" + name
+            }, function (defaultExtra, funcName) {
                 // Margin is only for outerHeight, outerWidth
                 jQuery.fn[funcName] = function (margin, value) {
                     var chainable = arguments.length && (defaultExtra || typeof margin !== "boolean"), extra = defaultExtra || (margin === true || value === true ? "margin" : "border");
@@ -9399,13 +9857,13 @@
         return jQuery;
     });
 },
-460: /* @bokeh/slickgrid/slick.core.js */ function _(require, module, exports) {
+484: /* @bokeh/slickgrid/slick.core.js */ function _(require, module, exports, __esModule, __esExport) {
     /***
      * Contains core SlickGrid classes.
      * @module Core
      * @namespace Slick
      */
-    var $ = require(458) /* ./slick.jquery */;
+    var $ = require(482) /* ./slick.jquery */;
     /***
      * An event object for passing data to event handlers and letting them control propagation.
      * <p>This is pretty much identical to how W3C and jQuery implement events.</p>
@@ -9997,9 +10455,9 @@
         }
     };
 },
-461: /* @bokeh/slickgrid/plugins/slick.checkboxselectcolumn.js */ function _(require, module, exports) {
-    var $ = require(458) /* ../slick.jquery */;
-    var Slick = require(460) /* ../slick.core */;
+485: /* @bokeh/slickgrid/plugins/slick.checkboxselectcolumn.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ../slick.jquery */;
+    var Slick = require(484) /* ../slick.core */;
     function CheckboxSelectColumn(options) {
         var _grid;
         var _selectableOverride = null;
@@ -10302,9 +10760,9 @@
         "CheckboxSelectColumn": CheckboxSelectColumn
     };
 },
-462: /* @bokeh/slickgrid/plugins/slick.cellexternalcopymanager.js */ function _(require, module, exports) {
-    var $ = require(458) /* ../slick.jquery */;
-    var Slick = require(460) /* ../slick.core */;
+486: /* @bokeh/slickgrid/plugins/slick.cellexternalcopymanager.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ../slick.jquery */;
+    var Slick = require(484) /* ../slick.core */;
     var keyCodes = Slick.keyCode;
     function CellExternalCopyManager(options) {
         /*
@@ -10709,17 +11167,17 @@
         "CellExternalCopyManager": CellExternalCopyManager
     };
 },
-463: /* @bokeh/slickgrid/index.js */ function _(require, module, exports) {
+487: /* @bokeh/slickgrid/index.js */ function _(require, module, exports, __esModule, __esExport) {
     var tslib = require(1) /* tslib */;
-    tslib.__exportStar(require(460) /* ./slick.core */, module.exports);
-    tslib.__exportStar(require(464) /* ./slick.grid */, module.exports);
-    tslib.__exportStar(require(467) /* ./slick.dataview */, module.exports);
-    tslib.__exportStar(require(468) /* ./slick.editors */, module.exports);
-    tslib.__exportStar(require(469) /* ./slick.formatters */, module.exports);
-    tslib.__exportStar(require(470) /* ./slick.remotemodel */, module.exports);
-    tslib.__exportStar(require(471) /* ./slick.groupitemmetadataprovider */, module.exports);
+    tslib.__exportStar(require(484) /* ./slick.core */, module.exports);
+    tslib.__exportStar(require(488) /* ./slick.grid */, module.exports);
+    tslib.__exportStar(require(491) /* ./slick.dataview */, module.exports);
+    tslib.__exportStar(require(492) /* ./slick.editors */, module.exports);
+    tslib.__exportStar(require(493) /* ./slick.formatters */, module.exports);
+    tslib.__exportStar(require(494) /* ./slick.remotemodel */, module.exports);
+    tslib.__exportStar(require(495) /* ./slick.groupitemmetadataprovider */, module.exports);
 },
-464: /* @bokeh/slickgrid/slick.grid.js */ function _(require, module, exports) {
+488: /* @bokeh/slickgrid/slick.grid.js */ function _(require, module, exports, __esModule, __esExport) {
     /**
      * @license
      * (c) 2009-2016 Michael Leibman
@@ -10737,8 +11195,8 @@
      *     or data associated with any cell/row DOM nodes.  Cell editors must make sure they implement .destroy()
      *     and do proper cleanup.
      */
-    var $ = require(458) /* ./slick.jquery */;
-    var Slick = require(460) /* ./slick.core */;
+    var $ = require(482) /* ./slick.jquery */;
+    var Slick = require(484) /* ./slick.core */;
     // shared across all grids on the page
     var scrollbarDimensions;
     var maxSupportedCssHeight; // browser's breaking point
@@ -10755,10 +11213,10 @@
      **/
     function SlickGrid(container, data, columns, options) {
         if (!$.fn.drag) {
-            require(465) /* ./lib/jquery.event.drag-2.3.0 */;
+            require(489) /* ./lib/jquery.event.drag-2.3.0 */;
         }
         if (!$.fn.drop) {
-            require(466) /* ./lib/jquery.event.drop-2.3.0 */;
+            require(490) /* ./lib/jquery.event.drop-2.3.0 */;
         }
         // settings
         var defaults = {
@@ -13124,13 +13582,23 @@
                 }
             }
             setCellCssStyles(options.selectedCellCssClass, hash);
-            if (simpleArrayEquals(previousSelectedRows, selectedRows)) {
+            if (!simpleArrayEquals(previousSelectedRows, selectedRows)) {
                 trigger(self.onSelectedRowsChanged, { rows: getSelectedRows(), previousSelectedRows: previousSelectedRows }, e);
             }
         }
         // compare 2 simple arrays (integers or strings only, do not use to compare object arrays)
         function simpleArrayEquals(arr1, arr2) {
-            return Array.isArray(arr1) && Array.isArray(arr2) && arr2.sort().toString() !== arr1.sort().toString();
+            if (!Array.isArray(arr1) || !Array.isArray(arr2))
+                return true;
+            const s1 = new Set(arr1);
+            const s2 = new Set(arr2);
+            if (s1.size != s2.size)
+                return false;
+            for (const item of s1) {
+                if (!s2.has(item))
+                    return false;
+            }
+            return true;
         }
         function getColumns() {
             return columns;
@@ -15949,7 +16417,7 @@
         Grid: SlickGrid
     };
 },
-465: /* @bokeh/slickgrid/lib/jquery.event.drag-2.3.0.js */ function _(require, module, exports) {
+489: /* @bokeh/slickgrid/lib/jquery.event.drag-2.3.0.js */ function _(require, module, exports, __esModule, __esExport) {
     /*!
      * jquery.event.drag - v 2.3.0
      * Copyright (c) 2010 Three Dub Media - http://threedubmedia.com
@@ -15960,7 +16428,7 @@
     // Updated: 2016-08-16   Luiz Gonzaga dos Santos Filho
     // REQUIRES: jquery 1.8 +, , event.drag 2.3.0
     // TESTED WITH: jQuery 1.8.3, 1.11.2, 2.2.4, and 3.1.0
-    var $ = require(458) /* ../slick.jquery */;
+    var $ = require(482) /* ../slick.jquery */;
     // add the jquery instance method
     $.fn.drag = function (str, arg, opts) {
         // figure out the event type
@@ -16314,7 +16782,7 @@
     // share the same special event configuration with related events...
     $special.draginit = $special.dragstart = $special.dragend = drag;
 },
-466: /* @bokeh/slickgrid/lib/jquery.event.drop-2.3.0.js */ function _(require, module, exports) {
+490: /* @bokeh/slickgrid/lib/jquery.event.drop-2.3.0.js */ function _(require, module, exports, __esModule, __esExport) {
     /*!
      * jquery.event.drop - v 2.3.0
      * Copyright (c) 2010 Three Dub Media - http://threedubmedia.com
@@ -16325,7 +16793,7 @@
     // Updated: 2016-08-16   Luiz Gonzaga dos Santos Filho
     // REQUIRES: jquery 1.8 +, , event.drag 2.3.0
     // TESTED WITH: jQuery 1.8.3, 1.11.2, 2.2.4, and 3.1.0
-    var $ = require(458) /* ../slick.jquery */;
+    var $ = require(482) /* ../slick.jquery */;
     // Events: drop, dropstart, dropend
     // add the jquery instance method
     $.fn.drop = function (str, arg, opts) {
@@ -16597,9 +17065,9 @@
     // share the same special event configuration with related events...
     $special.dropinit = $special.dropstart = $special.dropend = drop;
 },
-467: /* @bokeh/slickgrid/slick.dataview.js */ function _(require, module, exports) {
-    var $ = require(458) /* ./slick.jquery */;
-    var Slick = require(460) /* ./slick.core */;
+491: /* @bokeh/slickgrid/slick.dataview.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ./slick.jquery */;
+    var Slick = require(484) /* ./slick.core */;
     /***
      * A sample Model implementation.
      * Provides a filtered view of the underlying data.
@@ -17771,9 +18239,9 @@
         Data: { Aggregators: Aggregators },
     };
 },
-468: /* @bokeh/slickgrid/slick.editors.js */ function _(require, module, exports) {
-    var $ = require(458) /* ./slick.jquery */;
-    var Slick = require(460) /* ./slick.core */;
+492: /* @bokeh/slickgrid/slick.editors.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ./slick.jquery */;
+    var Slick = require(484) /* ./slick.core */;
     /***
      * Contains basic SlickGrid editors.
      * @module Editors
@@ -18320,8 +18788,8 @@
         }
     };
 },
-469: /* @bokeh/slickgrid/slick.formatters.js */ function _(require, module, exports) {
-    var Slick = require(460) /* ./slick.core */;
+493: /* @bokeh/slickgrid/slick.formatters.js */ function _(require, module, exports, __esModule, __esExport) {
+    var Slick = require(484) /* ./slick.core */;
     /***
      * Contains basic SlickGrid formatters.
      *
@@ -18377,9 +18845,9 @@
         }
     };
 },
-470: /* @bokeh/slickgrid/slick.remotemodel.js */ function _(require, module, exports) {
-    var $ = require(458) /* ./slick.jquery */;
-    var Slick = require(460) /* ./slick.core */;
+494: /* @bokeh/slickgrid/slick.remotemodel.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ./slick.jquery */;
+    var Slick = require(484) /* ./slick.core */;
     /***
      * A sample AJAX data store implementation.
      * Right now, it's hooked up to load search results from Octopart, but can
@@ -18508,9 +18976,9 @@
         RemoteModel: RemoteModel
     };
 },
-471: /* @bokeh/slickgrid/slick.groupitemmetadataprovider.js */ function _(require, module, exports) {
-    var $ = require(458) /* ./slick.jquery */;
-    var Slick = require(460) /* ./slick.core */;
+495: /* @bokeh/slickgrid/slick.groupitemmetadataprovider.js */ function _(require, module, exports, __esModule, __esExport) {
+    var $ = require(482) /* ./slick.jquery */;
+    var Slick = require(484) /* ./slick.core */;
     /***
      * Provides item metadata for group (Slick.Group) and totals (Slick.Totals) rows produced by the DataView.
      * This metadata overrides the default behavior and formatting of those rows so that they appear and function
@@ -18670,11 +19138,10 @@
         GroupItemMetadataProvider: GroupItemMetadataProvider
     };
 },
-472: /* models/widgets/widget.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const html_box_1 = require(276) /* ../layouts/html_box */;
-    const p = tslib_1.__importStar(require(18) /* ../../core/properties */);
+496: /* models/widgets/widget.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const html_box_1 = require(323) /* ../layouts/html_box */;
+    const enums_1 = require(20) /* ../../core/enums */;
     class WidgetView extends html_box_1.HTMLBoxView {
         _width_policy() {
             return this.model.orientation == "horizontal" ? super._width_policy() : "fixed";
@@ -18702,10 +19169,10 @@
             super(attrs);
         }
         static init_Widget() {
-            this.define({
-                orientation: [p.Orientation, "horizontal"],
-                default_size: [p.Number, 300],
-            });
+            this.define(({ Number }) => ({
+                orientation: [enums_1.Orientation, "horizontal"],
+                default_size: [Number, 300],
+            }));
             this.override({
                 margin: [5, 5, 5, 5],
             });
@@ -18715,21 +19182,20 @@
     Widget.__name__ = "Widget";
     Widget.init_Widget();
 },
-473: /* models/widgets/tables/table_widget.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const widget_1 = require(472) /* ../widget */;
-    const cds_view_1 = require(114) /* ../../sources/cds_view */;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
+497: /* models/widgets/tables/table_widget.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const widget_1 = require(496) /* ../widget */;
+    const column_data_source_1 = require(131) /* ../../sources/column_data_source */;
+    const cds_view_1 = require(121) /* ../../sources/cds_view */;
     class TableWidget extends widget_1.Widget {
         constructor(attrs) {
             super(attrs);
         }
         static init_TableWidget() {
-            this.define({
-                source: [p.Instance],
-                view: [p.Instance, () => new cds_view_1.CDSView()],
-            });
+            this.define(({ Ref }) => ({
+                source: [Ref(column_data_source_1.ColumnDataSource), () => new column_data_source_1.ColumnDataSource()],
+                view: [Ref(cds_view_1.CDSView), () => new cds_view_1.CDSView()],
+            }));
         }
         initialize() {
             super.initialize();
@@ -18743,28 +19209,27 @@
     TableWidget.__name__ = "TableWidget";
     TableWidget.init_TableWidget();
 },
-474: /* models/widgets/tables/table_column.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const cell_formatters_1 = require(475) /* ./cell_formatters */;
-    const cell_editors_1 = require(455) /* ./cell_editors */;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
-    const string_1 = require(29) /* ../../../core/util/string */;
-    const model_1 = require(81) /* ../../../model */;
+498: /* models/widgets/tables/table_column.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const cell_formatters_1 = require(477) /* ./cell_formatters */;
+    const cell_editors_1 = require(474) /* ./cell_editors */;
+    const string_1 = require(34) /* ../../../core/util/string */;
+    const enums_1 = require(20) /* ../../../core/enums */;
+    const model_1 = require(53) /* ../../../model */;
     class TableColumn extends model_1.Model {
         constructor(attrs) {
             super(attrs);
         }
         static init_TableColumn() {
-            this.define({
-                field: [p.String],
-                title: [p.String],
-                width: [p.Number, 300],
-                formatter: [p.Instance, () => new cell_formatters_1.StringFormatter()],
-                editor: [p.Instance, () => new cell_editors_1.StringEditor()],
-                sortable: [p.Boolean, true],
-                default_sort: [p.Sort, "ascending"],
-            });
+            this.define(({ Boolean, Number, String, Nullable, Ref }) => ({
+                field: [String],
+                title: [Nullable(String), null],
+                width: [Number, 300],
+                formatter: [Ref(cell_formatters_1.StringFormatter), () => new cell_formatters_1.StringFormatter()],
+                editor: [Ref(cell_editors_1.StringEditor), () => new cell_editors_1.StringEditor()],
+                sortable: [Boolean, true],
+                default_sort: [enums_1.Sort, "ascending"],
+            }));
         }
         toColumn() {
             var _a;
@@ -18785,1095 +19250,24 @@
     TableColumn.__name__ = "TableColumn";
     TableColumn.init_TableColumn();
 },
-475: /* models/widgets/tables/cell_formatters.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const timezone_1 = tslib_1.__importDefault(require(186) /* timezone */);
-    const Numbro = tslib_1.__importStar(require(188) /* @bokeh/numbro */);
-    const underscore_template_1 = require(476) /* underscore.template */;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
-    const dom_1 = require(72) /* ../../../core/dom */;
-    const types_1 = require(8) /* ../../../core/util/types */;
-    const model_1 = require(81) /* ../../../model */;
-    class CellFormatter extends model_1.Model {
-        constructor(attrs) {
-            super(attrs);
-        }
-        doFormat(_row, _cell, value, _columnDef, _dataContext) {
-            if (value == null)
-                return "";
-            else
-                return (value + "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-    }
-    exports.CellFormatter = CellFormatter;
-    CellFormatter.__name__ = "CellFormatter";
-    class StringFormatter extends CellFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_StringFormatter() {
-            this.define({
-                font_style: [p.FontStyle, "normal"],
-                text_align: [p.TextAlign, "left"],
-                text_color: [p.Color],
-            });
-        }
-        doFormat(_row, _cell, value, _columnDef, _dataContext) {
-            const { font_style, text_align, text_color } = this;
-            const text = dom_1.div({}, value == null ? "" : `${value}`);
-            switch (font_style) {
-                case "bold":
-                    text.style.fontWeight = "bold";
-                    break;
-                case "italic":
-                    text.style.fontStyle = "italic";
-                    break;
-            }
-            if (text_align != null)
-                text.style.textAlign = text_align;
-            if (text_color != null)
-                text.style.color = text_color;
-            return text.outerHTML;
-        }
-    }
-    exports.StringFormatter = StringFormatter;
-    StringFormatter.__name__ = "StringFormatter";
-    StringFormatter.init_StringFormatter();
-    class ScientificFormatter extends StringFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_ScientificFormatter() {
-            this.define({
-                nan_format: [p.String],
-                precision: [p.Number, 10],
-                power_limit_high: [p.Number, 5],
-                power_limit_low: [p.Number, -3],
-            });
-        }
-        get scientific_limit_low() {
-            return 10.0 ** this.power_limit_low;
-        }
-        get scientific_limit_high() {
-            return 10.0 ** this.power_limit_high;
-        }
-        doFormat(row, cell, value, columnDef, dataContext) {
-            const need_sci = value <= this.scientific_limit_low || value >= this.scientific_limit_high;
-            let precision = this.precision;
-            // toExponential does not handle precision values < 0 correctly
-            if (precision < 1) {
-                precision = 1;
-            }
-            if ((value == null || isNaN(value)) && this.nan_format != null)
-                value = this.nan_format;
-            else if (need_sci) {
-                value = value.toExponential(precision);
-            }
-            else {
-                value = value.toFixed(precision).replace(/(\.[0-9]*?)0+$/, "$1").replace(/\.$/, "");
-            }
-            // add StringFormatter formatting
-            return super.doFormat(row, cell, value, columnDef, dataContext);
-        }
-    }
-    exports.ScientificFormatter = ScientificFormatter;
-    ScientificFormatter.__name__ = "ScientificFormatter";
-    ScientificFormatter.init_ScientificFormatter();
-    class NumberFormatter extends StringFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_NumberFormatter() {
-            this.define({
-                format: [p.String, '0,0'],
-                language: [p.String, 'en'],
-                rounding: [p.RoundingFunction, 'round'],
-                nan_format: [p.String],
-            });
-        }
-        doFormat(row, cell, value, columnDef, dataContext) {
-            const { format, language, nan_format } = this;
-            const rounding = (() => {
-                switch (this.rounding) {
-                    case "round":
-                    case "nearest": return Math.round;
-                    case "floor":
-                    case "rounddown": return Math.floor;
-                    case "ceil":
-                    case "roundup": return Math.ceil;
-                }
-            })();
-            if ((value == null || isNaN(value)) && nan_format != null)
-                value = nan_format;
-            else
-                value = Numbro.format(value, format, language, rounding);
-            return super.doFormat(row, cell, value, columnDef, dataContext);
-        }
-    }
-    exports.NumberFormatter = NumberFormatter;
-    NumberFormatter.__name__ = "NumberFormatter";
-    NumberFormatter.init_NumberFormatter();
-    class BooleanFormatter extends CellFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_BooleanFormatter() {
-            this.define({
-                icon: [p.String, 'check'],
-            });
-        }
-        doFormat(_row, _cell, value, _columnDef, _dataContext) {
-            return !!value ? dom_1.i({ class: this.icon }).outerHTML : "";
-        }
-    }
-    exports.BooleanFormatter = BooleanFormatter;
-    BooleanFormatter.__name__ = "BooleanFormatter";
-    BooleanFormatter.init_BooleanFormatter();
-    class DateFormatter extends StringFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_DateFormatter() {
-            this.define({
-                format: [p.String, 'ISO-8601'],
-                nan_format: [p.String],
-            });
-        }
-        getFormat() {
-            // using definitions provided here: https://api.jqueryui.com/datepicker/
-            // except not implementing TICKS
-            switch (this.format) {
-                case "ATOM":
-                case "W3C":
-                case "RFC-3339":
-                case "ISO-8601":
-                    return "%Y-%m-%d";
-                case "COOKIE":
-                    return "%a, %d %b %Y";
-                case "RFC-850":
-                    return "%A, %d-%b-%y";
-                case "RFC-1123":
-                case "RFC-2822":
-                    return "%a, %e %b %Y";
-                case "RSS":
-                case "RFC-822":
-                case "RFC-1036":
-                    return "%a, %e %b %y";
-                case "TIMESTAMP":
-                    return undefined;
-                default:
-                    return this.format;
-            }
-        }
-        doFormat(row, cell, value, columnDef, dataContext) {
-            const { nan_format } = this;
-            value = types_1.isString(value) ? parseInt(value, 10) : value;
-            let date;
-            // Handle null, NaN and NaT
-            if ((value == null || isNaN(value) || value === -9223372036854776) && nan_format != null)
-                date = nan_format;
-            else
-                date = value == null ? '' : timezone_1.default(value, this.getFormat());
-            return super.doFormat(row, cell, date, columnDef, dataContext);
-        }
-    }
-    exports.DateFormatter = DateFormatter;
-    DateFormatter.__name__ = "DateFormatter";
-    DateFormatter.init_DateFormatter();
-    class HTMLTemplateFormatter extends CellFormatter {
-        constructor(attrs) {
-            super(attrs);
-        }
-        static init_HTMLTemplateFormatter() {
-            this.define({
-                template: [p.String, '<%= value %>'],
-            });
-        }
-        doFormat(_row, _cell, value, _columnDef, dataContext) {
-            const { template } = this;
-            if (value == null)
-                return "";
-            else {
-                const compiled_template = underscore_template_1._.template(template);
-                const context = Object.assign(Object.assign({}, dataContext), { value });
-                return compiled_template(context);
-            }
-        }
-    }
-    exports.HTMLTemplateFormatter = HTMLTemplateFormatter;
-    HTMLTemplateFormatter.__name__ = "HTMLTemplateFormatter";
-    HTMLTemplateFormatter.init_HTMLTemplateFormatter();
+499: /* styles/widgets/slickgrid.css.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    exports.root = "bk-root";
+    exports.default = `.bk-root{}.bk-root .slick-header.ui-state-default,.bk-root .slick-headerrow.ui-state-default,.bk-root .slick-footerrow.ui-state-default,.bk-root .slick-top-panel-scroller.ui-state-default,.bk-root .slick-group-header.ui-state-default{width:100%;overflow:auto;position:relative;border-left:0px !important;}.bk-root .slick-header.ui-state-default{overflow:inherit;}.bk-root .slick-header::-webkit-scrollbar,.bk-root .slick-headerrow::-webkit-scrollbar,.bk-root .slick-footerrow::-webkit-scrollbar{display:none;}.bk-root .slick-header-columns,.bk-root .slick-headerrow-columns,.bk-root .slick-footerrow-columns,.bk-root .slick-group-header-columns{position:relative;white-space:nowrap;cursor:default;overflow:hidden;}.bk-root .slick-header-column.ui-state-default,.bk-root .slick-group-header-column.ui-state-default{position:relative;display:inline-block;box-sizing:content-box !important;overflow:hidden;-o-text-overflow:ellipsis;text-overflow:ellipsis;height:16px;line-height:16px;margin:0;padding:4px;border-right:1px solid silver;border-left:0px !important;border-top:0px !important;border-bottom:0px !important;float:left;}.bk-root .slick-footerrow-column.ui-state-default{-o-text-overflow:ellipsis;text-overflow:ellipsis;margin:0;padding:4px;border-right:1px solid silver;border-left:0px;border-top:0px;border-bottom:0px;float:left;line-height:20px;vertical-align:middle;}.bk-root .slick-headerrow-column.ui-state-default,.bk-root .slick-footerrow-column.ui-state-default{padding:4px;}.bk-root .slick-header-column-sorted{font-style:italic;}.bk-root .slick-sort-indicator{display:inline-block;width:8px;height:5px;margin-left:4px;margin-top:6px;float:left;}.bk-root .slick-sort-indicator-numbered{display:inline-block;width:8px;height:5px;margin-left:4px;margin-top:0;line-height:20px;float:left;font-family:Arial;font-style:normal;font-weight:bold;color:#6190CD;}.bk-root .slick-sort-indicator-desc{background:url(images/sort-desc.gif);}.bk-root .slick-sort-indicator-asc{background:url(images/sort-asc.gif);}.bk-root .slick-resizable-handle{position:absolute;font-size:0.1px;display:block;cursor:col-resize;width:9px;right:-5px;top:0;height:100%;z-index:1;}.bk-root .slick-sortable-placeholder{background:silver;}.bk-root .grid-canvas{position:relative;outline:0;}.bk-root .slick-row.ui-widget-content,.bk-root .slick-row.ui-state-active{position:absolute;border:0px;width:100%;}.bk-root .slick-cell,.bk-root .slick-headerrow-column,.bk-root .slick-footerrow-column{position:absolute;border:1px solid transparent;border-right:1px dotted silver;border-bottom-color:silver;overflow:hidden;-o-text-overflow:ellipsis;text-overflow:ellipsis;vertical-align:middle;z-index:1;padding:1px 2px 2px 1px;margin:0;white-space:nowrap;cursor:default;}.bk-root .slick-cell,.bk-root .slick-headerrow-column{border-bottom-color:silver;}.bk-root .slick-footerrow-column{border-top-color:silver;}.bk-root .slick-group-toggle{display:inline-block;}.bk-root .slick-cell.highlighted{background:lightskyblue;background:rgba(0, 0, 255, 0.2);-webkit-transition:all 0.5s;-moz-transition:all 0.5s;-o-transition:all 0.5s;transition:all 0.5s;}.bk-root .slick-cell.flashing{border:1px solid red !important;}.bk-root .slick-cell.editable{z-index:11;overflow:visible;background:white;border-color:black;border-style:solid;}.bk-root .slick-cell:focus{outline:none;}.bk-root .slick-reorder-proxy{display:inline-block;background:blue;opacity:0.15;cursor:move;}.bk-root .slick-reorder-guide{display:inline-block;height:2px;background:blue;opacity:0.7;}.bk-root .slick-selection{z-index:10;position:absolute;border:2px dashed black;}.bk-root .slick-pane{position:absolute;outline:0;overflow:hidden;width:100%;}.bk-root .slick-pane-header{display:block;}.bk-root .slick-header{overflow:hidden;position:relative;}.bk-root .slick-headerrow{overflow:hidden;position:relative;}.bk-root .slick-top-panel-scroller{overflow:hidden;position:relative;}.bk-root .slick-top-panel{width:10000px;}.bk-root .slick-viewport{position:relative;outline:0;width:100%;}.bk-root .slick-header-columns{background:url('images/header-columns-bg.gif') repeat-x center bottom;border-bottom:1px solid silver;}.bk-root .slick-header-column{background:url('images/header-columns-bg.gif') repeat-x center bottom;border-right:1px solid silver;}.bk-root .slick-header-column:hover,.bk-root .slick-header-column-active{background:white url('images/header-columns-over-bg.gif') repeat-x center bottom;}.bk-root .slick-headerrow{background:#fafafa;}.bk-root .slick-headerrow-column{background:#fafafa;border-bottom:0;height:100%;}.bk-root .slick-row.ui-state-active{background:#F5F7D7;}.bk-root .slick-row{position:absolute;background:white;border:0px;line-height:20px;}.bk-root .slick-row.selected{z-index:10;background:#DFE8F6;}.bk-root .slick-cell{padding-left:4px;padding-right:4px;}.bk-root .slick-group{border-bottom:2px solid silver;}.bk-root .slick-group-toggle{width:9px;height:9px;margin-right:5px;}.bk-root .slick-group-toggle.expanded{background:url(images/collapse.gif) no-repeat center center;}.bk-root .slick-group-toggle.collapsed{background:url(images/expand.gif) no-repeat center center;}.bk-root .slick-group-totals{color:gray;background:white;}.bk-root .slick-group-select-checkbox{width:13px;height:13px;margin:3px 10px 0 0;display:inline-block;}.bk-root .slick-group-select-checkbox.checked{background:url(images/GrpCheckboxY.png) no-repeat center center;}.bk-root .slick-group-select-checkbox.unchecked{background:url(images/GrpCheckboxN.png) no-repeat center center;}.bk-root .slick-cell.selected{background-color:beige;}.bk-root .slick-cell.active{border-color:gray;border-style:solid;}.bk-root .slick-sortable-placeholder{background:silver !important;}.bk-root .slick-row.odd{background:#fafafa;}.bk-root .slick-row.ui-state-active{background:#F5F7D7;}.bk-root .slick-row.loading{opacity:0.5;}.bk-root .slick-cell.invalid{border-color:red;-moz-animation-duration:0.2s;-webkit-animation-duration:0.2s;-moz-animation-name:slickgrid-invalid-hilite;-webkit-animation-name:slickgrid-invalid-hilite;}@-moz-keyframes slickgrid-invalid-hilite{from{box-shadow:0 0 6px red;}to{box-shadow:none;}}@-webkit-keyframes slickgrid-invalid-hilite{from{box-shadow:0 0 6px red;}to{box-shadow:none;}}.bk-root .slick-column-name,.bk-root .slick-sort-indicator{display:inline-block;float:left;margin-bottom:100px;}.bk-root .slick-header-button{display:inline-block;float:right;vertical-align:top;margin:1px;margin-bottom:100px;height:15px;width:15px;background-repeat:no-repeat;background-position:center center;cursor:pointer;}.bk-root .slick-header-button-hidden{width:0;-webkit-transition:0.2s width;-ms-transition:0.2s width;transition:0.2s width;}.bk-root .slick-header-column:hover > .slick-header-button{width:15px;}.bk-root .slick-header-menubutton{position:absolute;right:0;top:0;bottom:0;width:14px;background-repeat:no-repeat;background-position:left center;background-image:url(../images/down.gif);cursor:pointer;display:none;border-left:thin ridge silver;}.bk-root .slick-header-column:hover > .slick-header-menubutton,.bk-root .slick-header-column-active .slick-header-menubutton{display:inline-block;}.bk-root .slick-header-menu{position:absolute;display:inline-block;margin:0;padding:2px;cursor:default;}.bk-root .slick-header-menuitem{list-style:none;margin:0;padding:0;cursor:pointer;}.bk-root .slick-header-menuicon{display:inline-block;width:16px;height:16px;vertical-align:middle;margin-right:4px;background-repeat:no-repeat;background-position:center center;}.bk-root .slick-header-menucontent{display:inline-block;vertical-align:middle;}.bk-root .slick-header-menuitem-disabled{color:silver;}.bk-root .slick-header-menuitem.slick-header-menuitem-divider{cursor:default;border:none;overflow:hidden;padding:0;height:1px;margin:8px 2px;background-color:#cecece;}.bk-root .slick-header-menuitem-divider.slick-header-menuitem:hover{background-color:#cecece;}.bk-root .slick-columnpicker{border:1px solid #718BB7;background:#f0f0f0;padding:6px;-moz-box-shadow:2px 2px 2px silver;-webkit-box-shadow:2px 2px 2px silver;box-shadow:2px 2px 2px silver;min-width:150px;cursor:default;position:absolute;z-index:20;overflow:auto;resize:both;}.bk-root .slick-columnpicker > .close{float:right;}.bk-root .slick-columnpicker .title{font-size:16px;width:60%;border-bottom:solid 1px #d6d6d6;margin-bottom:10px;}.bk-root .slick-columnpicker li{list-style:none;margin:0;padding:0;background:none;}.bk-root .slick-columnpicker input{margin:4px;}.bk-root .slick-columnpicker li a{display:block;padding:4px;font-weight:bold;}.bk-root .slick-columnpicker li a:hover{background:white;}.bk-root .slick-columnpicker-list li.hidden{display:none;}.bk-root .slick-pager{width:100%;height:26px;border:1px solid gray;border-top:0;background:url('../images/header-columns-bg.gif') repeat-x center bottom;vertical-align:middle;}.bk-root .slick-pager .slick-pager-status{display:inline-block;padding:6px;}.bk-root .slick-pager .ui-icon-container{display:inline-block;margin:2px;border-color:gray;}.bk-root .slick-pager .slick-pager-nav{display:inline-block;float:left;padding:2px;}.bk-root .slick-pager .slick-pager-settings{display:block;float:right;padding:2px;}.bk-root .slick-pager .slick-pager-settings *{vertical-align:middle;}.bk-root .slick-pager .slick-pager-settings a{padding:2px;text-decoration:underline;cursor:pointer;}.bk-root .slick-header-columns{border-bottom:1px solid silver;background-image:none;}.bk-root .slick-header-column{border-right:1px solid transparent;background-image:none;}.bk-root .slick-header-column:last-of-type{border-right-color:transparent;}.bk-root .slick-header-column:hover,.bk-root .slick-header-column-active{background-color:#F0F8FF;background-image:none;}.bk-root .slick-group-toggle.expanded{background-image:url("data:image/gif;base64,R0lGODlhCQAJAPcAAAFGeoCAgNXz/+v5/+v6/+z5/+36//L7//X8//j9/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAACQAJAAAIMwADCBxIUIDBgwIEChgwwECBAgQUFjBAkaJCABgxGlB4AGHCAAIQiBypEEECkScJqgwQEAA7");}.bk-root .slick-group-toggle.collapsed{background-image:url("data:image/gif;base64,R0lGODlhCQAJAPcAAAFGeoCAgNXz/+v5/+v6/+z5/+36//L7//X8//j9/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAACQAJAAAIOAADCBxIUIDBgwIEChgwAECBAgQUFjAAQIABAwoBaNSIMYCAAwIqGlSIAEHFkiQTIBCgkqDLAAEBADs=");}.bk-root .slick-group-select-checkbox.checked{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAAEcSURBVChTjdI9S8NQFAbg/raQXVwCRRFE7GK7OXTwD+ikk066VF3a0ja0hQTyQdJrwNq0zrYSQRLEXMSWSlCIb8glqRcFD+9yz3nugXwU4n9XQqMoGjj36uBJsTwuaNo3EwBG4Yy7pe7Gv8YcvhJCGFVsjxsjxujj6OTSGlHv+U2WZUZbPWKOv1ZjT5a7pbIoiptbO5b73mwrjHa1B27l8VlTEIS1damlTnEE+EEN9/P8WrfH81qdAIGeXvTTmzltdCy46sEhxpKUINReZR9NnqZbr9puugxV3NjWh/k74WmmEdWhmUNy2jNmWRc6fZTVADCqao52u+DGWTACYNT3fRxwtatPufTNR4yCIGAUn5hS+vJHhWGY/ANx/A3tvdv+1tZmuwAAAABJRU5ErkJggg==");}.bk-root .slick-group-select-checkbox.unchecked{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAACXSURBVChT1dIxC4MwEAXg/v8/VOhQVDBNakV0KA6pxS4JhWRSIYPEJxwdDi1de7wleR+3JIf486w0hKCKRpSvvOhZcCmvNQBRuKqdah03U7UjNNH81rOaBYDo8SQaPX8JANFEaLaGBeAPaaY61rGksiN6TmR5H1j9CSoAosYYHLA7vTxYMvVEZa0liif23r93xjm3/oEYF8PiDn/I2FHCAAAAAElFTkSuQmCC");}.bk-root .slick-sort-indicator-desc{background-image:url("data:image/gif;base64,R0lGODlhDQAFAIcAAGGQzUD/QOPu+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAMAAAEALAAAAAANAAUAAAgeAAUAGEgQgIAACBEKLHgwYcKFBh1KFNhQosOKEgMCADs=");}.bk-root .slick-sort-indicator-asc{background-image:url("data:image/gif;base64,R0lGODlhDQAFAIcAAGGQzUD/QOPu+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAMAAAEALAAAAAANAAUAAAgbAAMIDABgoEGDABIeRJhQ4cKGEA8KmEiRosGAADs=");}.bk-root .slick-header-menubutton{background-image:url("data:image/gif;base64,R0lGODlhDgAOAIABADtKYwAAACH5BAEAAAEALAAAAAAOAA4AAAISjI+py+0PHZgUsGobhTn6DxoFADs=");}.bk-root .slick-pager{background-image:none;}`;
 },
-476: /* underscore.template/lib/index.js */ function _(require, module, exports) {
-    var _ = require(477) /* ./underscore.template */;
-    var UnderscoreTemplate = _.template;
-    function Template(text, data, settings) {
-        return UnderscoreTemplate(text, data, settings);
-    }
-    Template._ = _;
-    module.exports = Template;
-    // If we're in the browser,
-    // define it if we're using AMD, otherwise leak a global.
-    if (typeof define === 'function' && define.amd) {
-        define(function () {
-            return Template;
-        });
-    }
-    else if (typeof window !== 'undefined' || typeof navigator !== 'undefined') {
-        window.UnderscoreTemplate = Template;
-    }
-},
-477: /* underscore.template/lib/underscore.template.js */ function _(require, module, exports) {
-    //     Underscore.js 1.5.2
-    //     http://underscorejs.org
-    //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-    //     Underscore may be freely distributed under the MIT license.
-    // Establish the object that gets returned to break out of a loop iteration.
-    var breaker = {};
-    // Save bytes in the minified (but not gzipped) version:
-    var ArrayProto = Array.prototype, ObjProto = Object.prototype;
-    // Create quick reference variables for speed access to core prototypes.
-    var slice = ArrayProto.slice, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty;
-    // All **ECMAScript 5** native function implementations that we hope to use
-    // are declared here.
-    var nativeForEach = ArrayProto.forEach, nativeKeys = Object.keys, nativeIsArray = Array.isArray;
-    // Create a safe reference to the Underscore object for use below.
-    var _ = function () { };
-    // Collection Functions
-    // --------------------
-    // The cornerstone, an `each` implementation, aka `forEach`.
-    // Handles objects with the built-in `forEach`, arrays, and raw objects.
-    // Delegates to **ECMAScript 5**'s native `forEach` if available.
-    var each = _.each = _.forEach = function (obj, iterator, context) {
-        if (obj == null)
-            return;
-        if (nativeForEach && obj.forEach === nativeForEach) {
-            obj.forEach(iterator, context);
-        }
-        else if (obj.length === +obj.length) {
-            for (var i = 0, length = obj.length; i < length; i++) {
-                if (iterator.call(context, obj[i], i, obj) === breaker)
-                    return;
-            }
-        }
-        else {
-            var keys = _.keys(obj);
-            for (var i = 0, length = keys.length; i < length; i++) {
-                if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker)
-                    return;
-            }
-        }
-    };
-    // Object Functions
-    // ----------------
-    // Retrieve the names of an object's properties.
-    // Delegates to **ECMAScript 5**'s native `Object.keys`
-    _.keys = nativeKeys || function (obj) {
-        if (obj !== Object(obj))
-            throw new TypeError('Invalid object');
-        var keys = [];
-        for (var key in obj)
-            if (_.has(obj, key))
-                keys.push(key);
-        return keys;
-    };
-    // Fill in a given object with default properties.
-    _.defaults = function (obj) {
-        each(slice.call(arguments, 1), function (source) {
-            if (source) {
-                for (var prop in source) {
-                    if (obj[prop] === void 0)
-                        obj[prop] = source[prop];
-                }
-            }
-        });
-        return obj;
-    };
-    // Is a given value an array?
-    // Delegates to ECMA5's native Array.isArray
-    _.isArray = nativeIsArray || function (obj) {
-        return toString.call(obj) === '[object Array]';
-    };
-    // Shortcut function for checking if an object has a given property directly
-    // on itself (in other words, not on a prototype).
-    _.has = function (obj, path) {
-        if (!_.isArray(path)) {
-            return obj != null && hasOwnProperty.call(obj, path);
-        }
-        var length = path.length;
-        for (var i = 0; i < length; i++) {
-            var key = path[i];
-            if (obj == null || !hasOwnProperty.call(obj, key)) {
-                return false;
-            }
-            obj = obj[key];
-        }
-        return !!length;
-    };
-    // List of HTML entities for escaping.
-    var entityMap = {
-        escape: {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#x27;'
-        }
-    };
-    // Regexes containing the keys and values listed immediately above.
-    var entityRegexes = {
-        escape: new RegExp('[' + _.keys(entityMap.escape).join('') + ']', 'g')
-    };
-    // Functions for escaping and unescaping strings to/from HTML interpolation.
-    _.each(['escape'], function (method) {
-        _[method] = function (string) {
-            if (string == null)
-                return '';
-            return ('' + string).replace(entityRegexes[method], function (match) {
-                return entityMap[method][match];
-            });
-        };
-    });
-    // By default, Underscore uses ERB-style template delimiters, change the
-    // following template settings to use alternative delimiters.
-    _.templateSettings = {
-        evaluate: /<%([\s\S]+?)%>/g,
-        interpolate: /<%=([\s\S]+?)%>/g,
-        escape: /<%-([\s\S]+?)%>/g
-    };
-    // When customizing `templateSettings`, if you don't want to define an
-    // interpolation, evaluation or escaping regex, we need one that is
-    // guaranteed not to match.
-    var noMatch = /(.)^/;
-    // Certain characters need to be escaped so that they can be put into a
-    // string literal.
-    var escapes = {
-        "'": "'",
-        '\\': '\\',
-        '\r': 'r',
-        '\n': 'n',
-        '\t': 't',
-        '\u2028': 'u2028',
-        '\u2029': 'u2029'
-    };
-    var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-    // JavaScript micro-templating, similar to John Resig's implementation.
-    // Underscore templating handles arbitrary delimiters, preserves whitespace,
-    // and correctly escapes quotes within interpolated code.
-    _.template = function (text, data, settings) {
-        var render;
-        settings = _.defaults({}, settings, _.templateSettings);
-        // Combine delimiters into one regular expression via alternation.
-        var matcher = new RegExp([
-            (settings.escape || noMatch).source,
-            (settings.interpolate || noMatch).source,
-            (settings.evaluate || noMatch).source
-        ].join('|') + '|$', 'g');
-        // Compile the template source, escaping string literals appropriately.
-        var index = 0;
-        var source = "__p+='";
-        text.replace(matcher, function (match, escape, interpolate, evaluate, offset) {
-            source += text.slice(index, offset)
-                .replace(escaper, function (match) { return '\\' + escapes[match]; });
-            if (escape) {
-                source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-            }
-            if (interpolate) {
-                source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-            }
-            if (evaluate) {
-                source += "';\n" + evaluate + "\n__p+='";
-            }
-            index = offset + match.length;
-            return match;
-        });
-        source += "';\n";
-        // If a variable is not specified, place data values in local scope.
-        if (!settings.variable)
-            source = 'with(obj||{}){\n' + source + '}\n';
-        source = "var __t,__p='',__j=Array.prototype.join," +
-            "print=function(){__p+=__j.call(arguments,'');};\n" +
-            source + "return __p;\n";
-        try {
-            render = new Function(settings.variable || 'obj', '_', source);
-        }
-        catch (e) {
-            e.source = source;
-            throw e;
-        }
-        if (data)
-            return render(data, _);
-        var template = function (data) {
-            return render.call(this, data, _);
-        };
-        // Provide the compiled function source as a convenience for precompilation.
-        template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
-        return template;
-    };
-    module.exports = _;
-},
-478: /* styles/widgets/tables.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.bk_data_table = "bk-data-table";
-    exports.bk_cell_index = "bk-cell-index";
-    exports.bk_header_index = "bk-header-index";
-    exports.bk_cell_editor = "bk-cell-editor";
-    exports.bk_cell_select = "bk-cell-select";
-},
-479: /* styles/widgets/slickgrid.css.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const css = `
-.bk-root {
-  /*
-IMPORTANT:
-In order to preserve the uniform grid appearance, all cell styles need to have padding, margin and border sizes.
-No built-in (selected, editable, highlight, flashing, invalid, loading, :focus) or user-specified CSS
-classes should alter those!
-*/
-  /*
-IMPORTANT:
-In order to preserve the uniform grid appearance, all cell styles need to have padding, margin and border sizes.
-No built-in (selected, editable, highlight, flashing, invalid, loading, :focus) or user-specified CSS
-classes should alter those!
-*/
-  /* Menu button */
-  /* Menu */
-  /* Menu items */
-  /* Disabled */
-  /* Divider */
-  /* Excluded item from Column Picker will be hidden */
-}
-.bk-root .slick-header.ui-state-default,
-.bk-root .slick-headerrow.ui-state-default,
-.bk-root .slick-footerrow.ui-state-default,
-.bk-root .slick-top-panel-scroller.ui-state-default,
-.bk-root .slick-group-header.ui-state-default {
-  width: 100%;
-  overflow: auto;
-  position: relative;
-  border-left: 0px !important;
-}
-.bk-root .slick-header.ui-state-default {
-  overflow: inherit;
-}
-.bk-root .slick-header::-webkit-scrollbar,
-.bk-root .slick-headerrow::-webkit-scrollbar,
-.bk-root .slick-footerrow::-webkit-scrollbar {
-  display: none;
-}
-.bk-root .slick-header-columns,
-.bk-root .slick-headerrow-columns,
-.bk-root .slick-footerrow-columns,
-.bk-root .slick-group-header-columns {
-  position: relative;
-  white-space: nowrap;
-  cursor: default;
-  overflow: hidden;
-}
-.bk-root .slick-header-column.ui-state-default,
-.bk-root .slick-group-header-column.ui-state-default {
-  position: relative;
-  display: inline-block;
-  box-sizing: content-box !important;
-  /* this here only for Firefox! */
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  height: 16px;
-  line-height: 16px;
-  margin: 0;
-  padding: 4px;
-  border-right: 1px solid silver;
-  border-left: 0px !important;
-  border-top: 0px !important;
-  border-bottom: 0px !important;
-  float: left;
-}
-.bk-root .slick-footerrow-column.ui-state-default {
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  margin: 0;
-  padding: 4px;
-  border-right: 1px solid silver;
-  border-left: 0px;
-  border-top: 0px;
-  border-bottom: 0px;
-  float: left;
-  line-height: 20px;
-  vertical-align: middle;
-}
-.bk-root .slick-headerrow-column.ui-state-default,
-.bk-root .slick-footerrow-column.ui-state-default {
-  padding: 4px;
-}
-.bk-root .slick-header-column-sorted {
-  font-style: italic;
-}
-.bk-root .slick-sort-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 5px;
-  margin-left: 4px;
-  margin-top: 6px;
-  float: left;
-}
-.bk-root .slick-sort-indicator-numbered {
-  display: inline-block;
-  width: 8px;
-  height: 5px;
-  margin-left: 4px;
-  margin-top: 0;
-  line-height: 20px;
-  float: left;
-  font-family: Arial;
-  font-style: normal;
-  font-weight: bold;
-  color: #6190CD;
-}
-.bk-root .slick-sort-indicator-desc {
-  background: url(images/sort-desc.gif);
-}
-.bk-root .slick-sort-indicator-asc {
-  background: url(images/sort-asc.gif);
-}
-.bk-root .slick-resizable-handle {
-  position: absolute;
-  font-size: 0.1px;
-  display: block;
-  cursor: col-resize;
-  width: 9px;
-  right: -5px;
-  top: 0;
-  height: 100%;
-  z-index: 1;
-}
-.bk-root .slick-sortable-placeholder {
-  background: silver;
-}
-.bk-root .grid-canvas {
-  position: relative;
-  outline: 0;
-}
-.bk-root .slick-row.ui-widget-content,
-.bk-root .slick-row.ui-state-active {
-  position: absolute;
-  border: 0px;
-  width: 100%;
-}
-.bk-root .slick-cell,
-.bk-root .slick-headerrow-column,
-.bk-root .slick-footerrow-column {
-  position: absolute;
-  border: 1px solid transparent;
-  border-right: 1px dotted silver;
-  border-bottom-color: silver;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-  z-index: 1;
-  padding: 1px 2px 2px 1px;
-  margin: 0;
-  white-space: nowrap;
-  cursor: default;
-}
-.bk-root .slick-cell,
-.bk-root .slick-headerrow-column {
-  border-bottom-color: silver;
-}
-.bk-root .slick-footerrow-column {
-  border-top-color: silver;
-}
-.bk-root .slick-group-toggle {
-  display: inline-block;
-}
-.bk-root .slick-cell.highlighted {
-  background: lightskyblue;
-  background: rgba(0, 0, 255, 0.2);
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
-}
-.bk-root .slick-cell.flashing {
-  border: 1px solid red !important;
-}
-.bk-root .slick-cell.editable {
-  z-index: 11;
-  overflow: visible;
-  background: white;
-  border-color: black;
-  border-style: solid;
-}
-.bk-root .slick-cell:focus {
-  outline: none;
-}
-.bk-root .slick-reorder-proxy {
-  display: inline-block;
-  background: blue;
-  opacity: 0.15;
-  cursor: move;
-}
-.bk-root .slick-reorder-guide {
-  display: inline-block;
-  height: 2px;
-  background: blue;
-  opacity: 0.7;
-}
-.bk-root .slick-selection {
-  z-index: 10;
-  position: absolute;
-  border: 2px dashed black;
-}
-.bk-root .slick-pane {
-  position: absolute;
-  outline: 0;
-  overflow: hidden;
-  width: 100%;
-}
-.bk-root .slick-pane-header {
-  display: block;
-}
-.bk-root .slick-header {
-  overflow: hidden;
-  position: relative;
-}
-.bk-root .slick-headerrow {
-  overflow: hidden;
-  position: relative;
-}
-.bk-root .slick-top-panel-scroller {
-  overflow: hidden;
-  position: relative;
-}
-.bk-root .slick-top-panel {
-  width: 10000px;
-}
-.bk-root .slick-viewport {
-  position: relative;
-  outline: 0;
-  width: 100%;
-}
-.bk-root .slick-header-columns {
-  background: url('images/header-columns-bg.gif') repeat-x center bottom;
-  border-bottom: 1px solid silver;
-}
-.bk-root .slick-header-column {
-  background: url('images/header-columns-bg.gif') repeat-x center bottom;
-  border-right: 1px solid silver;
-}
-.bk-root .slick-header-column:hover,
-.bk-root .slick-header-column-active {
-  background: white url('images/header-columns-over-bg.gif') repeat-x center bottom;
-}
-.bk-root .slick-headerrow {
-  background: #fafafa;
-}
-.bk-root .slick-headerrow-column {
-  background: #fafafa;
-  border-bottom: 0;
-  height: 100%;
-}
-.bk-root .slick-row.ui-state-active {
-  background: #F5F7D7;
-}
-.bk-root .slick-row {
-  position: absolute;
-  background: white;
-  border: 0px;
-  line-height: 20px;
-}
-.bk-root .slick-row.selected {
-  z-index: 10;
-  background: #DFE8F6;
-}
-.bk-root .slick-cell {
-  padding-left: 4px;
-  padding-right: 4px;
-}
-.bk-root .slick-group {
-  border-bottom: 2px solid silver;
-}
-.bk-root .slick-group-toggle {
-  width: 9px;
-  height: 9px;
-  margin-right: 5px;
-}
-.bk-root .slick-group-toggle.expanded {
-  background: url(images/collapse.gif) no-repeat center center;
-}
-.bk-root .slick-group-toggle.collapsed {
-  background: url(images/expand.gif) no-repeat center center;
-}
-.bk-root .slick-group-totals {
-  color: gray;
-  background: white;
-}
-.bk-root .slick-group-select-checkbox {
-  width: 13px;
-  height: 13px;
-  margin: 3px 10px 0 0;
-  display: inline-block;
-}
-.bk-root .slick-group-select-checkbox.checked {
-  background: url(images/GrpCheckboxY.png) no-repeat center center;
-}
-.bk-root .slick-group-select-checkbox.unchecked {
-  background: url(images/GrpCheckboxN.png) no-repeat center center;
-}
-.bk-root .slick-cell.selected {
-  background-color: beige;
-}
-.bk-root .slick-cell.active {
-  border-color: gray;
-  border-style: solid;
-}
-.bk-root .slick-sortable-placeholder {
-  background: silver !important;
-}
-.bk-root .slick-row.odd {
-  background: #fafafa;
-}
-.bk-root .slick-row.ui-state-active {
-  background: #F5F7D7;
-}
-.bk-root .slick-row.loading {
-  opacity: 0.5;
-}
-.bk-root .slick-cell.invalid {
-  border-color: red;
-  -moz-animation-duration: 0.2s;
-  -webkit-animation-duration: 0.2s;
-  -moz-animation-name: slickgrid-invalid-hilite;
-  -webkit-animation-name: slickgrid-invalid-hilite;
-}
-@-moz-keyframes slickgrid-invalid-hilite {
-  from {
-    box-shadow: 0 0 6px red;
-  }
-  to {
-    box-shadow: none;
-  }
-}
-@-webkit-keyframes slickgrid-invalid-hilite {
-  from {
-    box-shadow: 0 0 6px red;
-  }
-  to {
-    box-shadow: none;
-  }
-}
-.bk-root .slick-column-name,
-.bk-root .slick-sort-indicator {
-  /**
-   * This makes all "float:right" elements after it that spill over to the next line
-   * display way below the lower boundary of the column thus hiding them.
-   */
-  display: inline-block;
-  float: left;
-  margin-bottom: 100px;
-}
-.bk-root .slick-header-button {
-  display: inline-block;
-  float: right;
-  vertical-align: top;
-  margin: 1px;
-  /**
-  * This makes all "float:right" elements after it that spill over to the next line
-  * display way below the lower boundary of the column thus hiding them.
-  */
-  margin-bottom: 100px;
-  height: 15px;
-  width: 15px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  cursor: pointer;
-}
-.bk-root .slick-header-button-hidden {
-  width: 0;
-  -webkit-transition: 0.2s width;
-  -ms-transition: 0.2s width;
-  transition: 0.2s width;
-}
-.bk-root .slick-header-column:hover > .slick-header-button {
-  width: 15px;
-}
-.bk-root .slick-header-menubutton {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 14px;
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-image: url(../images/down.gif);
-  cursor: pointer;
-  display: none;
-  border-left: thin ridge silver;
-}
-.bk-root .slick-header-column:hover > .slick-header-menubutton,
-.bk-root .slick-header-column-active .slick-header-menubutton {
-  display: inline-block;
-}
-.bk-root .slick-header-menu {
-  position: absolute;
-  display: inline-block;
-  margin: 0;
-  padding: 2px;
-  cursor: default;
-}
-.bk-root .slick-header-menuitem {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.bk-root .slick-header-menuicon {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-  margin-right: 4px;
-  background-repeat: no-repeat;
-  background-position: center center;
-}
-.bk-root .slick-header-menucontent {
-  display: inline-block;
-  vertical-align: middle;
-}
-.bk-root .slick-header-menuitem-disabled {
-  color: silver;
-}
-.bk-root .slick-header-menuitem.slick-header-menuitem-divider {
-  cursor: default;
-  border: none;
-  overflow: hidden;
-  padding: 0;
-  height: 1px;
-  margin: 8px 2px;
-  background-color: #cecece;
-}
-.bk-root .slick-header-menuitem-divider.slick-header-menuitem:hover {
-  background-color: #cecece;
-}
-.bk-root .slick-columnpicker {
-  border: 1px solid #718BB7;
-  background: #f0f0f0;
-  padding: 6px;
-  -moz-box-shadow: 2px 2px 2px silver;
-  -webkit-box-shadow: 2px 2px 2px silver;
-  box-shadow: 2px 2px 2px silver;
-  min-width: 150px;
-  cursor: default;
-  position: absolute;
-  z-index: 20;
-  overflow: auto;
-  resize: both;
-}
-.bk-root .slick-columnpicker > .close {
-  float: right;
-}
-.bk-root .slick-columnpicker .title {
-  font-size: 16px;
-  width: 60%;
-  border-bottom: solid 1px #d6d6d6;
-  margin-bottom: 10px;
-}
-.bk-root .slick-columnpicker li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: none;
-}
-.bk-root .slick-columnpicker input {
-  margin: 4px;
-}
-.bk-root .slick-columnpicker li a {
-  display: block;
-  padding: 4px;
-  font-weight: bold;
-}
-.bk-root .slick-columnpicker li a:hover {
-  background: white;
-}
-.bk-root .slick-columnpicker-list li.hidden {
-  display: none;
-}
-.bk-root .slick-pager {
-  width: 100%;
-  height: 26px;
-  border: 1px solid gray;
-  border-top: 0;
-  background: url('../images/header-columns-bg.gif') repeat-x center bottom;
-  vertical-align: middle;
-}
-.bk-root .slick-pager .slick-pager-status {
-  display: inline-block;
-  padding: 6px;
-}
-.bk-root .slick-pager .ui-icon-container {
-  display: inline-block;
-  margin: 2px;
-  border-color: gray;
-}
-.bk-root .slick-pager .slick-pager-nav {
-  display: inline-block;
-  float: left;
-  padding: 2px;
-}
-.bk-root .slick-pager .slick-pager-settings {
-  display: block;
-  float: right;
-  padding: 2px;
-}
-.bk-root .slick-pager .slick-pager-settings * {
-  vertical-align: middle;
-}
-.bk-root .slick-pager .slick-pager-settings a {
-  padding: 2px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.bk-root .slick-header-columns {
-  border-bottom: 1px solid silver;
-  background-image: none;
-}
-.bk-root .slick-header-column {
-  border-right: 1px solid transparent;
-  background-image: none;
-}
-.bk-root .slick-header-column:last-of-type {
-  border-right-color: transparent;
-}
-.bk-root .slick-header-column:hover,
-.bk-root .slick-header-column-active {
-  background-color: #F0F8FF;
-  background-image: none;
-}
-.bk-root .slick-group-toggle.expanded {
-  background-image: url("data:image/gif;base64,R0lGODlhCQAJAPcAAAFGeoCAgNXz/+v5/+v6/+z5/+36//L7//X8//j9/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAACQAJAAAIMwADCBxIUIDBgwIEChgwwECBAgQUFjBAkaJCABgxGlB4AGHCAAIQiBypEEECkScJqgwQEAA7");
-}
-.bk-root .slick-group-toggle.collapsed {
-  background-image: url("data:image/gif;base64,R0lGODlhCQAJAPcAAAFGeoCAgNXz/+v5/+v6/+z5/+36//L7//X8//j9/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAACQAJAAAIOAADCBxIUIDBgwIEChgwAECBAgQUFjAAQIABAwoBaNSIMYCAAwIqGlSIAEHFkiQTIBCgkqDLAAEBADs=");
-}
-.bk-root .slick-group-select-checkbox.checked {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAAEcSURBVChTjdI9S8NQFAbg/raQXVwCRRFE7GK7OXTwD+ikk066VF3a0ja0hQTyQdJrwNq0zrYSQRLEXMSWSlCIb8glqRcFD+9yz3nugXwU4n9XQqMoGjj36uBJsTwuaNo3EwBG4Yy7pe7Gv8YcvhJCGFVsjxsjxujj6OTSGlHv+U2WZUZbPWKOv1ZjT5a7pbIoiptbO5b73mwrjHa1B27l8VlTEIS1damlTnEE+EEN9/P8WrfH81qdAIGeXvTTmzltdCy46sEhxpKUINReZR9NnqZbr9puugxV3NjWh/k74WmmEdWhmUNy2jNmWRc6fZTVADCqao52u+DGWTACYNT3fRxwtatPufTNR4yCIGAUn5hS+vJHhWGY/ANx/A3tvdv+1tZmuwAAAABJRU5ErkJggg==");
-}
-.bk-root .slick-group-select-checkbox.unchecked {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAIAAACQKrqGAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAACXSURBVChT1dIxC4MwEAXg/v8/VOhQVDBNakV0KA6pxS4JhWRSIYPEJxwdDi1de7wleR+3JIf486w0hKCKRpSvvOhZcCmvNQBRuKqdah03U7UjNNH81rOaBYDo8SQaPX8JANFEaLaGBeAPaaY61rGksiN6TmR5H1j9CSoAosYYHLA7vTxYMvVEZa0liif23r93xjm3/oEYF8PiDn/I2FHCAAAAAElFTkSuQmCC");
-}
-.bk-root .slick-sort-indicator-desc {
-  background-image: url("data:image/gif;base64,R0lGODlhDQAFAIcAAGGQzUD/QOPu+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAMAAAEALAAAAAANAAUAAAgeAAUAGEgQgIAACBEKLHgwYcKFBh1KFNhQosOKEgMCADs=");
-}
-.bk-root .slick-sort-indicator-asc {
-  background-image: url("data:image/gif;base64,R0lGODlhDQAFAIcAAGGQzUD/QOPu+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAMAAAEALAAAAAANAAUAAAgbAAMIDABgoEGDABIeRJhQ4cKGEA8KmEiRosGAADs=");
-}
-.bk-root .slick-header-menubutton {
-  background-image: url("data:image/gif;base64,R0lGODlhDgAOAIABADtKYwAAACH5BAEAAAEALAAAAAAOAA4AAAISjI+py+0PHZgUsGobhTn6DxoFADs=");
-}
-.bk-root .slick-pager {
-  background-image: none;
-}
-`;
-    exports.default = css;
-},
-480: /* styles/widgets/tables.css.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const css = `
-.bk-root .bk-data-table {
-  box-sizing: content-box;
-  font-size: 11px;
-}
-.bk-root .bk-data-table input[type="checkbox"] {
-  margin-left: 4px;
-  margin-right: 4px;
-}
-.bk-root .bk-cell-special-defaults {
-  border-right-color: silver;
-  border-right-style: solid;
-  background: #f5f5f5;
-}
-.bk-root .bk-cell-select {
-  border-right-color: silver;
-  border-right-style: solid;
-  background: #f5f5f5;
-}
-.bk-root .slick-cell.bk-cell-index {
-  border-right-color: silver;
-  border-right-style: solid;
-  background: #f5f5f5;
-  text-align: right;
-  background: #f0f0f0;
-  color: #909090;
-}
-.bk-root .bk-header-index .slick-column-name {
-  float: right;
-}
-.bk-root .slick-row.selected .bk-cell-index {
-  background-color: transparent;
-}
-.bk-root .slick-row.odd {
-  background: #f0f0f0;
-}
-.bk-root .slick-cell {
-  padding-left: 4px;
-  padding-right: 4px;
-  border-right-color: transparent;
-  border: 0.25px solid transparent;
-}
-.bk-root .slick-cell .bk {
-  line-height: inherit;
-}
-.bk-root .slick-cell.active {
-  border-style: dashed;
-}
-.bk-root .slick-cell.selected {
-  background-color: #F0F8FF;
-}
-.bk-root .slick-cell.editable {
-  padding-left: 0;
-  padding-right: 0;
-}
-.bk-root .bk-cell-editor {
-  display: contents;
-}
-.bk-root .bk-cell-editor input,
-.bk-root .bk-cell-editor select {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  margin: 0;
-  padding: 0;
-  outline: 0;
-  background: transparent;
-  vertical-align: baseline;
-}
-.bk-root .bk-cell-editor input {
-  padding-left: 4px;
-  padding-right: 4px;
-}
-.bk-root .bk-cell-editor-completion {
-  font-size: 11px;
-}
-`;
-    exports.default = css;
-},
-481: /* models/widgets/tables/row_aggregators.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const slickgrid_1 = require(463) /* @bokeh/slickgrid */;
+500: /* models/widgets/tables/row_aggregators.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const slickgrid_1 = require(487) /* @bokeh/slickgrid */;
     const { Avg, Min, Max, Sum } = slickgrid_1.Data.Aggregators;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
-    const model_1 = require(81) /* ../../../model */;
+    const model_1 = require(53) /* ../../../model */;
     class RowAggregator extends model_1.Model {
         constructor(attrs) {
             super(attrs);
         }
         static init_RowAggregator() {
-            this.define({
-                field_: [p.String, ''],
-            });
+            this.define(({ String }) => ({
+                field_: [String, ""],
+            }));
         }
     }
     exports.RowAggregator = RowAggregator;
@@ -19928,14 +19322,15 @@ classes should alter those!
     exports.SumAggregator = SumAggregator;
     SumAggregator.__name__ = "SumAggregator";
 },
-482: /* models/widgets/tables/data_cube.js */ function _(require, module, exports) {
-    Object.defineProperty(exports, "__esModule", { value: true });
-    const tslib_1 = require(1) /* tslib */;
-    const p = tslib_1.__importStar(require(18) /* ../../../core/properties */);
-    const dom_1 = require(72) /* ../../../core/dom */;
-    const slickgrid_1 = require(463) /* @bokeh/slickgrid */;
-    const data_table_1 = require(456) /* ./data_table */;
-    const model_1 = require(81) /* ../../../model */;
+501: /* models/widgets/tables/data_cube.js */ function _(require, module, exports, __esModule, __esExport) {
+    __esModule();
+    const dom_1 = require(43) /* ../../../core/dom */;
+    const slickgrid_1 = require(487) /* @bokeh/slickgrid */;
+    const definitions_1 = require(475) /* ./definitions */;
+    const data_table_1 = require(480) /* ./data_table */;
+    const column_data_source_1 = require(131) /* ../../sources/column_data_source */;
+    const row_aggregators_1 = require(500) /* ./row_aggregators */;
+    const model_1 = require(53) /* ../../../model */;
     function groupCellFormatter(_row, _cell, _value, _columnDef, dataContext) {
         const { collapsed, level, title } = dataContext;
         const toggle = dom_1.span({
@@ -19952,7 +19347,7 @@ classes should alter those!
         return (row, cell, value, columnDef, dataContext) => {
             const spacer = dom_1.span({
                 class: 'slick-group-toggle',
-                style: { 'margin-left': `${(indent || 0) * 15}px` },
+                style: { 'margin-left': `${(indent !== null && indent !== void 0 ? indent : 0) * 15}px` },
             });
             const formatted = formatter ? formatter(row, cell, value, columnDef, dataContext) : `${value}`;
             return `${spacer.outerHTML}${formatted && formatted.replace(/^<div/, '<span').replace(/div>$/, 'span>')}`;
@@ -19978,11 +19373,11 @@ classes should alter those!
             super(attrs);
         }
         static init_GroupingInfo() {
-            this.define({
-                getter: [p.String, ''],
-                aggregators: [p.Array, []],
-                collapsed: [p.Boolean, false],
-            });
+            this.define(({ Boolean, String, Array, Ref }) => ({
+                getter: [String, ""],
+                aggregators: [Array(Ref(row_aggregators_1.RowAggregator)), []],
+                collapsed: [Boolean, false],
+            }));
         }
         get comparer() {
             return (a, b) => {
@@ -20090,7 +19485,7 @@ classes should alter those!
             return item instanceof slickgrid_1.Group
                 ? item
                 : Object.keys(data)
-                    .reduce((o, c) => (Object.assign(Object.assign({}, o), { [c]: data[c][item] })), { [data_table_1.DTINDEX_NAME]: item });
+                    .reduce((o, c) => (Object.assign(Object.assign({}, o), { [c]: data[c][item] })), { [definitions_1.DTINDEX_NAME]: item });
         }
         getItemMetadata(i) {
             const myItem = this.rows[i];
@@ -20162,17 +19557,15 @@ classes should alter those!
         }
         static init_DataCube() {
             this.prototype.default_view = DataCubeView;
-            this.define({
-                grouping: [p.Array, []],
-                target: [p.Instance],
-            });
+            this.define(({ Array, Ref }) => ({
+                grouping: [Array(Ref(GroupingInfo)), []],
+                target: [Ref(column_data_source_1.ColumnDataSource)],
+            }));
         }
     }
     exports.DataCube = DataCube;
     DataCube.__name__ = "DataCube";
     DataCube.init_DataCube();
 },
-}, 453, {"models/widgets/tables/main":453,"models/widgets/tables/index":454,"models/widgets/tables/cell_editors":455,"models/widgets/tables/data_table":456,"models/widgets/widget":472,"models/widgets/tables/table_widget":473,"models/widgets/tables/table_column":474,"models/widgets/tables/cell_formatters":475,"styles/widgets/tables":478,"styles/widgets/slickgrid.css":479,"styles/widgets/tables.css":480,"models/widgets/tables/row_aggregators":481,"models/widgets/tables/data_cube":482}, {});
-})
-
+}, 472, {"models/widgets/tables/main":472,"models/widgets/tables/index":473,"models/widgets/tables/cell_editors":474,"models/widgets/tables/definitions":475,"styles/widgets/tables.css":476,"models/widgets/tables/cell_formatters":477,"models/widgets/tables/data_table":480,"models/widgets/widget":496,"models/widgets/tables/table_widget":497,"models/widgets/tables/table_column":498,"styles/widgets/slickgrid.css":499,"models/widgets/tables/row_aggregators":500,"models/widgets/tables/data_cube":501}, {});});
 //# sourceMappingURL=bokeh-tables.js.map
