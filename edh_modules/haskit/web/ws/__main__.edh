@@ -6,9 +6,11 @@
  # client is disconnected once this module finished running.
  #}
 
-import ( Peer, **_ ) 'net/RT'
+import ( Peer, ** ) 'net/RT'
 import * 'net/symbols'
 effect import * 'net/effects'
+
+import * 'haskit'
 
 
 # a Peer object should have been implanted atomically, the following
@@ -33,25 +35,27 @@ effect {
 }
 
 
-# should have been implanted by per-connection peer module init method
-hskiServer ?= HaskItServer()
+# `@haskItServer` should have been implanted by per-connection peer module init method
+; @haskItServer ?= HaskItServer()
 
 # HaskIt specific effectful artifacts for commands to be landed here
 effect {
-  hski = hskiServer
-  hskiPeer = peer
+  ; @haskItServer = @haskItServer
+  ; @haskItPeer = peer
 }
 
 
 # keep landing commands from browser over WebSocket
 {
 
-  # host web client actions with the effectful context here
-  perceive hskiServer.wcaSink { wcAction } -> {
-    # carry out such an action asynchronously, as some of them should block
-    # wait for some data stream (i.e. channel) of this connection
-    go wcAction( peer )
-  }
+  {@
+    # host web client actions with the effectful context here
+    perceive @haskItServer.wcaSink { wcAction } -> {
+      # carry out such an action asynchronously, as some of them should block
+      # wait for some data stream (i.e. channel) of this connection
+      go wcAction( peer )
+    }
+  @}
 
 
   while peer.eol() is false case peer.readCommand() of {@

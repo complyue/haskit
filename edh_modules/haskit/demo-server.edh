@@ -1,0 +1,16 @@
+{## Global singleton HaskIt server for demo purpose
+
+You should never import this module unless for demonstration purpose, instead you would usually craft a similar module, with a properly customized server instance exported per your business needs.
+
+That is, you usually derive a custom class from `HaskItServer`, with your own `WEB_MODULES` list and/or `WS_MODULE`, then create a globally shared instance of it, export the instance as `@haskItServer` from your server module, then `effect import ` your server module where necessary.
+
+ #}
+
+import * './web'
+
+# create the singleton HaskIt server instance, provide the effects it exports
+# to commands to be eval'ed here
+export @haskItServer = HaskItServer(
+  # todo support some environment variables for these configurations?
+  '127.0.0.1', 3780, 3790,
+)

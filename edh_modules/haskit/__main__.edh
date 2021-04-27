@@ -1,14 +1,8 @@
 
 import * 'haskit'
 
-
-# create the singleton HaskIt server instance, provide the effects it exports
-# to commands to be eval'ed here
-hski = HaskItServer(
-  # todo support some environment variables for these configurations?
-  '127.0.0.1', 3780, 3790,
-)
-effect hski = hski
+# take the global demo server into effect here
+effect import * './demo-server'
 
 
 # run repl as a usual Edh interactive interpreter

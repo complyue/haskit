@@ -11,33 +11,59 @@ export data jsSnippet ( jsSrc ) {
 }
 
 
+{## Type description for a plot script
+
+The plot script is an expression to be evaluated with effectful helper procedures for plotting, it can assume availability of the effectful artifacts described here
+
+ #}
 PlotScript :=: {
   # these effects materialized in module `haskit/web/ws/__main__.edh`
   effect {
-    # will be the HaskItServer passed in
-    hski :: HaskItServer
+
+    # the effective HaskItServer instance
+    ; @haskItServer :: HaskItServer
     # the peer object connected through WebSocket,
     # from root window of the web client
-    hskiPeer :: Peer
+    ; @haskItPeer :: Peer
+
     # standard data channel sink by Nedh convention
-    ; @dataSink :: EventSink
+    ; @dataSink :: sink
     # also the same peer object as `hskiPeer`, by Nedh convention
     ; @netPeer :: Peer
-  }
-} => () -> 'the group plot script'!Any
-plot :: ( HaskItServer, 'the plot group id'!Any, PlotScript, ) -> nil
-export method plot( hski, pgid, grpPlotScript ) {
-  hski ?= HaskItServer() # hinting VSCode for code navigation
 
-  # note outer most curly braces are being interpreted as markers of a
-  # block of code in js `eval`, need to get it parenthese quoted
+    method defineAxis( axisName= 'axis', ) pass
+    method plotWindow( pwid, winPlotScript, ) pass
+    method defineDataSource(** cols ) pass
+    method postJsCode( jsExpr ) pass
+
+  }
+} => () -> Any
+
+
+{## Plot a group with specified script
+
+An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
+
+Especially note that the plot script can be evaluated multiple times and concurrently, when multiple clients are connected, so it's usually a good idea to use a scoped block to wrap the plotting statements, unless you have good reasons not to.
+
+ #}
+plot :: { effect {
+    # the effective HaskItServer instance
+    ; @haskItServer :: HaskItServer
+} } => ( 'the plot group id'!Any, PlotScript!ExprType, ) -> nil
+export interpreter plot( callerScope, pgidExpr, grpPlotScript, ) void {
+  pgid = callerScope.eval(pgidExpr)
+
+  {# note wrt the js!expr posted to web clients:
+outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
+   #}
 
   # intermediate data for the plot group
   namespace pgData( pgid= pgid, ) {
     naxes = 0
   }
 
-  hski.clientsEachDo $ crPeer => {
+  perform @haskItServer.clientsEachDo $ crPeer => {
 
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
@@ -46,7 +72,7 @@ export method plot( hski, pgid, grpPlotScript ) {
       return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
     }
 
-    effect method plotWindow( pwid, winPlotScript ) {
+    effect method plotWindow( pwid, winPlotScript, ) {
       # open a new plot window from this root client window, establish the
       # comm channel to it
       plotChannel = str( UUID() )
@@ -97,7 +123,8 @@ export method plot( hski, pgid, grpPlotScript ) {
       winPlotScript()
     }
 
-    grpPlotScript()
+    callerScope.eval(grpPlotScript)
+
   }
 
 }

@@ -1,4 +1,9 @@
 
+export {
+  symbol @haskItServer
+  symbol @haskItPeer
+}
+
 export class HaskItServer {
 
   # a stack of overlayed edh modules providing web resources
@@ -19,20 +24,19 @@ export class HaskItServer {
 
   clientsEachDo :: ( { effect {
         # bound server instance of this method
-        hski :: HaskItServer
+        ; @haskItServer :: HaskItServer
         # the peer object connected through WebSocket,
         # same as the peer object passed to the action
-        hskiPeer :: Peer
+        ; @haskItPeer :: Peer
         # standard data channel sink by Nedh convention
-        ; @dataSink :: EventSink
+        ; @dataSink :: sink
         # also the same peer object as `hskiPeer`, by Nedh convention
         ; @netPeer :: Peer
     } } => Peer -> Any ) -> nil
   # send the specified action to be perceived thus performed on each web
   # client's serving thread (goroutine)
-  export method clientsEachDo( perWebClientAction ) {
+  export method clientsEachDo( perWebClientAction ) void {
     this.wcaSink <- perWebClientAction
-    return nil
   }
 
 
@@ -53,7 +57,7 @@ export class HaskItServer {
       that.WS_MODULE, netInterface, wsPort,
       port'max= wsPort+numAltPorts,
       init= modu => {
-        modu.hskiServer = this
+        modu.@haskItServer = this
       },
     )
     case this.ws.addrs() of {
