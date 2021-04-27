@@ -72,7 +72,9 @@ outer most curly braces are being interpreted as markers of a block of code in j
       return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
     }
 
-    effect method plotWindow( pwid, winPlotScript, ) {
+    effect interpreter plotWindow( callerScope, pwidExpr, winPlotScript, ) {
+      pwid = callerScope.eval(pwidExpr)
+
       # open a new plot window from this root client window, establish the
       # comm channel to it
       plotChannel = str( UUID() )
@@ -120,11 +122,10 @@ outer most curly braces are being interpreted as markers of a block of code in j
         } ) )
       }
 
-      winPlotScript()
+      callerScope.eval(winPlotScript)
     }
 
     callerScope.eval(grpPlotScript)
-
   }
 
 }

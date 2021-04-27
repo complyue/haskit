@@ -27,7 +27,7 @@ plot( 'demoPlotGroup1', {@
     sharedX = perform defineAxis( 'x' )
     sharedY = perform defineAxis( 'y' )
 
-    perform plotWindow( 'demoPlotWin1', () => {
+    perform plotWindow( 'demoPlotWin1', {@
         ds = perform defineDataSource(
           x= x, sin= ySin, cos= yCos,
         )
@@ -79,6 +79,6 @@ plot( 'demoPlotGroup1', {@
             void 0
         } )
 
-    } )
+    @} )
 
 @} )
