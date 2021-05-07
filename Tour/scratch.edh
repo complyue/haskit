@@ -14,7 +14,7 @@ perform @haskItServer.clientsEachDo $ crPeer => {
   crPeer.postCommand( js!expr {
       console.log( 'xxx: ', 'utc nanos=' + {$ console.now() $} )
 
-      {$ jsSnippet$ '''
+      {$snippet$ '''
 // js code with syntax incompatible with Edh can be interpolated like this
 for(let n of [3, 2, 5]) {
   console.info('arbitrary js code says: ' + n)

@@ -62,7 +62,7 @@ plot( 'demoPlotGroup1', {@
                 alpha: 0.7,
                 legend: 'COS Curve',
             } )
-            {$ jsSnippet$ 'for ( let g of f2.select( bkh.Legend ) )' $} {
+            {$snippet$ 'for ( let g of f2.select( bkh.Legend ) )' $} {
               g.location = 'top_left'
               g.click_policy = 'hide'
               g.background_fill_alpha = 0.6

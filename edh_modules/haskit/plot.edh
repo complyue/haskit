@@ -5,9 +5,8 @@
 import * 'haskit'
 
 
-export data jsSnippet ( jsSrc ) {
-  method __repr__() this.jsSrc
-  __str__ = __repr__
+export class snippet {
+  method __init__(src) this.__repr__ = str(src)
 }
 
 
