@@ -9,6 +9,10 @@ export class snippet {
   method __init__(src) this.__repr__ = str(src)
 }
 
+export class snippets {
+  method __init__(srcs) this.__repr__ = join(*srcs, sep='\n\n')
+}
+
 
 {## Type description for a plot script
 
