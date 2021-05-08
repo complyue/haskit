@@ -112,7 +112,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
           crPeer.p2c( plotChannel, blob$ v )
         }
 
-        return dsName
+        return snippet$ 'plotData['++repr(dsName)++']'
       }
 
       effect method postJsCode( jsExpr ) {

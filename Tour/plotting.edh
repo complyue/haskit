@@ -39,7 +39,7 @@ plot( 'demoPlotGroup1', {@
                 sizing_mode: 'stretch_both',
             } )
             f1.line( {
-                source: plotData[ {$ ds $} ],
+                source: {$ ds $},
                 x: { field: 'x' },
                 y: { field: 'sin' },
                 color: '#1122cc',
@@ -55,7 +55,7 @@ plot( 'demoPlotGroup1', {@
                 sizing_mode: 'stretch_both',
             } )
             f2.line( {
-                source: plotData[ {$ ds $} ],
+                source: {$ ds $},
                 x: { field: 'x' },
                 y: { field: 'cos' },
                 color: '#11cc22',
