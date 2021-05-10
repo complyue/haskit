@@ -2,8 +2,8 @@
  # plotting procedures
  #}
 
-import * 'haskit'
-
+import * './web'
+import * './debug'
 
 export class snippet {
   method __init__(src) this.__repr__ = str(src)
@@ -102,12 +102,16 @@ outer most curly braces are being interpreted as markers of a block of code in j
         dsNum = ai pwData.nds+=1
         dsName = 'ds' + dsNum
 
-        colNames = [] =< for ( k, _v ) from cols do k
-        colDtypes = [] =< for ( _k, v ) from cols do str( v.dtype )
+        let ( colNames, colDtypes, ) = (*unzip$ for ( k, v ) from cols
+          do ( k, v.dtype|str, )
+        )
+        # hskiDebug.replHere()
         crPeer.p2c( plotChannel, js!expr ( {
-              plotCmd : {$ str$ js!expr
+              plotCmd : {$str$ js!expr
                 receiveDataSource(
-                  {$ dsName $}, {$ colNames $}, {$ colDtypes $},
+                  {$ dsName $},
+                  {$snippet$json$ colNames $},
+                  {$snippet$json$ colDtypes $},
                 )
               $}
         } ) )
