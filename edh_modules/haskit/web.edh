@@ -1,3 +1,4 @@
+import * 'net'
 
 export {
   symbol @haskItServer
@@ -22,21 +23,14 @@ export class HaskItServer {
   URL_ROUTES = ()
 
 
-  clientsEachDo :: ( { effect {
-        # bound server instance of this method
-        ; @haskItServer :: HaskItServer
-        # the peer object connected through WebSocket,
-        # same as the peer object passed to the action
-        ; @haskItPeer :: Peer
-        # standard data channel sink by Nedh convention
-        ; @dataSink :: sink
-        # also the same peer object as `hskiPeer`, by Nedh convention
-        ; @netPeer :: Peer
-    } } => Peer -> Any ) -> nil
-  # send the specified action to be perceived thus performed on each web
-  # client's serving thread (goroutine)
-  export method clientsEachDo( perWebClientAction ) void {
-    this.wcaSink <- perWebClientAction
+  generator clients() for (wsPeer, _) from this.activeClients do {
+    wsPeer ?= Peer()
+    if wsPeer.eol() then {
+      this.activeClients[wsPeer] = nil
+      continue
+    }
+    effect @haskItPeer = wsPeer
+    yield wsPeer
   }
 
 
@@ -47,11 +41,12 @@ export class HaskItServer {
     numAltPorts= 9,
   ) {
 
-    # the sink for web client actions to be performed on demand
-    this.wcaSink = sink.subseq
-
-    # locally import Nedh stuff, not needed elsewhere
-    import * 'net'
+    # collection of active ws peers
+    this.activeClients = {}
+    wsClients = sink.subseq # don't have the last peer to linger in the sink
+    go for wsPeer from wsClients do {
+      this.activeClients[wsPeer] = true
+    }
 
     this.ws = WsServer(
       that.WS_MODULE, netInterface, wsPort,
@@ -59,6 +54,7 @@ export class HaskItServer {
       init= modu => {
         modu.@haskItServer = this
       },
+      clients= wsClients,
     )
     case this.ws.addrs() of {
       { wsAddr :> _extraWsAddrs } -> {

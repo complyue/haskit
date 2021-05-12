@@ -48,16 +48,6 @@ effect {
 # keep landing commands from browser over WebSocket
 {
 
-  {@
-    # host web client actions with the effectful context here
-    perceive @haskItServer.wcaSink { wcAction } -> {
-      # carry out such an action asynchronously, as some of them should block
-      # wait for some data stream (i.e. channel) of this connection
-      go wcAction( peer )
-    }
-  @}
-
-
   while peer.eol() is false case peer.readCommand() of {@
     { cmdVal } -> {
       console.warn<| 'Unexpected command result from ws: ' ++ desc( cmdVal )

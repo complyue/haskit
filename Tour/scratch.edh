@@ -2,20 +2,21 @@
 import * 'net'
 import * 'haskit'
 
+effect import * 'haskit/demo-server'
+
 
 # %%
-perform @haskItServer.clientsEachDo $ crPeer => {
-  crPeer ?= Peer()
-  # note this runs in separate thread, not synchronously
+for hskiPeer from perform @haskItServer.clients() do {
+  hskiPeer ?= Peer() # just to hint the IDE
 
   # we can construct some expression as for JavaScript source here, only if
-  # it parses as valid Edh source (thus syntax highlighted as such), it'll
+  # it parses as valid Đ source (thus syntax highlighted as such), it'll
   # run as JavaScript source in the browser window, and we craft it that way.
-  crPeer.postCommand( js!expr {
+  hskiPeer.postCommand( js!expr {
       console.log( 'xxx: ', 'utc nanos=' + {$ console.now() $} )
 
       {$snippet$ '''
-// js code with syntax incompatible with Edh can be interpolated like this
+// js code with syntax incompatible with Đ can be interpolated like this
 for(let n of [3, 2, 5]) {
   console.info('arbitrary js code says: ' + n)
 }
@@ -24,24 +25,26 @@ for(let n of [3, 2, 5]) {
   )
 }
 
+
 # %%
 # client root peer is a WsPeer object, whose lander environment hosts our
 # expression, we can call any function exposed there, we can access constants
 # and variables there. but note due to JavaScript strict evaluation, we can
 # not introduce new variables there (via var/let/const).
-perform @haskItServer.clientsEachDo $ crPeer => {
-  crPeer ?= Peer()
+for hskiPeer from perform @haskItServer.clients() do {
+  hskiPeer ?= Peer() # just to hint the IDE
 
-  crPeer.postCommand( js!expr
+  hskiPeer.postCommand( js!expr
     clearLog()
   )
 }
 
-# %%
-perform @haskItServer.clientsEachDo $ crPeer => {
-  crPeer ?= Peer()
 
-  crPeer.postCommand( js!expr
+# %%
+for hskiPeer from perform @haskItServer.clients() do {
+  hskiPeer ?= Peer() # just to hint the IDE
+
+  hskiPeer.postCommand( js!expr
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
   )
 }

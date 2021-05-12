@@ -5,58 +5,26 @@
 import * './web'
 import * './debug'
 
+
+{## Helper for a piece of literal source text to be interpolated into an expression #}
 export class snippet {
   method __init__(src) this.__repr__ = str(src)
 }
 
+{## Helper for a series of literal source text to be interpolated into an expression #}
 export class snippets {
   method __init__(srcs) this.__repr__ = join(*srcs, sep='\n\n')
 }
 
 
-{## Type description for a plot script
+{##
 
-The plot script is an expression to be evaluated with effectful helper procedures for plotting, it can assume availability of the effectful artifacts described here
-
- #}
-PlotScript :=: {
-  # these effects materialized in module `haskit/web/ws/__main__.edh`
-  effect {
-
-    # the effective HaskItServer instance
-    ; @haskItServer :: HaskItServer
-    # the peer object connected through WebSocket,
-    # from root window of the web client
-    ; @haskItPeer :: Peer
-
-    # standard data channel sink by Nedh convention
-    ; @dataSink :: sink
-    # also the same peer object as `hskiPeer`, by Nedh convention
-    ; @netPeer :: Peer
-
-    method defineAxis( axisName= 'axis', ) pass
-    method plotWindow( pwid, winPlotScript, ) pass
-    method defineDataSource(** cols ) pass
-    method postJsCode( jsExpr ) pass
-
-  }
-} => () -> Any
-
-
-{## Plot a group with specified script
+Vend effectful API to plot a group of plotting windows against each connected hski client
 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
 
-Especially note that the plot script can be evaluated multiple times and concurrently, when multiple clients are connected, so it's usually a good idea to use a scoped block to wrap the plotting statements, unless you have good reasons not to.
-
  #}
-plot :: { effect {
-    # the effective HaskItServer instance
-    ; @haskItServer :: HaskItServer
-} } => ( 'the plot group id'!Any, PlotScript!ExprType, ) -> nil
-export interpreter plot( callerScope, pgidExpr, grpPlotScript, ) void {
-  pgid = callerScope.eval(pgidExpr)
-
+export generator plot( pgid ) void {
   {# note wrt the js!expr posted to web clients:
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
    #}
@@ -66,24 +34,23 @@ outer most curly braces are being interpreted as markers of a block of code in j
     naxes = 0
   }
 
-  perform @haskItServer.clientsEachDo $ crPeer => {
+  effect method defineAxis( axisName= 'axis' ) {
+    # use a shared counter to isolate different root client windows from synchronizing axes with eachothers
+    axisNum = ai pgData.naxes+=1
+    return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
+  }
 
-    effect method defineAxis( axisName= 'axis' ) {
-      # use a shared counter to isolate different root client windows from
-      # synchronizing axes with eachothers
-      axisNum = ai pgData.naxes+=1
-      return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
-    }
+  for hskiPeer from perform @haskItServer.clients() do {
 
-    effect interpreter plotWindow( callerScope, pwidExpr, winPlotScript, ) {
-      pwid = callerScope.eval(pwidExpr)
-
-      # open a new plot window from this root client window, establish the
-      # comm channel to it
+    {##
+Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
+     #}
+    effect generator plotWindow( pwid ) {
+      # open the specified plot window from this root client window, establish the comm channel to it
       plotChannel = str( UUID() )
-      plotSink = crPeer.armChannel( plotChannel )
+      plotSink = hskiPeer.armChannel( plotChannel )
       for ack from ( outlet= plotSink ) | () =>* {
-        crPeer.postCommand( js!expr {
+        hskiPeer.postCommand( js!expr {
             void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
         } )
       } do {
@@ -106,7 +73,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
           do ( k, v.dtype|str, )
         )
         # hskiDebug.replHere()
-        crPeer.p2c( plotChannel, js!expr ( {
+        hskiPeer.p2c( plotChannel, js!expr ( {
               plotCmd : {$str$ js!expr
                 receiveDataSource(
                   {$ dsName $},
@@ -116,23 +83,23 @@ outer most curly braces are being interpreted as markers of a block of code in j
               $}
         } ) )
         for ( _k, v ) from cols do {
-          crPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
-          crPeer.p2c( plotChannel, blob$ v )
+          hskiPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
+          hskiPeer.p2c( plotChannel, blob$ v )
         }
 
         return snippet$ 'plotData['++repr(dsName)++']'
       }
 
       effect method postJsCode( jsExpr ) {
-        crPeer.p2c( plotChannel, js!expr ( {
-              plotCmd : {$ str$ jsExpr $}
+        hskiPeer.p2c( plotChannel, js!expr ( {
+              plotCmd : {$str$ jsExpr $}
         } ) )
       }
 
-      callerScope.eval(winPlotScript)
+      yield ()
     }
 
-    callerScope.eval(grpPlotScript)
+    yield ()
   }
 
 }
