@@ -34,14 +34,14 @@ outer most curly braces are being interpreted as markers of a block of code in j
 
   for crPeer from perform @haskItServer.clients() do {
 
-    effect method defineAxis( axisName= 'axis' ) {
+    method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
       # synchronizing axes with eachothers
       axisNum = ai pgData.naxes+=1
       return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
     }
 
-    effect generator plotWindow( pwid ) {
+    generator plotWindow( pwid ) {
       # open a new plot window from this root client window, establish the
       # comm channel to it
       plotChannel = str( UUID() )
@@ -62,7 +62,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
         nds = 0
       }
 
-      effect method defineDataSource(** cols ) {
+      method defineDataSource(** cols ) {
         dsNum = ai pwData.nds+=1
         dsName = 'ds' + dsNum
 
@@ -87,16 +87,20 @@ outer most curly braces are being interpreted as markers of a block of code in j
         return snippet$ 'plotData['++repr(dsName)++']'
       }
 
-      effect method postJsCode( jsExpr ) {
+      method postJsCode( jsExpr ) {
         crPeer.p2c( plotChannel, js!expr ( {
               plotCmd : {$ str$ jsExpr $}
         } ) )
       }
 
-      yield ()
+      yield (
+        defineDataSource= defineDataSource, postJsCode= postJsCode,
+      )
     }
 
-    yield ()
+    yield (
+      defineAxis= defineAxis, plotWindow= plotWindow,
+    )
   }
 
 }

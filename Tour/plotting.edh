@@ -23,16 +23,16 @@ yCos = cos( xv )
 
 # %%
 
-for () from plot( 'demoPlotGroup1' ) do {
-  sharedX = perform defineAxis( 'x' )
-  sharedY = perform defineAxis( 'y' )
+for (defineAxis, plotWindow, **) from plot( 'demoPlotGroup1' ) do {
+  sharedX = defineAxis( 'x' )
+  sharedY = defineAxis( 'y' )
 
-  for () from perform plotWindow( 'demoPlotWin1' ) do {
-    ds = perform defineDataSource(
+  for (defineDataSource, postJsCode, **) from plotWindow( 'demoPlotWin1' ) do {
+    ds = defineDataSource(
       x= x, sin= ySin, cos= yCos,
     )
 
-    perform postJsCode( js!expr {
+    postJsCode( js!expr {
         const f1 = plt.figure( {
             title: 'SIN Figure',
             toolbar_location: 'left',
