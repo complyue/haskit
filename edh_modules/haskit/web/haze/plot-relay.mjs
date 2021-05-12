@@ -1,5 +1,5 @@
 /**
- * relay plot traffic from HaskIt server to respective plot windows
+ * relay plot traffic between HaskIt server and respective plot windows
  *
  * plot windows are only opened from the window importing this module, per
  * request from HaskIt server, this module should only be imported from a
@@ -94,7 +94,7 @@ export function setupPlotRelay(hskiCurrPeer) {
             "string" === typeof cmdPayload
               ? JSON.stringify(cmdPayload)
               : cmdPayload;
-          hskiCurrPeer().p2c(plotChannel, cmdOut);
+          wsPeer.p2c(plotChannel, cmdOut);
         }
       });
 

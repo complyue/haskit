@@ -35,7 +35,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
   }
 
   effect method defineAxis( axisName= 'axis' ) {
-    # use a shared counter to isolate different root client windows from synchronizing axes with eachothers
+    # use a shared counter to ensure uniqueness per axis definition
     axisNum = ai pgData.naxes+=1
     return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
   }
