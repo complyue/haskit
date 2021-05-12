@@ -5,6 +5,7 @@
 import * './web'
 import * './debug'
 
+
 export class snippet {
   method __init__(src) this.__repr__ = str(src)
 }
@@ -14,35 +15,6 @@ export class snippets {
 }
 
 
-{## Type description for a plot script
-
-The plot script is an expression to be evaluated with effectful helper procedures for plotting, it can assume availability of the effectful artifacts described here
-
- #}
-PlotScript :=: {
-  # these effects materialized in module `haskit/web/ws/__main__.edh`
-  effect {
-
-    # the effective HaskItServer instance
-    ; @haskItServer :: HaskItServer
-    # the peer object connected through WebSocket,
-    # from root window of the web client
-    ; @haskItPeer :: Peer
-
-    # standard data channel sink by Nedh convention
-    ; @dataSink :: sink
-    # also the same peer object as `hskiPeer`, by Nedh convention
-    ; @netPeer :: Peer
-
-    method defineAxis( axisName= 'axis', ) pass
-    method plotWindow( pwid, winPlotScript, ) pass
-    method defineDataSource(** cols ) pass
-    method postJsCode( jsExpr ) pass
-
-  }
-} => () -> Any
-
-
 {## Plot a group with specified script
 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
@@ -50,13 +22,7 @@ An instance of `HaskItServer` (usually a descendant instance of it) must be in e
 Especially note that the plot script can be evaluated multiple times and concurrently, when multiple clients are connected, so it's usually a good idea to use a scoped block to wrap the plotting statements, unless you have good reasons not to.
 
  #}
-plot :: { effect {
-    # the effective HaskItServer instance
-    ; @haskItServer :: HaskItServer
-} } => ( 'the plot group id'!Any, PlotScript!ExprType, ) -> nil
-export interpreter plot( callerScope, pgidExpr, grpPlotScript, ) void {
-  pgid = callerScope.eval(pgidExpr)
-
+export generator plot( pgid ) void {
   {# note wrt the js!expr posted to web clients:
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
    #}
@@ -66,7 +32,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
     naxes = 0
   }
 
-  perform @haskItServer.clientsEachDo $ crPeer => {
+  for crPeer from perform @haskItServer.clients() do {
 
     effect method defineAxis( axisName= 'axis' ) {
       # use a shared counter to isolate different root client windows from
@@ -75,9 +41,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
       return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
     }
 
-    effect interpreter plotWindow( callerScope, pwidExpr, winPlotScript, ) {
-      pwid = callerScope.eval(pwidExpr)
-
+    effect generator plotWindow( pwid ) {
       # open a new plot window from this root client window, establish the
       # comm channel to it
       plotChannel = str( UUID() )
@@ -129,10 +93,10 @@ outer most curly braces are being interpreted as markers of a block of code in j
         } ) )
       }
 
-      callerScope.eval(winPlotScript)
+      yield ()
     }
 
-    callerScope.eval(grpPlotScript)
+    yield ()
   }
 
 }

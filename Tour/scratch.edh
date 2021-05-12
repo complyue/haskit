@@ -2,9 +2,11 @@
 import * 'net'
 import * 'haskit'
 
+effect import * 'haskit/demo-server'
+
 
 # %%
-perform @haskItServer.clientsEachDo $ crPeer => {
+for crPeer from perform @haskItServer.clients() do {
   crPeer ?= Peer()
   # note this runs in separate thread, not synchronously
 
@@ -24,12 +26,13 @@ for(let n of [3, 2, 5]) {
   )
 }
 
+
 # %%
 # client root peer is a WsPeer object, whose lander environment hosts our
 # expression, we can call any function exposed there, we can access constants
 # and variables there. but note due to JavaScript strict evaluation, we can
 # not introduce new variables there (via var/let/const).
-perform @haskItServer.clientsEachDo $ crPeer => {
+for crPeer from perform @haskItServer.clients() do {
   crPeer ?= Peer()
 
   crPeer.postCommand( js!expr
@@ -37,8 +40,9 @@ perform @haskItServer.clientsEachDo $ crPeer => {
   )
 }
 
+
 # %%
-perform @haskItServer.clientsEachDo $ crPeer => {
+for crPeer from perform @haskItServer.clients() do {
   crPeer ?= Peer()
 
   crPeer.postCommand( js!expr
