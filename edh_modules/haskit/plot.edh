@@ -43,6 +43,37 @@ outer most curly braces are being interpreted as markers of a block of code in j
   for hskiPeer from perform @haskItServer.clients() do {
 
     {##
+Open the client narrator window identified by `narrid`, vend effectful API to setup narrations in it
+     #}
+    effect generator narrWindow( narrid ) {
+      # open the specified narr window from this root client window, establish the comm channel to it
+      narrChannel = str( UUID() )
+      narrSink = hskiPeer.armChannel( narrChannel )
+      for ack from ( outlet= narrSink ) | () =>* {
+        hskiPeer.postCommand( js!expr {
+            void openNarrWindow( {$ pgid $}, {$ narrid $}, {$ narrChannel $} )
+        } )
+      } do {
+        if ack is not 'narr-win-open'
+        then error$ 'bug: bad handshake, check narr/narr-relay.mjs'
+
+        break
+      }
+
+      # intermediate data for the narr window
+      namespace pnData () {
+      }
+
+      effect method postJsCode( jsExpr ) {
+        hskiPeer.p2c( narrChannel, js!expr ( {
+              narrCmd : {$str$ jsExpr $}
+        } ) )
+      }
+
+      yield ()
+    }
+
+    {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
      #}
     effect generator plotWindow( pwid ) {

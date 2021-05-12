@@ -7,6 +7,7 @@ import { Lander, WsPeer } from "nedh";
 import { hasLogBox, uiLog, clearLog } from "/log.mjs";
 
 import { setupPlotRelay } from "/haze/plot-relay.mjs";
+import { setupNarrRelay } from "/narr/narr-relay.mjs";
 
 $("button[name=clear-log]").on("click", () => {
   clearLog();
@@ -105,3 +106,4 @@ $(async function () {
 });
 
 export const openPlotWindow = setupPlotRelay(currPeer);
+export const openNarrWindow = setupNarrRelay(currPeer);
