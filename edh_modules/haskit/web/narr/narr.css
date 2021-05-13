@@ -1,0 +1,136 @@
+/*
+* Narrator page styles
+*/
+
+.Narrator {
+  display: flex;
+  flex-flow: column;
+  margin: 0;
+  padding: 6pt;
+  background-color: #e3e340;
+}
+
+.NarrationStory {
+  flex: none;
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 2pt;
+  padding: 0;
+}
+
+.NarratorTitleBar {
+  flex: none;
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0;
+  padding: 0;
+}
+
+.NarrationTitle {
+  flex: 1 0 auto;
+  display: inline;
+  margin: 0;
+  padding: 3pt 9pt;
+
+  background-color: #bfbf35;
+}
+
+.NarrationContent {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
+  overflow: auto;
+  margin: 0;
+  padding: 2px;
+}
+
+.ContextContent,
+.NarrativeContent {
+  flex: none;
+  display: flex;
+  overflow: auto;
+  margin: 0;
+  padding: 3pt 0;
+}
+
+.ContextContent {
+  flex-flow: row wrap;
+}
+.NarrativeContent {
+  flex-flow: column wrap;
+}
+
+.FeatNarreme {
+  flex: none;
+  padding: 0;
+  margin: 1px 3pt;
+  display: inline-flex;
+  flex-flow: row wrap;
+}
+
+.FeatName,
+.Narreme {
+  overflow: auto;
+  display: inline;
+
+  padding: 3pt;
+
+  min-width: 6pt;
+  min-height: 6pt;
+}
+
+.FeatName {
+  max-width: 120pt;
+  max-height: 60pt;
+
+  background-color: #cdcd3b;
+}
+
+.Narreme {
+  max-width: 50vw;
+  max-height: 30vw;
+
+  background-color: #a6a62d;
+}
+
+.Narreme ul,
+.Narreme ol,
+.Narreme li {
+  margin: 0;
+  padding: 2px;
+}
+
+.NarrationContent::-webkit-scrollbar,
+.NarrativeContent::-webkit-scrollbar,
+.FeatName::-webkit-scrollbar,
+.Narreme::-webkit-scrollbar {
+  background-color: #c2c236;
+}
+
+.NarrationContent::-webkit-scrollbar-track,
+.NarrativeContent::-webkit-scrollbar-track,
+.FeatName::-webkit-scrollbar-track,
+.Narreme::-webkit-scrollbar-track {
+  background-color: #c2c236;
+}
+
+.NarrationContent::-webkit-scrollbar-corner,
+.NarrativeContent::-webkit-scrollbar-corner,
+.FeatName::-webkit-scrollbar-corner,
+.Narreme::-webkit-scrollbar-corner {
+  background-color: #c2c236;
+}
+
+.NarrationContent::-webkit-scrollbar-thumb,
+.NarrativeContent::-webkit-scrollbar-thumb,
+.FeatName::-webkit-scrollbar-thumb,
+.Narreme::-webkit-scrollbar-thumb {
+  background-color: #b7b735;
+}
+
+.NarrationContent::-webkit-scrollbar-button,
+.NarrativeContent::-webkit-scrollbar-button,
+.FeatName::-webkit-scrollbar-button,
+.Narreme::-webkit-scrollbar-button {
+  background-color: #b7b735;
+}

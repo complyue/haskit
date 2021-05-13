@@ -43,52 +43,62 @@ for () from plot( 'demoPlotGroup1' ) do {
       x= x, sin= ySin, cos= yCos,
     )
 
-    perform postJsCode( js!expr {
-        const f1 = plt.figure( {
-            title: 'SIN Figure',
-            toolbar_location: 'left',
-            sizing_mode: 'stretch_both',
-        } )
-        f1.line( {
-            source: {$ ds $},
-            x: { field: 'x' },
-            y: { field: 'sin' },
-            color: '#1122cc',
-            alpha: 0.7,
-            legend: 'SIN Curve',
-        } )
-        syncRange( f1.x_range, {$ sharedX $} )
-        syncRange( f1.y_range, {$ sharedY $} )
+    perform postJsCode( js!expr (async()=>{
 
-        const f2 = plt.figure( {
-            title: 'COS Figure',
-            toolbar_location: 'right',
-            sizing_mode: 'stretch_both',
-        } )
-        f2.line( {
-            source: {$ ds $},
-            x: { field: 'x' },
-            y: { field: 'cos' },
-            color: '#11cc22',
-            alpha: 0.7,
-            legend: 'COS Curve',
-        } )
-        {$snippet$ 'for ( let g of f2.select( bkh.Legend ) )' $} {
-          g.location = 'top_left'
-          g.click_policy = 'hide'
-          g.background_fill_alpha = 0.6
-        }
-        syncRange( f2.x_range, {$ sharedX $} )
-        syncRange( f2.y_range, {$ sharedY $} )
-
-        const plotView = plt.show( plt.gridplot(
-            [ [ f1 ], [ f2 ] ], {
-              merge_tools: false,
+          const f1 = plt.figure( { name: 'sin_curve',
+              title: 'SIN Figure',
+              toolbar_location: 'left',
               sizing_mode: 'stretch_both',
-          } ), document.body )
-        debugger;
+          } )
+          f1.line( {
+              source: {$ ds $},
+              x: { field: 'x' },
+              y: { field: 'sin' },
+              color: '#1122cc',
+              alpha: 0.7,
+              legend: 'SIN Curve',
+          } )
+          syncRange( f1.x_range, {$ sharedX $} )
+          syncRange( f1.y_range, {$ sharedY $} )
 
-    } )
+          const f2 = plt.figure( { name: 'cos_curve',
+              title: 'COS Figure',
+              toolbar_location: 'right',
+              sizing_mode: 'stretch_both',
+          } )
+          f2.line( {
+              source: {$ ds $},
+              x: { field: 'x' },
+              y: { field: 'cos' },
+              color: '#11cc22',
+              alpha: 0.7,
+              legend: 'COS Curve',
+          } )
+          {$snippet$ 'for ( let g of f2.select( bkh.Legend ) )' $} {
+            g.location = 'top_left'
+            g.click_policy = 'hide'
+            g.background_fill_alpha = 0.6
+          }
+          syncRange( f2.x_range, {$ sharedX $} )
+          syncRange( f2.y_range, {$ sharedY $} )
+
+          const plotView = await plt.show( plt.gridplot(
+              [ [ f1 ], [ f2 ] ], {
+                merge_tools: false,
+                sizing_mode: 'stretch_both',
+            } ), document.body )
+
+          window.figView = findViewByModelName( 'sin_curve' )( plotView );
+          window.evtElem = figView.canvas_view.events_el;
+          window.xscale = figView.frame.xscales.default;
+          evtElem.addEventListener( 'mousemove', me=>{
+              const { left } = me.target.getBoundingClientRect();
+              const sx = me.clientX - left;
+              const dx = xscale.invert(sx);
+
+          });
+
+      })() )
 
   }
 

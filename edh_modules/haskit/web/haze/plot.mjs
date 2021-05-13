@@ -4,6 +4,17 @@
 
 import { Lander, McClient } from "nedh";
 
+export function findViewByModelName(name) {
+  return function findNamedView(view) {
+    if (view.model && view.model.name == name) return view;
+    for (const child of view.child_views || []) {
+      const v = findNamedView(child);
+      if (v !== null) return v;
+    }
+    return null;
+  };
+}
+
 /**
  * Synchronize the specified Boken range with the rest of all such ranges,
  * those associated with the same global axis name.

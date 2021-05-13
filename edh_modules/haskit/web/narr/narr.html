@@ -9,6 +9,8 @@
   <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
 
+  <link rel="stylesheet" type="text/css" href="/narr/narr.css" />
+
   <!-- this requires Chrome, with flag `Experimental Productivity Features`
        enabled for the time being 2020/10
     -->
@@ -30,8 +32,6 @@
     document.title = window.name;
   </script>
 
-  <script type="module" src="./narr.mjs"></script>
-
   <!-- be the last to assume highest precedence, 
     as mui/Bokeh are not dark theme aware -->
   <style type="text/css">
@@ -49,5 +49,7 @@
 </head>
 
 <body>
-  <!-- the narrator UI here -->
+  <div class="Narrator"></div>
+
+  <script type="module" src="./narr.mjs"></script>
 </body>
