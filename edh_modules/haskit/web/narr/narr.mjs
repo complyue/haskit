@@ -95,7 +95,8 @@ export class Storyline {
   </div>
 </div>
 `)
-    const divContent = $("<div/>", { class: "NarrationContent", }).appendTo(this.div)
+    const divContent =
+      $("<div/>", { class: "NarrationContent", }).appendTo(this.div)
     this.featureNarremes = {}
     for (const i = 0; i < featureKeys.length; i++) {
       const featKey = featureKeys[i], featName = featureNames[i]
@@ -122,4 +123,4 @@ export class Storyline {
   }
 }
 
-export const narrator = Narrator()
+export const narrator = new Narrator()

@@ -40,24 +40,9 @@
   display: flex;
   flex-flow: column;
   overflow: auto;
+  max-height: 50vh;
   margin: 0;
   padding: 2px;
-}
-
-.ContextContent,
-.NarrativeContent {
-  flex: none;
-  display: flex;
-  overflow: auto;
-  margin: 0;
-  padding: 3pt 0;
-}
-
-.ContextContent {
-  flex-flow: row wrap;
-}
-.NarrativeContent {
-  flex-flow: column wrap;
 }
 
 .FeatNarreme {
@@ -101,35 +86,30 @@
 }
 
 .NarrationContent::-webkit-scrollbar,
-.NarrativeContent::-webkit-scrollbar,
 .FeatName::-webkit-scrollbar,
 .Narreme::-webkit-scrollbar {
   background-color: #c2c236;
 }
 
 .NarrationContent::-webkit-scrollbar-track,
-.NarrativeContent::-webkit-scrollbar-track,
 .FeatName::-webkit-scrollbar-track,
 .Narreme::-webkit-scrollbar-track {
   background-color: #c2c236;
 }
 
 .NarrationContent::-webkit-scrollbar-corner,
-.NarrativeContent::-webkit-scrollbar-corner,
 .FeatName::-webkit-scrollbar-corner,
 .Narreme::-webkit-scrollbar-corner {
   background-color: #c2c236;
 }
 
 .NarrationContent::-webkit-scrollbar-thumb,
-.NarrativeContent::-webkit-scrollbar-thumb,
 .FeatName::-webkit-scrollbar-thumb,
 .Narreme::-webkit-scrollbar-thumb {
   background-color: #b7b735;
 }
 
 .NarrationContent::-webkit-scrollbar-button,
-.NarrativeContent::-webkit-scrollbar-button,
 .FeatName::-webkit-scrollbar-button,
 .Narreme::-webkit-scrollbar-button {
   background-color: #b7b735;
