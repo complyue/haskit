@@ -88,6 +88,7 @@ export const mcc2Root = new McClient(
   }
 )
 
+
 export class Narrator {
   constructor() {
     this.div = $(document.body).find(".Narrator")
@@ -124,7 +125,7 @@ export class Storyline {
     const divContent =
       $("<div/>", { class: "NarrationContent", }).appendTo(this.div)
     this.featureNarremes = {}
-    for (const i = 0; i < featureKeys.length; i++) {
+    for (let i = 0; i < featureKeys.length; i++) {
       const featKey = featureKeys[i], featName = featureNames[i]
       const divFeat = $("<div/>", { class: "FeatNarreme" })
       $("<div/>", { class: "FeatName" }).text(featName).appendTo(divFeat)

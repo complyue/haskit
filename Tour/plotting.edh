@@ -88,26 +88,34 @@ for () from plot( 'demoPlotGroup1' ) do {
           announceFocus(cosView, {$focusedFigure$})
           announceAxisCursor(cosView, defaultXScale, {$focusedX$})
 
-      })() )
+    })())
 
   }
 
   for () from perform narrWindow( 'demoNarrWin1' ) do {
     perform postJsCode( js!expr (async()=>{
 
+          const story = narrator.addStoryLine(
+            'demoStory1', 'Demo for sin/cos values',
+            [ 'ffigName', 'shownRng', 'x', ],
+            [ 'Observing Function', 'Observing Range', 'X', ],
+          )
+
+
           onViewRangeChange({$sharedX$}, (start, end)=>{
-              console.log( 'Viewing X range: ' + start + ' ~ ' + end )
+              story.updateNarremes({ shownRng:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
 
           onViewFocusChange({$focusedFigure$}, (figName)=>{
-              console.log( 'Pointing at figure: ' + figName)
+              story.updateNarremes({ffigName: figName})
           })
 
           onAxisCursorChange({$focusedX$},(x)=>{
-              console.log( 'Read X= ' + x )
+              story.updateNarremes({x: x})
           })
 
-      })() )
+    })())
   }
 
 }
