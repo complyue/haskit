@@ -4,6 +4,32 @@
 
 import { Lander, McClient } from "nedh"
 
+
+export function onViewRangeChange(vrName, onViewRangeChanged,) {
+  const ch = new BroadcastChannel(vrName)
+  ch.onmessage = function (me) {
+    const [start, end] = me.data
+    onViewRangeChanged(start, end)
+  }
+}
+
+
+export function onAxisCursorChange(acName, onAxisCursorChanged,) {
+  const ch = new BroadcastChannel(acName)
+  ch.onmessage = function (me) {
+    onAxisCursorChanged(me.data)
+  }
+}
+
+
+export function onViewFocusChange(vfName, onViewFocusChanged,) {
+  const ch = new BroadcastChannel(vfName)
+  ch.onmessage = function (me) {
+    onViewFocusChanged(me.data)
+  }
+}
+
+
 // lander with this module scope as environment
 class NarrLander extends Lander {
   async landingThread() {

@@ -31,27 +31,41 @@ outer most curly braces are being interpreted as markers of a block of code in j
 
   # intermediate data for the plot group
   namespace pgData( pgid= pgid, ) {
-    naxes = 0
+    nViewRanges = 0
+    nViewFocuses = 0
+    nAxisCursors = 0
   }
 
-  effect method defineAxis( axisName= 'axis' ) {
-    # use a shared counter to ensure uniqueness per axis definition
-    axisNum = ai pgData.naxes+=1
-    return axisName ++ '#' ++ axisNum ++ '@' ++ pgid
+  effect method defineViewRange( vrName= 'view-range' ) {
+    # use a shared counter to ensure uniqueness per view-range definition
+    vrNum = ai pgData.nViewRanges+=1
+    return vrName ++ '#' ++ vrNum ++ '@' ++ pgid
+  }
+
+  effect method defineViewFocus( vfName= 'view-focus' ) {
+    # use a shared counter to ensure uniqueness per view-focus definition
+    vfNum = ai pgData.nViewFocuses+=1
+    return vfName ++ '#' ++ vfNum ++ '@' ++ pgid
+  }
+
+  effect method defineAxisCursor( acName= 'axis-cursor' ) {
+    # use a shared counter to ensure uniqueness per axis-cursor definition
+    acNum = ai pgData.nAxisCursors+=1
+    return acName ++ '#' ++ acNum ++ '@' ++ pgid
   }
 
   for hskiPeer from perform @haskItServer.clients() do {
 
     {##
-Open the client narrator window identified by `narrid`, vend effectful API to setup narrations in it
+Open the client narrator window identified by `pnid`, vend effectful API to setup narrations in it
      #}
-    effect generator narrWindow( narrid ) {
+    effect generator narrWindow( pnid ) {
       # open the specified narr window from this root client window, establish the comm channel to it
       narrChannel = str( UUID() )
       narrSink = hskiPeer.armChannel( narrChannel )
       for ack from ( outlet= narrSink ) | () =>* {
         hskiPeer.postCommand( js!expr {
-            void openNarrWindow( {$ pgid $}, {$ narrid $}, {$ narrChannel $} )
+            void openNarrWindow( {$ pgid $}, {$ pnid $}, {$ narrChannel $} )
         } )
       } do {
         if ack is not 'narr-win-open'

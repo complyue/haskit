@@ -13,17 +13,6 @@ effect import * 'dim/effects'
 
 
 # %%
-
-for () from plot( 'demoPlotGroup0' ) do {
-  for () from perform narrWindow( 'demoNarrWin1' ) do {
-    perform postJsCode( js!expr {
-        console.log( 'xxx')
-    })
-  }
-}
-
-
-# %%
 nPoints = 500
 nPhases = 8
 x = arange( nPoints, dtype=f8 ) * nPhases / ( nPoints-1 )
@@ -35,8 +24,11 @@ yCos = cos( xv )
 # %%
 
 for () from plot( 'demoPlotGroup1' ) do {
-  sharedX = perform defineAxis( 'x' )
-  sharedY = perform defineAxis( 'y' )
+  sharedX = perform defineViewRange( 'x' )
+  sharedY = perform defineViewRange( 'y' )
+
+  focusedFigure = perform defineViewFocus( 'focusedFigure' )
+  focusedX = perform defineAxisCursor( 'focusedX' )
 
   for () from perform plotWindow( 'demoPlotWin1' ) do {
     ds = perform defineDataSource(
@@ -88,18 +80,34 @@ for () from plot( 'demoPlotGroup1' ) do {
                 sizing_mode: 'stretch_both',
             } ), document.body )
 
-          window.figView = findViewByModelName( 'sin_curve' )( plotView );
-          window.evtElem = figView.canvas_view.events_el;
-          window.xscale = figView.frame.xscales.default;
-          evtElem.addEventListener( 'mousemove', me=>{
-              const { left } = me.target.getBoundingClientRect();
-              const sx = me.clientX - left;
-              const dx = xscale.invert(sx);
+          const sinView = findViewByModelName( 'sin_curve' )( plotView )
+          announceFocus(sinView, {$focusedFigure$})
+          announceAxisCursor(sinView, defaultXScale, {$focusedX$})
 
-          });
+          const cosView = findViewByModelName( 'cos_curve' )( plotView )
+          announceFocus(cosView, {$focusedFigure$})
+          announceAxisCursor(cosView, defaultXScale, {$focusedX$})
 
       })() )
 
+  }
+
+  for () from perform narrWindow( 'demoNarrWin1' ) do {
+    perform postJsCode( js!expr (async()=>{
+
+          onViewRangeChange({$sharedX$}, (start, end)=>{
+              console.log( 'Viewing X range: ' + start + ' ~ ' + end )
+          })
+
+          onViewFocusChange({$focusedFigure$}, (figName)=>{
+              console.log( 'Pointing at figure: ' + figName)
+          })
+
+          onAxisCursorChange({$focusedX$},(x)=>{
+              console.log( 'Read X= ' + x )
+          })
+
+      })() )
   }
 
 }
