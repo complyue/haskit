@@ -17,7 +17,8 @@ export function onViewRangeChange(vrName, onViewRangeChanged,) {
 export function onAxisCursorChange(acName, onAxisCursorChanged,) {
   const ch = new BroadcastChannel(acName)
   ch.onmessage = function (me) {
-    onAxisCursorChanged(me.data)
+    const [x, y] = me.data
+    onAxisCursorChanged(x, y)
   }
 }
 
@@ -137,9 +138,9 @@ export class Storyline {
   }
 
   focus() {
-    // move this storyline to the top
-    this.div.parent().prepend(this.div)
-    // todo, hide or fade other storylines?
+    this.div.parent().children().removeClass('Focus')
+    this.div.addClass('Focus')
+    this.div.each(function () { this.scrollIntoView() })
   }
 
   updateNarremes(narremeTexts) {

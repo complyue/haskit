@@ -71,19 +71,19 @@ export function announceFocus(figView, vfName, focusName,) {
 }
 
 
-export function defaultXScale(frame) {
-  return frame.xscales.default
+export function defaultScale(frame) {
+  return [frame.xscales.default, frame.yscales.default]
 }
 
 export function announceAxisCursor(figView, scaleGetter, acName,) {
   const evtElem = figView.canvas_view.events_el
-  const scale = scaleGetter(figView.frame)
+  const [xscale, yscale] = scaleGetter(figView.frame)
   const ch = new BroadcastChannel(acName)
   evtElem.addEventListener('mousemove', me => {
-    const { left } = me.target.getBoundingClientRect()
-    const sx = me.clientX - left
-    const dx = scale.invert(sx)
-    ch.postMessage(dx)
+    const { left, top } = me.target.getBoundingClientRect()
+    const sx = me.clientX - left, dx = xscale.invert(sx)
+    const sy = me.clientY - top, dy = yscale.invert(sy)
+    ch.postMessage([dx, dy])
   })
 }
 

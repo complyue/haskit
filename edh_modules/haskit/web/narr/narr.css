@@ -16,6 +16,11 @@
   flex-flow: column nowrap;
   margin: 2pt;
   padding: 0;
+  border: solid 1px #e3e340;
+}
+.Focus {
+  border: solid 1px #777777;
+  box-shadow: 0 0 2px 2px #8b8b27;
 }
 
 .NarratorTitleBar {
