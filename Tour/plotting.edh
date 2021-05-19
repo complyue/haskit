@@ -145,7 +145,7 @@ for () from plot( 'demoPlotGroup1' ) do {
                   start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
           onAxisCursorChange({$sinCursorPoint$},(x,y)=>{
-              storySin.updateNarremes({ x: x, y: y, v: Math.sin(x), })
+              storySin.updateNarremes({ x: x, y: y, v: Math.sin(x*Math.PI), })
           })
 
 
@@ -159,7 +159,7 @@ for () from plot( 'demoPlotGroup1' ) do {
                   start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
           onAxisCursorChange({$cosCursorPoint$},(x, y)=>{
-              storyCos.updateNarremes({ x: x, y: y, v: Math.cos(x), })
+              storyCos.updateNarremes({ x: x, y: y, v: Math.cos(x*Math.PI), })
           })
 
 
