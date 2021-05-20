@@ -43,11 +43,15 @@
 .NarrationContent {
   flex: 1 1 auto;
   display: flex;
-  flex-flow: column;
+  flex-flow: column wrap;
   overflow: auto;
-  max-height: 50vh;
   margin: 0;
   padding: 2px;
+
+  overflow: auto;
+  height: 20em;
+  max-height: 90vh;
+  resize: vertical;
 }
 
 .FeatNarreme {
