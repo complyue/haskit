@@ -17,6 +17,8 @@ import * 'haskit'
 # line should have no technical effect but to hint an IDE for code
 # completion etc.
 peer ?= Peer()
+# Per WebScocket connection, `reqPath` should also has been implanted
+reqPath ?= '/'
 
 console.debug<| 'WebSocket client connected - ' ++ peer
 defer {
