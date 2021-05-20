@@ -5,6 +5,7 @@ export {
   symbol @haskItPeer
 }
 
+
 export class HaskItServer {
 
   # a stack of overlayed edh modules providing web resources
@@ -23,14 +24,13 @@ export class HaskItServer {
   URL_ROUTES = ()
 
 
-  generator clients() for (wsPeer, _) from this.activeClients do {
+  generator clientsOn(path) for (wsPeer, wsCtx) from this.activeClients do {
     wsPeer ?= Peer()
-    if wsPeer.eol() then {
-      this.activeClients[wsPeer] = nil
-      continue
+    ;| wsPeer.eol() -> this.activeClients[wsPeer] = nil
+    case wsCtx of {( reqPath:svcScope )} | reqPath == path -> {
+      effect @haskItPeer = wsPeer
+      yield (wsPeer, svcScope)
     }
-    effect @haskItPeer = wsPeer
-    yield wsPeer
   }
 
 
@@ -43,10 +43,6 @@ export class HaskItServer {
 
     # collection of active ws peers
     this.activeClients = {}
-    wsClients = sink.subseq # don't have the last peer to linger in the sink
-    go for wsPeer from wsClients do {
-      this.activeClients[wsPeer] = true
-    }
 
     this.ws = WsServer(
       that.WS_MODULE, netInterface, wsPort,
@@ -54,7 +50,6 @@ export class HaskItServer {
       init= modu => {
         modu.@haskItServer = this
       },
-      clients= wsClients,
     )
     case this.ws.addrs() of {
       { wsAddr :> _extraWsAddrs } -> {

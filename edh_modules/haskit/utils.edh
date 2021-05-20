@@ -1,0 +1,10 @@
+
+{## Helper for a piece of literal source text to be interpolated into an expression #}
+export class snippet {
+  method __init__(src) this.__repr__ = str(src)
+}
+
+{## Helper for a series of literal source text to be interpolated into an expression #}
+export class snippets {
+  method __init__(srcs) this.__repr__ = join(*srcs, sep='\n\n')
+}

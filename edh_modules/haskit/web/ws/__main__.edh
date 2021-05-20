@@ -13,16 +13,20 @@ effect import * 'net/effects'
 import * 'haskit'
 
 
-# a Peer object should have been implanted atomically, the following
-# line should have no technical effect but to hint an IDE for code
-# completion etc.
-peer ?= Peer()
-# Per WebScocket connection, `reqPath` should also has been implanted
-reqPath ?= '/'
+if false then { # hint the assumed environment
 
-console.debug<| 'WebSocket client connected - ' ++ peer
+  # a Peer object representing the ws connection should have been implanted
+  peer ?= Peer()
+
+  # reqPath should have been implanted as well, reflecting ws request path
+  reqPath ?= '/'
+}
+
+console.debug<| 'WebSocket client connected - [' ++ reqPath ++ '] ' ++ peer
+; @haskItServer.activeClients[peer] = reqPath:scope()
 defer {
-  console.debug<| 'Disconnecting ws client ' ++ peer
+  console.debug<| 'Disconnecting ws client - [' ++ reqPath ++ '] ' ++ peer
+  ; @haskItServer.activeClients[peer] = nil
 }
 
 # define various effectful artifacts used for communication with this

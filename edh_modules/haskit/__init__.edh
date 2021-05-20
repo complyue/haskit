@@ -4,4 +4,6 @@ export {
   import * './web'
   import * './plot'
 
+  import * './utils'
+
 }
