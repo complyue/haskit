@@ -63,7 +63,7 @@ Open the client narrator window identified by `pnid`, vend effectful API to setu
       # open the specified narr window from this root client window, establish the comm channel to it
       narrChannel = str( UUID() )
       narrSink = hskiPeer.armChannel( narrChannel )
-      for ack from ( outlet= narrSink ) | () =>* {
+      for ack from (outlet= narrSink )|() =>* {
         hskiPeer.postCommand( js!expr {
             void openNarrWindow( {$ pgid $}, {$ pnid $}, {$ narrChannel $} )
         } )
@@ -94,7 +94,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
       # open the specified plot window from this root client window, establish the comm channel to it
       plotChannel = str( UUID() )
       plotSink = hskiPeer.armChannel( plotChannel )
-      for ack from ( outlet= plotSink ) | () =>* {
+      for ack from (outlet= plotSink )|() =>* {
         hskiPeer.postCommand( js!expr {
             void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
         } )

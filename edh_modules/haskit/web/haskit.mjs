@@ -2,21 +2,21 @@
  * main module of HaskIt root page
  */
 
-import { Lander, WsPeer } from "nedh";
+import { Lander, WsPeer } from "nedh"
 
-import { hasLogBox, uiLog, clearLog } from "/log.mjs";
+import { hasLogBox, uiLog, clearLog } from "/log.mjs"
 
-import { setupPlotRelay } from "/haze/plot-relay.mjs";
-import { setupNarrRelay } from "/narr/narr-relay.mjs";
+import { setupPlotRelay } from "/haze/plot-relay.mjs"
+import { setupNarrRelay } from "/narr/narr-relay.mjs"
 
 $("button[name=clear-log]").on("click", () => {
-  clearLog();
-});
+  clearLog()
+})
 
 async function getWsUrl() {
-  let wsPort = await $.get("/:");
+  let wsPort = await $.get("/:")
   // todo use wss:// when appropriate
-  return "ws://" + location.hostname + ":" + wsPort;
+  return "ws://" + location.hostname + ":" + wsPort
 }
 
 class HaskItLander extends Lander {
@@ -31,27 +31,27 @@ class HaskItLander extends Lander {
     //     and nasty) hacks can be put right here, but god forbid it.
 
     if (null === this.nxt) {
-      throw Error("Passed end-of-stream for packets");
+      throw Error("Passed end-of-stream for packets")
     }
     while (true) {
-      const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt;
-      const [_src, _nxt] = await _intake;
-      this.nxt = _nxt;
+      const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt
+      const [_src, _nxt] = await _intake
+      this.nxt = _nxt
       if (null === _src) {
         if (null !== _nxt) {
-          throw Error("bug: inconsistent eos signal");
+          throw Error("bug: inconsistent eos signal")
         }
-        return; // reached end-of-stream, terminate this thread
+        return // reached end-of-stream, terminate this thread
       }
       if (null === _nxt) {
-        throw Error("bug: null nxt for non-eos-packet");
+        throw Error("bug: null nxt for non-eos-packet")
       }
 
       // land one packet
       try {
-        _resolve(await eval(_src));
+        _resolve(await eval(_src))
       } catch (exc) {
-        _reject(exc);
+        _reject(exc)
       }
     }
   }
@@ -59,51 +59,51 @@ class HaskItLander extends Lander {
 
 class HaskItPeer extends WsPeer {
   async handleError(err, errDetails) {
-    console.error("Unexpected WS error: ", err, errDetails);
-    debugger;
-    if (hasLogBox()) uiLog(err, "err-msg", errDetails);
+    console.error("Unexpected WS error: ", err, errDetails)
+    debugger
+    if (hasLogBox()) uiLog(err, "err-msg", errDetails)
   }
   cleanup() {
-    super.cleanup();
-    uiLog("Lost connection with HaskIt backend.");
+    super.cleanup()
+    uiLog("Lost connection with HaskIt backend.")
   }
 }
 
-let _livePeer = null;
+let _livePeer = null
 
 // this provides effective current peer object to the source of a command
 // being eval'ed during landing of the command
 export function currPeer() {
-  return _livePeer;
+  return _livePeer
 }
 
 export default async function livePeer() {
-  const wsUrl = await getWsUrl();
+  const wsUrl = await getWsUrl()
   switch (_livePeer ? _livePeer.ws.readyState : WebSocket.CLOSED) {
     case WebSocket.OPEN:
-      return _livePeer; // already established
+      return _livePeer // already established
     case WebSocket.CONNECTING:
-      break; // connecting inprogress
+      break // connecting inprogress
     default:
-      uiLog("Dialing HaskIt backend ...");
+      uiLog("Dialing HaskIt backend ...")
       // to establish new WebSocket connection with Nedh semantics
-      _livePeer = new HaskItPeer(wsUrl, new HaskItLander());
+      _livePeer = new HaskItPeer(wsUrl, new HaskItLander())
   }
   // wait until really connected, as well as get connection error if any
-  await _livePeer.opened;
+  await _livePeer.opened
   // certainly it's connected for the time being
-  return _livePeer;
+  return _livePeer
 }
 
 $(async function () {
   try {
-    await livePeer();
-    uiLog("Connected with HaskIt backend.");
+    await livePeer()
+    uiLog("Connected with HaskIt backend.")
   } catch (err) {
-    let details = err ? err.stack : err;
-    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details);
+    let details = err ? err.stack : err
+    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
   }
-});
+})
 
-export const openPlotWindow = setupPlotRelay(currPeer);
-export const openNarrWindow = setupNarrRelay(currPeer);
+export const openPlotWindow = setupPlotRelay(currPeer)
+export const openNarrWindow = setupNarrRelay(currPeer)
