@@ -6,7 +6,7 @@
  * HaskIt web client's root window.
  */
 
-import { Lander, McServer } from "nedh";
+import { Lander, McServer } from "nedh"
 
 export function setupNarrRelay(hskiCurrPeer) {
   class NarrRelayLander extends Lander {
@@ -21,27 +21,27 @@ export function setupNarrRelay(hskiCurrPeer) {
       //     and nasty) hacks can be put right here, but god forbid it.
 
       if (null === this.nxt) {
-        throw Error("Passed end-of-stream for packets");
+        throw Error("Passed end-of-stream for packets")
       }
       while (true) {
-        const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt;
-        const [_src, _nxt] = await _intake;
-        this.nxt = _nxt;
+        const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt
+        const [_src, _nxt] = await _intake
+        this.nxt = _nxt
         if (null === _src) {
           if (null !== _nxt) {
-            throw Error("bug: inconsistent eos signal");
+            throw Error("bug: inconsistent eos signal")
           }
-          return; // reached end-of-stream, terminate this thread
+          return // reached end-of-stream, terminate this thread
         }
         if (null === _nxt) {
-          throw Error("bug: null nxt for non-eos-packet");
+          throw Error("bug: null nxt for non-eos-packet")
         }
 
         // land one packet
         try {
-          _resolve(await eval(_src));
+          _resolve(await eval(_src))
         } catch (exc) {
-          _reject(exc);
+          _reject(exc)
         }
       }
     }
@@ -53,37 +53,37 @@ export function setupNarrRelay(hskiCurrPeer) {
     window,
     "narr",
     () => new NarrRelayLander(),
-    ({ narrChannel }, mcPeer) => {
-      const wsPeer = hskiCurrPeer();
-      const chIncoming = wsPeer.armChannel(narrChannel);
-      const chOutgoing = mcPeer.armChannel(narrChannel);
+    async ({ narrChannel }, mcPeer) => {
+      const wsPeer = await hskiCurrPeer()
+      const chIncoming = wsPeer.armChannel(narrChannel)
+      const chOutgoing = mcPeer.armChannel(narrChannel)
 
       const incomingReady = new Promise(async (resolveIncoming, _) => {
         // spawn the [ hskiServer => narrWin ] cmd pump
-        let chLctr = null;
+        let chLctr = null
         for await (const cmdPayload of chIncoming.runProducer(async () =>
           resolveIncoming(true)
         )) {
-          const dir = chLctr;
-          chLctr = null;
+          const dir = chLctr
+          chLctr = null
           if (null !== dir) {
-            mcPeer.p2c(dir, cmdPayload);
-            continue;
+            mcPeer.p2c(dir, cmdPayload)
+            continue
           }
 
           if (null === cmdPayload) {
-            debugger;
-            throw Error("bad usage: hski server posted null packet");
+            debugger
+            throw Error("bad usage: hski server posted null packet")
           }
-          const { nextDir, narrCmd } = cmdPayload;
+          const { nextDir, narrCmd } = cmdPayload
           if (undefined !== nextDir) {
-            chLctr = nextDir;
+            chLctr = nextDir
           }
           if (undefined !== narrCmd) {
-            mcPeer.postCommand(narrCmd);
+            mcPeer.postCommand(narrCmd)
           }
         }
-      });
+      })
 
       const outgoingReady = new Promise(async (resolveOutgoing, _) => {
         // spawn the [ narrWin => hskiServer ] cmd pump
@@ -93,23 +93,23 @@ export function setupNarrRelay(hskiCurrPeer) {
           const cmdOut =
             "string" === typeof cmdPayload
               ? JSON.stringify(cmdPayload)
-              : cmdPayload;
-          wsPeer.p2c(narrChannel, cmdOut);
+              : cmdPayload
+          wsPeer.p2c(narrChannel, cmdOut)
         }
-      });
+      })
 
-      (async () => {
-        await incomingReady;
-        await outgoingReady;
-        // act to hski server that the window is open now
-        wsPeer.p2c(narrChannel, '"narr-win-open"');
-      })().catch(console.error);
+        ; (async () => {
+          await incomingReady
+          await outgoingReady
+          // act to hski server that the window is open now
+          wsPeer.p2c(narrChannel, '"narr-win-open"')
+        })().catch(console.error)
     }
-  );
+  )
 
   return function openNarrWindow(pgid, narrid, narrChannel) {
-    const winName = "narr#" + pgid + "/" + narrid; // + "@" + narrChannel;
-    window.open("/narr/narr.html?" + narrChannel, winName);
-    return winName;
-  };
+    const winName = "narr#" + pgid + "/" + narrid // + "@" + narrChannel
+    window.open("/narr/narr.html?" + narrChannel, winName)
+    return winName
+  }
 }

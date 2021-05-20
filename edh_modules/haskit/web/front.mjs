@@ -2,24 +2,15 @@
  * main module of HaskIt root page
  */
 
-import { Lander, WsPeer } from "nedh"
+import { Lander, } from "nedh"
 
-import { hasLogBox, uiLog, clearLog } from "/log.mjs"
+import { HaskItConn, uiLog, clearLog, } from "haskit"
 
 import { setupPlotRelay } from "/haze/plot-relay.mjs"
 import { setupNarrRelay } from "/narr/narr-relay.mjs"
 
-$("button[name=clear-log]").on("click", () => {
-  clearLog()
-})
 
-async function getWsUrl() {
-  let wsPort = await $.get("/:")
-  // todo use wss:// when appropriate
-  return "ws://" + location.hostname + ":" + wsPort
-}
-
-class HaskItLander extends Lander {
+class FrontLander extends Lander {
   async landingThread() {
     // XXX a subclass of Lander normally overrides this method, with even
     //     verbatim copy of the method code here, it's already very useful,
@@ -57,53 +48,35 @@ class HaskItLander extends Lander {
   }
 }
 
-class HaskItPeer extends WsPeer {
-  async handleError(err, errDetails) {
-    console.error("Unexpected WS error: ", err, errDetails)
-    debugger
-    if (hasLogBox()) uiLog(err, "err-msg", errDetails)
-  }
-  cleanup() {
-    super.cleanup()
-    uiLog("Lost connection with HaskIt backend.")
+
+// The page wide haskit connection to server
+class FrontConn extends HaskItConn {
+  async createLander() {
+    return new FrontLander()
   }
 }
+const hskiPageConn = new FrontConn('')
 
-let _livePeer = null
 
 // this provides effective current peer object to the source of a command
 // being eval'ed during landing of the command
-export function currPeer() {
-  return _livePeer
-}
+const currPeer = () => hskiPageConn.livePeer()
+export const openPlotWindow = setupPlotRelay(currPeer)
+export const openNarrWindow = setupNarrRelay(currPeer)
 
-export default async function livePeer() {
-  const wsUrl = await getWsUrl()
-  switch (_livePeer ? _livePeer.ws.readyState : WebSocket.CLOSED) {
-    case WebSocket.OPEN:
-      return _livePeer // already established
-    case WebSocket.CONNECTING:
-      break // connecting inprogress
-    default:
-      uiLog("Dialing HaskIt backend ...")
-      // to establish new WebSocket connection with Nedh semantics
-      _livePeer = new HaskItPeer(wsUrl, new HaskItLander())
-  }
-  // wait until really connected, as well as get connection error if any
-  await _livePeer.opened
-  // certainly it's connected for the time being
-  return _livePeer
-}
+
+// page UI reactions
+
+$("button[name=clear-log]").on("click", () => {
+  clearLog()
+})
 
 $(async function () {
   try {
-    await livePeer()
+    await hskiPageConn.livePeer()
     uiLog("Connected with HaskIt backend.")
   } catch (err) {
     let details = err ? err.stack : err
     uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
   }
 })
-
-export const openPlotWindow = setupPlotRelay(currPeer)
-export const openNarrWindow = setupNarrRelay(currPeer)
