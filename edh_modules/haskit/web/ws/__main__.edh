@@ -18,16 +18,20 @@ if false then { # hint the assumed environment
   # a Peer object representing the ws connection should have been implanted
   peer ?= Peer()
 
-  # reqPath should have been implanted as well, reflecting ws request path
+  # reqPath & reqParams should have been implanted as well, reflecting ws request path and query parameters
   reqPath ?= '/'
+  reqParams ?= ( s= '<session-id>', )
+
+  # `@haskItServer` should have been implanted by per-connection peer module init method
+  ; @haskItServer ?= HaskItServer()
 }
 
 console.debug<| 'WebSocket client connected - [' ++ reqPath ++ '] ' ++ peer
-; @haskItServer.activeClients[peer] = reqPath:scope()
+; @haskItServer.registerWsClient()
 defer {
   console.debug<| 'Disconnecting ws client - [' ++ reqPath ++ '] ' ++ peer
-  ; @haskItServer.activeClients[peer] = nil
 }
+
 
 # define various effectful artifacts used for communication with this
 # connected consumer client session, with `@netPeer` and `@dataSink` the
@@ -40,9 +44,6 @@ effect {
   ; @dataSink = peer.armChannel( dataChan ?:= 'data' )
 }
 
-
-# `@haskItServer` should have been implanted by per-connection peer module init method
-; @haskItServer ?= HaskItServer()
 
 # HaskIt specific effectful artifacts for commands to be landed here
 effect {
@@ -61,6 +62,5 @@ effect {
   @}
 
 } $=> { exc } -> {
-  console.error<| 'Exception by ws client ' ++ peer
-  ++ ' error: ' ++ desc( exc )
+  console.error<| 'Exception by ws client ' ++ peer ++ ' error: ' ++ desc( exc )
 }

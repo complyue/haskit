@@ -24,13 +24,31 @@ export class HaskItServer {
   URL_ROUTES = ()
 
 
-  generator clientsOn(path) for (wsPeer, wsCtx) from this.activeClients do {
+  {## Enumerate all websocket clients connected to the specified path
+   #}
+  generator wsClientsOn( path ) case this._wsClients[path] of
+  # nil means no such path ever connected, we only care non-nil case
+  { clntsOnPath } -> for (wsPeer, wscScope) from clntsOnPath do {
     wsPeer ?= Peer()
-    ;| wsPeer.eol() -> this.activeClients[wsPeer] = nil
-    case wsCtx of {( reqPath:svcScope )} | reqPath == path -> {
-      effect @haskItPeer = wsPeer
-      yield (wsPeer, svcScope)
-    }
+    ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
+    effect @haskItPeer = wsPeer
+    yield (wsPeer, wscScope)
+  }
+
+  {## For a client facing service module to register the websocket connection it is handling
+
+This must be called from such a service module's module procedure, thus run on its connection handling thread.
+   #}
+  interpreter registerWsClient( wscScope ) {
+    # peer/reqPath/repParams ets. should have been implanted there
+    peer = wscScope.eval(expr peer)
+    reqPath = wscScope.eval(expr reqPath)
+    # prepare the dict by request path
+    clntsOnPath = this._wsClients[reqPath] |= {}
+    # cleanup on termination of the service module procedure thread
+    defer clntsOnPath[peer] = nil
+    # record it
+    clntsOnPath[peer] = wscScope
   }
 
 
@@ -41,8 +59,8 @@ export class HaskItServer {
     numAltPorts= 9,
   ) {
 
-    # collection of active ws peers
-    this.activeClients = {}
+    # collection of active websocket clients with their respecitive handling service module scope
+    this._wsClients = {}
 
     this.ws = WsServer(
       that.WS_MODULE, netInterface, wsPort,

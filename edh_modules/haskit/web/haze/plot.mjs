@@ -178,7 +178,7 @@ const plotData = {}
 // current figure during the run.
 // let fig = null
 
-function receiveDataSource(dsName, colNames, colDtypes) {
+export function receiveDataSource(dsName, colNames, colDtypes) {
   // arm a fresh new sink to receive the stream of column data
   const dataSink = mcc2Root.peer.armChannel("data")
 

@@ -44,7 +44,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
     return acName ++ '#' ++ acNum ++ '@' ++ pgid
   }
 
-  for hskiPeer from perform @haskItServer.clientsOn('/') do {
+  for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
 
     {##
 Open the client narrator window identified by `pnid`, vend effectful API to setup narrations in it

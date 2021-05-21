@@ -6,7 +6,7 @@ effect import * 'haskit/demo-server'
 
 
 # %%
-for (hskiPeer, svcScope) from perform @haskItServer.clientsOn('/') do {
+for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
   hskiPeer ?= Peer() # just to hint the IDE
 
   # we can construct some expression as for JavaScript source here, only if
@@ -31,7 +31,7 @@ for(let n of [3, 2, 5]) {
 # expression, we can call any function exposed there, we can access constants
 # and variables there. but note due to JavaScript strict evaluation, we can
 # not introduce new variables there (via var/let/const).
-for (hskiPeer, svcScope) from perform @haskItServer.clientsOn('/') do {
+for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
   hskiPeer ?= Peer() # just to hint the IDE
 
   hskiPeer.postCommand( js!expr
@@ -41,7 +41,7 @@ for (hskiPeer, svcScope) from perform @haskItServer.clientsOn('/') do {
 
 
 # %%
-for (hskiPeer, svcScope) from perform @haskItServer.clientsOn('/') do {
+for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
   hskiPeer ?= Peer() # just to hint the IDE
 
   hskiPeer.postCommand( js!expr
