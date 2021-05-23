@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<head>
+  <title>Microscope View</title>
+
+  <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
+
+  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="/haskit.css" />
+
+  <!-- this requires Chrome, with flag `Experimental Web Platform features`
+       enabled for the time being 2020/10
+    -->
+  <script type="importmap">
+    {
+      "imports": {
+        "edh": "/edh/index.js",
+        "nedh": "/nedh/index.js",
+        "haskit": "/haskit/index.js"
+      }
+    }
+  </script>
+
+  <script src="/vendor/jquery/jquery.js"></script>
+
+  <script src="/vendor/mui/mui.min.js"></script>
+
+  <!-- note: order of BokehJS imports does matter -->
+  <script src="/vendor/bokehjs/bokeh.js"></script>
+  <script src="/vendor/bokehjs/bokeh-widgets.js"></script>
+  <script src="/vendor/bokehjs/bokeh-tables.js"></script>
+  <script src="/vendor/bokehjs/bokeh-api.js"></script>
+
+  <!-- TODO Bokeh support of dark theme? -->
+  <script type="module">
+    // let bokeh be some verbose
+    Bokeh.set_log_level("info");
+    Bokeh.settings.dev = true;
+  </script>
+
+  <script type="module" src="./microscope.js"></script>
+
+  <!-- be the last to assume highest precedence, 
+    as mui/Bokeh are not dark theme aware -->
+  <style type="text/css">
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #000;
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+</body>
