@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "haskit",
+  "version": "0.1.0",
+  "description": "HaskIt",
+  "main": "index.js",
+  "author": "Compl Yue",
+  "license": "BSD-3-Clause"
+}

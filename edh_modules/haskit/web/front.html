@@ -10,18 +10,15 @@
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
 
-  <!-- this requires Chrome
-        Older version:
-          enable flag `Experimental Web Platform features`
-        Version 87+:
-          chrome://flags/#enable-experimental-web-platform-features
+  <!-- this requires Chrome, with flag `Experimental Web Platform features`
+       enabled for the time being 2020/10
     -->
   <script type="importmap">
     {
       "imports": {
-        "edh": "/edh/index.mjs",
-        "nedh": "/nedh/index.mjs",
-        "haskit": "/haskit/index.mjs"
+        "edh": "/edh/index.js",
+        "nedh": "/nedh/index.js",
+        "haskit": "/haskit/index.js"
       }
     }
   </script>
@@ -30,7 +27,7 @@
 
   <script src="/vendor/mui/mui.min.js"></script>
 
-  <script type="module" src="/front.mjs"></script>
+  <script type="module" src="/front.js"></script>
 </head>
 
 <body>
@@ -51,16 +48,11 @@
   </div>
 
   You need Chrome and
-  <a
-    href="about://flags/#enable-experimental-web-platform-features"
-    target="_blank"
-  >
+  <a href="about://flags/#enable-experimental-web-platform-features" target="_blank">
     Experimental Web Platform features
   </a>
   enabled.
   <br />
   It can not be opened directly, copy & paste to address bar:
-  <b style="font-family: monospace"
-    >about://flags/#enable-experimental-web-platform-features</b
-  >
+  <b style="font-family: monospace">about://flags/#enable-experimental-web-platform-features</b>
 </body>

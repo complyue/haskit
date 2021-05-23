@@ -2,16 +2,23 @@
  * logging functions directing messages to some box in UI
  */
 
-import { NaiveDate } from "./ts.mjs"
+import { NaiveDate } from "./ts.js"
 
-let logBox = $(".LogBox"),
+
+
+let logBox = null, logArea = null,
+  logAnimTask = null, lastAnimTime = 0
+
+if (globalThis.window === globalThis) { // in browser
+  logBox = $(".LogBox")
   logArea = logBox.closest(".LogArea")
-let lastAnimTime = 0,
-  logAnimTask = null
+}
+
 
 export function hasLogBox() {
-  return logBox.length > 0
+  return logBox && logBox.length > 0
 }
+
 
 export function uiLog(msg, type = "msg", details = undefined) {
   if (!hasLogBox()) {
@@ -62,8 +69,7 @@ export function uiLog(msg, type = "msg", details = undefined) {
   }
 }
 
-export function clearLog() {
-  logBox.empty()
-}
 
-export default uiLog
+export function clearLog() {
+  if (hasLogBox) logBox.empty()
+}

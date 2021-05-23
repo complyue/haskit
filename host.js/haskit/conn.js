@@ -4,7 +4,7 @@
 
 import { WsPeer, } from "nedh"
 
-import { hasLogBox, uiLog, } from "./log.mjs"
+import { hasLogBox, uiLog, } from "./log.js"
 
 
 export async function getWsBaseUrl() {
