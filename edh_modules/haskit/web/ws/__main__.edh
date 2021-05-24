@@ -26,11 +26,10 @@ if false then { # hint the assumed environment
   ; @haskItServer ?= HaskItServer()
 }
 
-console.debug<| 'WebSocket client connected - [' ++ reqPath ++ '] ' ++ peer
-; @haskItServer.registerWsClient()
 defer {
   console.debug<| 'Disconnecting ws client - [' ++ reqPath ++ '] ' ++ peer
 }
+console.debug<| 'WebSocket client connected - [' ++ reqPath ++ '] ' ++ peer
 
 
 # define various effectful artifacts used for communication with this
@@ -52,8 +51,8 @@ effect {
 }
 
 
-# keep landing commands from browser over WebSocket
-{
+if not @haskItServer.hookWsClient() then {
+  # keep landing commands from browser over WebSocket
 
   while peer.eol() is false case peer.readCommand() of {@
     { cmdVal } -> {

@@ -28,8 +28,9 @@ export class HaskItPeer extends WsPeer {
 
 
 export class HaskItConn {
-  constructor(path = '') {
-    this.path = path
+  constructor(path = '', params = null,) {
+    this.path = (path.startsWith('/') ? '' : '/') + path
+    this.params = null === params ? null : new URLSearchParams(params)
     this.url = null
     this.peer = null
   }
@@ -37,7 +38,10 @@ export class HaskItConn {
   async getUrl() {
     if (this.url === null) {
       const wsBaseUrl = await getWsBaseUrl()
-      this.url = wsBaseUrl + '/' + this.path
+      this.url = wsBaseUrl + this.path
+      if (null !== this.params) {
+        this.url += '?' + this.params
+      }
     }
     return this.url
   }
