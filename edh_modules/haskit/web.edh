@@ -68,7 +68,7 @@ This must be called from such a service module's module procedure, thus run on i
 The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` before return, after it returns `false`, the client will continue being served by `readCommand()` looping within the service module scope; if it returns `true`, the client will be disconnected immediately.
 
    #}
-  method mountServlet( servlet, path= '/' ++ str(UUID()), ) {
+  method mountServlet( servlet, path= '/' ++ UUID(), ) {
     if this._wsServlets[path] is not nil then {
       console.warn<| 'Replacing servlet: [' ++ path ++ ']'
     }

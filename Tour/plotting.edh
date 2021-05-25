@@ -1,7 +1,10 @@
 
 import * 'haskit'
 
-# %%
+effect import * 'haskit/demo-server'
+
+# above will be automatically imported by `hski`
+# %% # this importing cell may need manual execution
 
 # import hasdim this way so:
 #  *) all exported artifacts are directly available
