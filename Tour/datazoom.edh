@@ -1,0 +1,59 @@
+
+import * 'haskit'
+
+effect import * 'haskit/demo-server'
+
+# above will be automatically imported by `hski`
+# %% # this importing cell may need manual execution
+
+# import hasdim this way so:
+#  *) all exported artifacts are directly available
+#  *) all module level artifacts are available via `hd`
+#  *) monkey-patching to the module object is possible
+hd = { import * 'dim' }
+# import effectful support for dtypes etc.
+effect import * 'dim/effects'
+
+
+# %% #
+nPoints = 5000
+
+x = arange( nPoints, dtype=f8, ) / nPoints
+raw = random( nPoints, -0.499..0.501, dtype=f8, )
+
+
+# %% #
+y = cumsum(raw)
+
+
+# %%
+
+for () from plot( 'randomGroup' ) do {
+
+  for () from perform plotWindow( 'randomLine' ) do {
+    ds = perform defineDataSource(
+      x= x, y= y,
+    )
+
+    perform postJsCode( js!expr (async()=>{
+
+          const fig = plt.figure( { name: 'fig',
+              title: 'Random Figure',
+              toolbar_location: 'left',
+              sizing_mode: 'stretch_both',
+          } )
+          fig.line( {
+              source: {$ ds $},
+              x: { field: 'x' },
+              y: { field: 'y' },
+              color: '#000000',
+              alpha: 0.7,
+              legend: 'Random Line',
+          } )
+
+          const plotView = await plt.show( fig, document.body )
+
+    })())
+
+  }
+}
