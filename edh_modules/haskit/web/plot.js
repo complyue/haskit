@@ -6,6 +6,8 @@ import { Lander, } from "nedh"
 
 import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
+import { cdsReceive, } from './cds.js'
+
 
 export function findViewByModelName(name) {
   return function findNamedView(view) {
@@ -90,23 +92,6 @@ export function announceAxisCursor(figView, scaleGetter, acName,) {
 }
 
 
-/**
- * Map dtype to js typed array constructor
- *
- * @param dt dtype identifier
- */
-export function dtype2ArrayCtor(dt) {
-  switch (dt) {
-    case "int32":
-      return Int32Array
-    case "float32":
-      return Float32Array
-    case "float64":
-      return Float64Array
-  }
-  throw new Error(`Unsupported dtype: [${dt}] !`)
-}
-
 
 class PlotLander extends Lander {
   async landingThread() {
@@ -173,35 +158,17 @@ const hskiPageConn = new PlotConn(plotService)
  * define containers here to persist intermediate data across scripted RPCs. 
  */
 export const plotContext = {}
-// Central store for intermediate Bokeh CDS objects
-const plotData = {}
 
-export async function receiveDataSource(dsName, colNames, colDtypes) {
-  const peer = await hskiPageConn.livePeer()
-  // arm a fresh new sink to receive the stream of column data
-  const dataSink = peer.armChannel("data")
-
-  // don't continue landing following commands until dataSink gets looped,
-  // or there's race condition for some column data to be missed.
-  return new Promise(async (resolve, _reject) => {
-    const cdsData = {}
-    let colCntr = 0
-
-    for await (const colData of dataSink.runProducer(async () => {
-      resolve(undefined)
-    })) {
-      cdsData[colNames[colCntr]] = new (dtype2ArrayCtor(colDtypes[colCntr]))(
-        colData
-      )
-      if (++colCntr >= colNames.length) {
-        break
-      }
-    }
-
-    plotData[dsName] = new bkh.ColumnDataSource({
-      data: cdsData,
-    })
-  })
+export async function receiveDataSource(
+  dsName, colNames, colDtypes,
+) {
+  await cdsReceive(
+    await hskiPageConn.livePeer(), plotContext, bkh.ColumnDataSource,
+    dsName, colNames, colDtypes,
+  )
+}
+export function cds(name) {
+  return plotContext[name]
 }
 
 

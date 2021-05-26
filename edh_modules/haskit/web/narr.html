@@ -29,13 +29,28 @@
 
   <script src="/vendor/mui/mui.min.js"></script>
 
+  <!-- note: order of BokehJS imports does matter -->
+  <script src="/vendor/bokehjs/bokeh.js"></script>
+  <script src="/vendor/bokehjs/bokeh-widgets.js"></script>
+  <script src="/vendor/bokehjs/bokeh-tables.js"></script>
+  <script src="/vendor/bokehjs/bokeh-api.js"></script>
+
+  <!-- TODO Bokeh support of dark theme? -->
+  <script type="module">
+    // let bokeh be some verbose
+    Bokeh.set_log_level("info");
+    Bokeh.settings.dev = true;
+  </script>
+
+  <script type="module" src="/vendor/binary-search-bounds/search-bounds.js"></script>
+
   <script type="module" src="./narr.js"></script>
 
 </head>
 
 <body>
 
-  <div class="Narrator"></div>
+  <div id="narrator" class="Narrator"></div>
 
   <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
     Clear Log

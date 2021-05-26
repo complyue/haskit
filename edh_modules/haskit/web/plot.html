@@ -6,6 +6,7 @@
 
   <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
 
+  <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
@@ -42,21 +43,6 @@
 
   <script type="module" src="./plot.js"></script>
 
-  <!-- be the last to assume highest precedence, 
-    as mui/Bokeh are not dark theme aware -->
-  <style type="text/css">
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #000;
-      }
-    }
-
-    @media (prefers-color-scheme: light) {
-      body {
-        background: #fff;
-      }
-    }
-  </style>
 </head>
 
 <body>

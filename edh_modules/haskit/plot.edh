@@ -31,6 +31,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
     nViewRanges = 0
     nViewFocuses = 0
     nAxisCursors = 0
+    nCDS = 0
   }
 
   effect method defineViewRange( vrName= 'view-range' ) {
@@ -51,6 +52,23 @@ outer most curly braces are being interpreted as markers of a block of code in j
     return acName ++ '#' ++ acNum ++ '@' ++ pgid
   }
 
+  method defineDataSource(** cols ) {
+    dsNum = ai pgData.nCDS+=1
+    dsName = 'cds#' + dsNum
+
+    let ( colNames, colDtypes, ) = (*unzip$
+      do ( k, v.dtype|str, ) for ( k, v ) from cols
+    )
+    perform @sendCmd(js!expr receiveDataSource(
+        {$ dsName $},
+        {$snippet$json$ colNames $},
+        {$snippet$json$ colDtypes $},
+    ) )
+    for ( _k, v ) from cols do perform @sendData( blob$ v )
+
+    return snippet$ 'cds('++repr(dsName)++')'
+  }
+
   for (rootPeer, rootSvcScope) from hskiServer.wsClientsOn('/') do {
 
     {##
@@ -62,28 +80,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
       servicePath = '/' ++ UUID() # allocate a unique service path
       hskiServer.mountServlet(servicePath) $ plotSvcScope => {
 
-        # intermediate data for the plot window
-        namespace pwData () {
-          nds = 0
-        }
-
-        effect method defineDataSource(** cols ) {
-          dsNum = ai pwData.nds+=1
-          dsName = 'ds' + dsNum
-
-          let ( colNames, colDtypes, ) = (*unzip$
-            do ( k, v.dtype|str, ) for ( k, v ) from cols
-          )
-          # hskiDebug.replHere()
-          perform @sendCmd(js!expr receiveDataSource(
-              {$ dsName $},
-              {$snippet$json$ colNames $},
-              {$snippet$json$ colDtypes $},
-          ) )
-          for ( _k, v ) from cols do perform @sendData( blob$ v )
-
-          return snippet$ 'plotData['++repr(dsName)++']'
-        }
+        effect defineDataSource = defineDataSource
 
         # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
         return case winPlotScope.eval(winPlotScript) of {
@@ -123,6 +120,8 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
     ) void {
       servicePath = '/' ++ UUID() # allocate a unique service path
       hskiServer.mountServlet(servicePath) $ narrSvcScope => {
+
+        effect defineDataSource = defineDataSource
 
         # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
         return case winNarrScope.eval(winNarrScript) of {

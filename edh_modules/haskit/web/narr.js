@@ -6,6 +6,8 @@ import { Lander, } from "nedh"
 
 import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
+import { cdsReceive, } from './cds.js'
+
 
 export function onViewRangeChange(vrName, onViewRangeChanged,) {
   const ch = new BroadcastChannel(vrName)
@@ -73,6 +75,10 @@ class NarrLander extends Lander {
 }
 
 
+// Alias shothands for BokehJS stuff, which should haven been injected by html
+export const bkh = window.Bokeh, plt = bkh.Plotting
+
+
 // Narrator parameters passed via query string
 const narrParams = new URLSearchParams(window.location.search)
 
@@ -97,9 +103,22 @@ const hskiPageConn = new NarrConn(narrService)
  */
 export const narrContext = {}
 
+export async function receiveDataSource(
+  dsName, colNames, colDtypes,
+) {
+  await cdsReceive(
+    await hskiPageConn.livePeer(), narrContext, bkh.ColumnDataSource,
+    dsName, colNames, colDtypes,
+  )
+}
+export function cds(name) {
+  return narrContext[name]
+}
+
+
 export class Narrator {
-  constructor() {
-    this.div = $(document.body).find(".Narrator")
+  constructor(div) {
+    this.div = div
     this.stories = {}
   }
 
@@ -158,7 +177,7 @@ export class Storyline {
   }
 }
 
-export const narrator = new Narrator()
+export const narrator = new Narrator($("#narrator"))
 
 
 // page UI reactions

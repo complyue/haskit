@@ -171,12 +171,18 @@ plot( 'randomGroup' ) $ {
 
   perform narrWindow( 'allFiguresNarr', 'All Figures Info' ) $ {@
 
+    ds = perform defineDataSource(
+      x= xSample, y= ySample, chg= yChg,
+    )
+
     perform @sendCmd(js!expr (async()=>{
 
           const splStory = narrator.addStoryLine(
             'splStory', 'Sample Figure Info',
-            [ 'shownRngX', 'shownRngY', 'x', 'y', 'v', ],
-            [ 'Shown X Range', 'Shown Y Range', 'Cursor X', 'Cursor Y', 'Sample Value', ],
+            [ 'shownRngX', 'shownRngY', 'x', 'y', 'dpx', 'dpy', ],
+            [ 'Shown X Range', 'Shown Y Range',
+              'Cursor X', 'Cursor Y',
+              'Sample X', 'Sample Y', ],
           )
           onViewRangeChange({$splRangeX$}, (start, end)=>{
               splStory.updateNarremes({ shownRngX:
@@ -187,13 +193,18 @@ plot( 'randomGroup' ) $ {
                   start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
           onAxisCursorChange({$splCursorPoint$},(x,y)=>{
-              splStory.updateNarremes({ x: x, y: y, v: '<todo>', })
+              const xs = {$ds$}.data.x
+              const di = Math.min(xs.length-1, bounds.ge(xs, x))
+              splStory.updateNarremes({ x: x, y: y,
+                  dpx: xs[di], dpy: {$ds$}.data.y[di], })
           })
 
           const chgStory = narrator.addStoryLine(
             'chgStory', 'Change Figure Info',
-            [ 'shownRngX', 'shownRngY', 'x', 'y', 'v', ],
-            [ 'Shown X Range', 'Shown Y Range', 'Cursor X', 'Cursor Y', 'Sample Value', ],
+            [ 'shownRngX', 'shownRngY', 'x', 'y', 'dpx', 'dpy', ],
+            [ 'Shown X Range', 'Shown Y Range',
+              'Cursor X', 'Cursor Y',
+              'Change X', 'Change Y', ],
           )
           onViewRangeChange({$chgRangeX$}, (start, end)=>{
               chgStory.updateNarremes({ shownRngX:
@@ -204,7 +215,10 @@ plot( 'randomGroup' ) $ {
                   start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
           onAxisCursorChange({$chgCursorPoint$},(x,y)=>{
-              chgStory.updateNarremes({ x: x, y: y, v: '<todo>', })
+              const xs = {$ds$}.data.x
+              const di = Math.min(xs.length-1, bounds.ge(xs, x))
+              chgStory.updateNarremes({ x: x, y: y,
+                  dpx: xs[di], dpy: {$ds$}.data.chg[di], })
           })
 
 
