@@ -2,6 +2,9 @@
  # plotting procedures
  #}
 
+import * 'net'
+effect import * 'net/effects'
+
 import * './web'
 import * './utils'
 import * './debug'
@@ -9,7 +12,7 @@ import * './debug'
 
 {##
 
-Vend effectful API to plot a group of plotting windows against each connected hski client
+Vend effectful API to plot a group of plotting windows against each hski client (root window)
 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
 
@@ -18,6 +21,8 @@ export generator plot( pgid ) void {
   {# note wrt the js!expr posted to web clients:
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
    #}
+  hskiServer = perform @haskItServer
+  hskiServer ?= HaskItServer()
 
   # intermediate data for the plot group
   namespace pgData( pgid= pgid, ) {
@@ -44,94 +49,62 @@ outer most curly braces are being interpreted as markers of a block of code in j
     return acName ++ '#' ++ acNum ++ '@' ++ pgid
   }
 
-  for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
-
-    {##
-Open the client narrator window identified by `pnid`, vend effectful API to setup narrations in it
-     #}
-    effect generator narrWindow( pnid ) {
-      # open the specified narr window from this root client window, establish the comm channel to it
-      narrChannel = str( UUID() )
-      narrSink = hskiPeer.armChannel( narrChannel )
-      for ack from (outlet= narrSink )|() =>* {
-        hskiPeer.postCommand( js!expr {
-            void openNarrWindow( {$ pgid $}, {$ pnid $}, {$ narrChannel $} )
-        } )
-      } do {
-        if ack is not 'narr-win-open'
-        then error$ 'bug: bad handshake, check narr/narr-relay.mjs'
-
-        break
-      }
-
-      # intermediate data for the narr window
-      namespace pnData () {
-      }
-
-      effect method postJsCode( jsExpr ) {
-        hskiPeer.p2c( narrChannel, js!expr ( {
-              narrCmd : {$str$ jsExpr $}
-        } ) )
-      }
-
-      yield ()
-    }
+  for (rootPeer, rootSvcScope) from hskiServer.wsClientsOn('/') do {
 
     {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
      #}
-    effect generator plotWindow( pwid ) {
-      # open the specified plot window from this root client window, establish the comm channel to it
-      plotChannel = str( UUID() )
-      plotSink = hskiPeer.armChannel( plotChannel )
-      for ack from (outlet= plotSink )|() =>* {
-        hskiPeer.postCommand( js!expr {
-            void openPlotWindow( {$ pgid $}, {$ pwid $}, {$ plotChannel $} )
-        } )
-      } do {
-        if ack is not 'plot-win-open'
-        then error$ 'bug: bad handshake, check haze/plot-relay.mjs'
+    effect method plotWindow( pwid, title= None ) plotScript => {
+      servicePath = '/' ++ UUID() # allocate a unique service path
+      hskiServer.mountServlet(servicePath) $ plotSvcScope => {
 
-        break
-      }
-
-      # intermediate data for the plot window
-      namespace pwData () {
-        nds = 0
-      }
-
-      effect method defineDataSource(** cols ) {
-        dsNum = ai pwData.nds+=1
-        dsName = 'ds' + dsNum
-
-        let ( colNames, colDtypes, ) = (*unzip$ for ( k, v ) from cols
-          do ( k, v.dtype|str, )
-        )
-        # hskiDebug.replHere()
-        hskiPeer.p2c( plotChannel, js!expr ( {
-              plotCmd : {$str$ js!expr
-                receiveDataSource(
-                  {$ dsName $},
-                  {$snippet$json$ colNames $},
-                  {$snippet$json$ colDtypes $},
-                )
-              $}
-        } ) )
-        for ( _k, v ) from cols do {
-          hskiPeer.p2c( plotChannel, js!expr ( { nextDir : 'data' } ) )
-          hskiPeer.p2c( plotChannel, blob$ v )
+        # intermediate data for the plot window
+        namespace pwData () {
+          nds = 0
         }
 
-        return snippet$ 'plotData['++repr(dsName)++']'
+        effect method defineDataSource(** cols ) {
+          dsNum = ai pwData.nds+=1
+          dsName = 'ds' + dsNum
+
+          let ( colNames, colDtypes, ) = (*unzip$
+            do ( k, v.dtype|str, ) for ( k, v ) from cols
+          )
+          # hskiDebug.replHere()
+          perform @sendCmd(js!expr receiveDataSource(
+              {$ dsName $},
+              {$snippet$json$ colNames $},
+              {$snippet$json$ colDtypes $},
+          ) )
+          for ( _k, v ) from cols do perform @sendData( blob$ v )
+
+          return snippet$ 'plotData['++repr(dsName)++']'
+        }
+
+        # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
+        return case plotScript() of {
+          # all done, disconnect this window as no further client/server interaction expected
+          true -> true
+          # initial plotting done, keep this window connected, further C/S interactions expected
+          false -> false
+          _ -> { # one-shot plotting, umount the service
+            hskiServer.unmountServlet(servicePath)
+            # todo which of the following is more correct?
+            true # disconnect this window, no further C/S interactions expected
+            # false # keep this window connected, further C/S interactions expected
+          }
+        }
+
       }
 
-      effect method postJsCode( jsExpr ) {
-        hskiPeer.p2c( plotChannel, js!expr ( {
-              plotCmd : {$str$ jsExpr $}
-        } ) )
-      }
-
-      yield ()
+      plotUrl = '/plot.html?service=' ++ servicePath
+      if title then plotUrl += (
+        '&' ++ 'title=' ++ title # TODO urlEncode it
+      )
+      plotWinName = 'plot#' ++ pgid ++ '/' ++ pwid
+      rootPeer.postCommand(js!expr
+        window.open( {$plotUrl$}, {$plotWinName$}, )
+      )
     }
 
     yield ()

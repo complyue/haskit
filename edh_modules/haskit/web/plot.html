@@ -2,21 +2,23 @@
 <meta charset="utf-8" />
 
 <head>
-  <title>Haze - Bokeh without Python</title>
+  <title>HaskIt Plot</title>
 
   <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
 
-  <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
 
+  <link rel="stylesheet" type="text/css" href="/haskit.css" />
+
   <!-- this requires Chrome, with flag `Experimental Web Platform features`
-       enabled for the time being 2020/10
+       enabled for the time being 2021/05
     -->
   <script type="importmap">
     {
       "imports": {
         "edh": "/edh/index.js",
-        "nedh": "/nedh/index.js"
+        "nedh": "/nedh/index.js",
+        "haskit": "/haskit/index.js"
       }
     }
   </script>
@@ -36,11 +38,6 @@
     // let bokeh be some verbose
     Bokeh.set_log_level("info");
     Bokeh.settings.dev = true;
-  </script>
-
-  <script type="module">
-    // make it easy to find by title
-    document.title = window.name;
   </script>
 
   <script type="module" src="./plot.js"></script>
@@ -63,5 +60,5 @@
 </head>
 
 <body>
-  <!-- the plot here -->
+  <div id="plot"></div>
 </body>

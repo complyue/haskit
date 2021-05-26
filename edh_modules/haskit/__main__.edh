@@ -1,4 +1,7 @@
 
+import * 'net'
+effect import * 'net/effects'
+
 import * 'haskit'
 
 # take the global demo server into effect here

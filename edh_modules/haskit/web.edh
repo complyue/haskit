@@ -24,63 +24,7 @@ export class HaskItServer {
   URL_ROUTES = ()
 
 
-  {## Enumerate all websocket clients connected to the specified path
-   #}
-  generator wsClientsOn( path ) case this._wsClients[path] of
-  # nil means no such path ever connected, we only care non-nil case
-  { clntsOnPath } -> for (wsPeer, svcScope) from clntsOnPath do {
-    wsPeer ?= Peer()
-    ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
-    effect @haskItPeer = wsPeer
-    yield (wsPeer, svcScope)
-  }
-
-
-  {## For a client facing service module to register the websocket connection it is handling
-
-This must be called from such a service module's module procedure, thus run on its connection handling thread.
-   #}
-  interpreter hookWsClient( svcScope ) {
-    # peer/reqPath/repParams ets. should have been implanted there
-    peer = svcScope.eval(expr peer)
-    reqPath = svcScope.eval(expr reqPath)
-
-    # check if a servlet mounted for it
-    case this._wsServlets[reqPath] of { servlet } -> {
-      # hook this client to the servlet
-      return servlet( svcScope )
-    }
-
-    # no servlet mounted for it, treat as active client session alone
-    clntsOnPath = this._wsClients[reqPath] |= {}
-    # cleanup on termination of the service module procedure thread
-    defer clntsOnPath[peer] = nil
-    # record it
-    clntsOnPath[peer] = svcScope
-    return false
-  }
-
-
-  {##
-
-`servlet` should take the service module scope as the only arg, it'll be called on the serive thread, and can hold the client connection abitrarily long without synchronous return; once it decides to return, it should return a bool to indicate whether the client should be disconnected immediately, or continue being served.
-
-The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` before return, after it returns `false`, the client will continue being served by `readCommand()` looping within the service module scope; if it returns `true`, the client will be disconnected immediately.
-
-   #}
-  method mountServlet( servlet, path= '/' ++ UUID(), ) {
-    if this._wsServlets[path] is not nil then {
-      console.warn<| 'Replacing servlet: [' ++ path ++ ']'
-    }
-    this._wsServlets[path] = servlet
-    return path
-  }
-
-  method unmountServlet( path ) {
-    this._wsServlets[path] = nil
-  }
-
-
+  # constructor
   method __init__(
     netInterface= '127.0.0.1',
     httpPort= 3780,
@@ -125,6 +69,66 @@ The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` befor
     }
 
   }
+
+
+  {##
+   # Enumerate all websocket clients connected to the specified path, those not hooked by a servlet
+   #}
+  generator wsClientsOn( path ) case this._wsClients[path] of
+  # nil means no such path ever connected, we only care non-nil case
+  { clntsOnPath } -> for (wsPeer, svcScope) from clntsOnPath do {
+    wsPeer ?= Peer()
+    ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
+    effect @haskItPeer = wsPeer
+    yield (wsPeer, svcScope)
+  }
+
+
+  {##
+   # For the client facing service module to register the websocket connection it is handling
+
+This must be called from such a service module's module procedure, thus run on its connection handling thread.
+   #}
+  interpreter hookWsClient( svcScope ) {
+    # peer/reqPath/repParams ets. should have been implanted there
+    peer = svcScope.eval(expr peer)
+    reqPath = svcScope.eval(expr reqPath)
+
+    # check if a servlet mounted for it
+    case this._wsServlets[reqPath] of { servlet } -> {
+      # hook this client to the servlet
+      return servlet( svcScope )
+    }
+
+    # no servlet mounted for it, treat as active client session alone
+    clntsOnPath = this._wsClients[reqPath] |= {}
+    # cleanup on termination of the service module procedure thread
+    defer clntsOnPath[peer] = nil
+    # record it
+    clntsOnPath[peer] = svcScope
+    return false
+  }
+
+
+  {##
+
+`servlet` should take the service module scope as the only arg, it'll be called on the serive thread, and can hold the client connection abitrarily long without synchronous return; once it decides to return, it should return a bool to indicate whether the client should be disconnected immediately, or continue being served.
+
+The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` before return, after it returns `false`, the client will continue being served by `readCommand()` looping within the service module scope; if it returns `true`, the client will be disconnected immediately.
+
+   #}
+  method mountServlet( path= '/' ++ UUID() ) servlet => {
+    if this._wsServlets[path] is not nil then {
+      console.warn<| 'Replacing servlet: [' ++ path ++ ']'
+    }
+    this._wsServlets[path] = servlet
+    return path
+  }
+
+  method unmountServlet( path ) {
+    this._wsServlets[path] = nil
+  }
+
 
   method join() {
     this.ws.join()

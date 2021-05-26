@@ -1,4 +1,7 @@
 
+import * 'net'
+effect import * 'net/effects'
+
 import * 'haskit'
 
 effect import * 'haskit/demo-server'
@@ -30,12 +33,12 @@ ySample = yRaw[0:nPoints:100]
 
 for () from plot( 'randomGroup' ) do {
 
-  for () from perform plotWindow( 'randomSample' ) do {
+  perform plotWindow( 'randomSample', 'Overview of Sampled Line' ) $ ()=>{
     ds = perform defineDataSource(
       x= xSample, y= ySample,
     )
 
-    perform postJsCode( js!expr (async()=>{
+    perform @sendCmd(js!expr (async()=>{
 
           const fig = plt.figure( { name: 'figSample',
               title: 'Sample of Random Series',
@@ -60,4 +63,5 @@ for () from plot( 'randomGroup' ) do {
     })())
 
   }
+
 }

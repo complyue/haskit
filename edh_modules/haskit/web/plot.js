@@ -1,8 +1,10 @@
 /**
- * main script of a window rendering Bokeh plots
+ * main module of HaskIt plot page
  */
 
-import { Lander, McClient } from "nedh"
+import { Lander, } from "nedh"
+
+import { HaskItConn, uiLog, } from "haskit"
 
 
 export function findViewByModelName(name) {
@@ -105,8 +107,8 @@ export function dtype2ArrayCtor(dt) {
   throw new Error(`Unsupported dtype: [${dt}] !`)
 }
 
-// lander with this module scope as environment
-class HazeLander extends Lander {
+
+class PlotLander extends Lander {
   async landingThread() {
     // XXX a subclass of Lander normally overrides this method, with even
     //     verbatim copy of the method code here, it's already very useful,
@@ -144,43 +146,40 @@ class HazeLander extends Lander {
   }
 }
 
-// passed as query string of the page url
-export const plotChannel = window.location.search.substr(1)
 
-// source of incoming commands may reference this as well as other scripts can
-// import it
-export const mcc2Root = new McClient(
-  // should have been opened directly by the root window, it listens for our
-  // connection
-  window.opener,
-  // name of the service to connect
-  "plot",
-  // land incoming commands with this module as environment
-  new HazeLander(),
-  // extra info for the connection
-  {
-    plotChannel: plotChannel,
+// Alias shothands for BokehJS stuff, which should haven been injected by html
+export const bkh = window.Bokeh, plt = bkh.Plotting
+
+
+// Plot parameters passed via query string
+const plotParams = new URLSearchParams(window.location.search)
+
+// The page wide haskit connection to server
+class PlotConn extends HaskItConn {
+  async createLander() {
+    return new PlotLander()
   }
-)
+}
+const plotService = plotParams.get('service')
+const hskiPageConn = new PlotConn(plotService)
 
-// Bokeh stuffs should be injected by page html
-const bkh = window.Bokeh,
-  plt = bkh.Plotting
-
-// central store for intermediate data of this plot window
-const plotData = {}
+{
+  const title = plotParams.get('title')
+  if (title) { window.title = title }
+}
 
 /*
  * js being strict-eval'ed can't create vars survive between eval invocations,
- * define vars to be persisted here beforehand.
+ * define containers here to persist intermediate data across scripted RPCs. 
  */
+export const plotContext = {}
+// Central store for intermediate Bokeh CDS objects
+const plotData = {}
 
-// current figure during the run.
-// let fig = null
-
-export function receiveDataSource(dsName, colNames, colDtypes) {
+export async function receiveDataSource(dsName, colNames, colDtypes) {
+  const peer = await hskiPageConn.livePeer()
   // arm a fresh new sink to receive the stream of column data
-  const dataSink = mcc2Root.peer.armChannel("data")
+  const dataSink = peer.armChannel("data")
 
   // don't continue landing following commands until dataSink gets looped,
   // or there's race condition for some column data to be missed.
@@ -204,3 +203,15 @@ export function receiveDataSource(dsName, colNames, colDtypes) {
     })
   })
 }
+
+
+// Connect on open
+$(async function () {
+  try {
+    await hskiPageConn.livePeer()
+    uiLog("Connected with HaskIt backend.")
+  } catch (err) {
+    let details = err ? err.stack : err
+    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
+  }
+})

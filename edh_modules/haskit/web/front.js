@@ -6,9 +6,6 @@ import { Lander, } from "nedh"
 
 import { HaskItConn, uiLog, clearLog, } from "haskit"
 
-import { setupPlotRelay } from "/haze/plot-relay.mjs"
-import { setupNarrRelay } from "/narr/narr-relay.mjs"
-
 
 class FrontLander extends Lander {
   async landingThread() {
@@ -55,14 +52,7 @@ class FrontConn extends HaskItConn {
     return new FrontLander()
   }
 }
-const hskiPageConn = new FrontConn('')
-
-
-// this provides effective current peer object to the source of a command
-// being eval'ed during landing of the command
-const currPeer = () => hskiPageConn.livePeer()
-export const openPlotWindow = setupPlotRelay(currPeer)
-export const openNarrWindow = setupNarrRelay(currPeer)
+const hskiPageConn = new FrontConn('') // connect to root path
 
 
 // page UI reactions
@@ -71,6 +61,7 @@ $("button[name=clear-log]").on("click", () => {
   clearLog()
 })
 
+// Connect on open
 $(async function () {
   try {
     await hskiPageConn.livePeer()
