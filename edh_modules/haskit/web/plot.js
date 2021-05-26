@@ -165,7 +165,7 @@ const hskiPageConn = new PlotConn(plotService)
 
 {
   const title = plotParams.get('title')
-  if (title) { window.title = title }
+  if (title) { document.title = title }
 }
 
 /*

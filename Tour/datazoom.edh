@@ -31,9 +31,13 @@ ySample = yRaw[0:nPoints:100]
 
 # %%
 
-for () from plot( 'randomGroup' ) do {
+plot( 'randomGroup' ) $ {
+  # Note this block is in-place interpreted, synchronously, per each connected root window
 
-  perform plotWindow( 'randomSample', 'Overview of Sampled Line' ) $ ()=>{
+  perform plotWindow( 'randomSample', 'Overview of Sampled Line' ) $ {@
+    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws serive thread
+    # so it's better to be a scoped block for context isolation, unless with good reasons not to
+
     ds = perform defineDataSource(
       x= xSample, y= ySample,
     )
@@ -73,6 +77,6 @@ for () from plot( 'randomGroup' ) do {
        * `return false` here will also keep the plotting service, and the ws connection to the plot window will also be kept connected, serving further RPC from browser js
        * otherwise this plot script is considered a one-shot, all resources are unreferenced then
      #}
-  }
+  @}
 
 }

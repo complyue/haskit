@@ -17,7 +17,9 @@ Vend effectful API to plot a group of plotting windows against each hski client 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
 
  #}
-export generator plot( pgid ) void {
+export method plot( pgid ) interpreter groupPlotter (
+  grpPlotScope, grpPlotScript
+) void {
   {# note wrt the js!expr posted to web clients:
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
    #}
@@ -54,7 +56,9 @@ outer most curly braces are being interpreted as markers of a block of code in j
     {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
      #}
-    effect method plotWindow( pwid, title= None ) plotScript => {
+    effect method plotWindow( pwid, title= None ) interpreter winPlotter (
+      winPlotScope, winPlotScript
+    ) void {
       servicePath = '/' ++ UUID() # allocate a unique service path
       hskiServer.mountServlet(servicePath) $ plotSvcScope => {
 
@@ -82,11 +86,13 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
         }
 
         # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
-        return case plotScript() of {
+        return case winPlotScope.eval(winPlotScript) of {
           # all done, disconnect this window as no further client/server interaction expected
           true -> true
+          {return true} -> true
           # initial plotting done, keep this window connected, further C/S interactions expected
           false -> false
+          {return false} -> false
           _ -> { # one-shot plotting, umount the service
             hskiServer.unmountServlet(servicePath)
             # todo which of the following is more correct?
@@ -97,6 +103,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
 
       }
 
+      # Instruct the browser to open one window automatically
       plotUrl = '/plot.html?service=' ++ servicePath
       if title then plotUrl += (
         '&' ++ 'title=' ++ title # TODO urlEncode it
@@ -107,7 +114,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
       )
     }
 
-    yield ()
+    grpPlotScope.eval(grpPlotScript)
   }
 
 }
