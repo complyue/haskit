@@ -62,6 +62,17 @@ for () from plot( 'randomGroup' ) do {
 
     })())
 
+    return true{##undefined##undefinedundefined##undefined##undefinedundefinedundefined
+     # Disconnect the window, but keep this plotting service mounted, so the window can be refreshed correctly.
+     # CAVEAT
+       This plot script (arrow procedure) captures the full hierearchy of its lexical scopes, kept mounted as a plotting service, all resources references by the closure are considered leaked in a sense.
+     #}
+
+    {#
+     # Alternatively:
+       * `return false` here will also keep the plotting service, and the ws connection to the plot window will also be kept connected, serving further RPC from browser js
+       * otherwise this plot script is considered a one-shot, all resources are unreferenced then
+     #}
   }
 
 }
