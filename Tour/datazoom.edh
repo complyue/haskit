@@ -58,11 +58,11 @@ for () from plot( 'randomGroup' ) do {
             g.background_fill_alpha = 0.6
           }
 
-          const plotView = await plt.show( fig, document.body )
+          const plotView = await plt.show( fig, $('#plot') )
 
     })())
 
-    return true{##undefined##undefinedundefined##undefined##undefinedundefinedundefined
+    return true {#
      # Disconnect the window, but keep this plotting service mounted, so the window can be refreshed correctly.
      # CAVEAT
        This plot script (arrow procedure) captures the full hierearchy of its lexical scopes, kept mounted as a plotting service, all resources references by the closure are considered leaked in a sense.
