@@ -16,29 +16,29 @@ effect import * 'dim/effects'
 
 
 # %% #
-nPoints = 5000
+nPoints = 50001
 
-x = arange( nPoints, dtype=f8, ) / nPoints
-raw = random( nPoints, -0.499..0.501, dtype=f8, )
-
+let xRaw = arange( nPoints, dtype=f8, )
+let yRaw = cumsum$random( nPoints, -0.499..0.501, dtype=f8, )
 
 # %% #
-y = cumsum(raw)
+xSample = xRaw[0:nPoints:100]
+ySample = yRaw[0:nPoints:100]
 
 
 # %%
 
 for () from plot( 'randomGroup' ) do {
 
-  for () from perform plotWindow( 'randomLine' ) do {
+  for () from perform plotWindow( 'randomSample' ) do {
     ds = perform defineDataSource(
-      x= x, y= y,
+      x= xSample, y= ySample,
     )
 
     perform postJsCode( js!expr (async()=>{
 
-          const fig = plt.figure( { name: 'fig',
-              title: 'Random Figure',
+          const fig = plt.figure( { name: 'figSample',
+              title: 'Sample of Random Series',
               toolbar_location: 'left',
               sizing_mode: 'stretch_both',
           } )
@@ -46,10 +46,14 @@ for () from plot( 'randomGroup' ) do {
               source: {$ ds $},
               x: { field: 'x' },
               y: { field: 'y' },
-              color: '#000000',
-              alpha: 0.7,
-              legend: 'Random Line',
+              color: '#000000', alpha: 0.7,
+              legend: 'Sample',
           } )
+          for(let g of fig.select( bkh.Legend )) {
+            g.location = 'top_left'
+            g.click_policy = 'hide'
+            g.background_fill_alpha = 0.6
+          }
 
           const plotView = await plt.show( fig, document.body )
 
