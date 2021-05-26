@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<head>
+  <title>HaskIt Narrator</title>
+
+  <link rel="icon" type="image/png" href="/icons/narr.png" />
+
+  <!-- TODO mui support of dark theme? -->
+  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
+
+  <link rel="stylesheet" type="text/css" href="/haskit.css" />
+  <link rel="stylesheet" type="text/css" href="./narr.css" />
+
+  <!-- this requires Chrome, with flag `Experimental Web Platform features`
+       enabled for the time being 2021/05
+    -->
+  <script type="importmap">
+    {
+      "imports": {
+        "edh": "/edh/index.js",
+        "nedh": "/nedh/index.js",
+        "haskit": "/haskit/index.js"
+      }
+    }
+  </script>
+
+  <script src="/vendor/jquery/jquery.js"></script>
+
+  <script src="/vendor/mui/mui.min.js"></script>
+
+  <script type="module" src="./narr.js"></script>
+
+</head>
+
+<body>
+
+  <div class="Narrator"></div>
+
+  <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
+    Clear Log
+  </button>
+
+  <div class="LogArea">
+    <div class="LogBox"></div>
+  </div>
+
+</body>

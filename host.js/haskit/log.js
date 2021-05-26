@@ -73,3 +73,12 @@ export function uiLog(msg, type = "msg", details = undefined) {
 export function clearLog() {
   if (hasLogBox) logBox.empty()
 }
+
+
+export function uiInitPage() {
+
+  $("button[name=clear-log]").on("click", () => {
+    clearLog()
+  })
+
+}

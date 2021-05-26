@@ -4,7 +4,7 @@
 
 import { Lander, } from "nedh"
 
-import { HaskItConn, uiLog, clearLog, } from "haskit"
+import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
 
 class FrontLander extends Lander {
@@ -56,10 +56,7 @@ const hskiPageConn = new FrontConn('') // connect to root path
 
 
 // page UI reactions
-
-$("button[name=clear-log]").on("click", () => {
-  clearLog()
-})
+uiInitPage()
 
 // Connect on open
 $(async function () {

@@ -4,7 +4,7 @@
 
 import { Lander, } from "nedh"
 
-import { HaskItConn, uiLog, } from "haskit"
+import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
 
 export function findViewByModelName(name) {
@@ -204,6 +204,9 @@ export async function receiveDataSource(dsName, colNames, colDtypes) {
   })
 }
 
+
+// page UI reactions
+uiInitPage()
 
 // Connect on open
 $(async function () {

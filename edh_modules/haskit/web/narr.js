@@ -1,8 +1,10 @@
 /**
- * main script of a window showing the narrator
+ * main module of the narrator page
  */
 
-import { Lander, McClient } from "nedh"
+import { Lander, } from "nedh"
+
+import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
 
 export function onViewRangeChange(vrName, onViewRangeChanged,) {
@@ -70,25 +72,30 @@ class NarrLander extends Lander {
   }
 }
 
-// passed as query string of the page url
-export const narrChannel = window.location.search.substr(1)
 
-// source of incoming commands may reference this as well as other scripts can
-// import it
-export const mcc2Root = new McClient(
-  // should have been opened directly by the root window, it listens for our
-  // connection
-  window.opener,
-  // name of the service to connect
-  "narr",
-  // land incoming commands with this module as environment
-  new NarrLander(),
-  // extra info for the connection
-  {
-    narrChannel: narrChannel,
+// Narrator parameters passed via query string
+const narrParams = new URLSearchParams(window.location.search)
+
+// The page wide haskit connection to server
+class NarrConn extends HaskItConn {
+  async createLander() {
+    return new NarrLander()
   }
-)
+}
+const narrService = narrParams.get('service')
+const hskiPageConn = new NarrConn(narrService)
 
+{
+  const title = narrParams.get('title')
+  if (title) { document.title = title }
+}
+
+
+/*
+ * js being strict-eval'ed can't create vars survive between eval invocations,
+ * define containers here to persist intermediate data across scripted RPCs. 
+ */
+export const narrContext = {}
 
 export class Narrator {
   constructor() {
@@ -152,3 +159,18 @@ export class Storyline {
 }
 
 export const narrator = new Narrator()
+
+
+// page UI reactions
+uiInitPage()
+
+// Connect on open
+$(async function () {
+  try {
+    await hskiPageConn.livePeer()
+    uiLog("Connected with HaskIt backend.")
+  } catch (err) {
+    let details = err ? err.stack : err
+    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
+  }
+})

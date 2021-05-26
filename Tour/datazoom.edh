@@ -41,8 +41,10 @@ plot( 'randomGroup' ) $ {
 
   syncedRangeX = perform defineViewRange( 'x' )
 
-  splRangeY = perform defineViewRange( 'spl' )
-  chgRangeY = perform defineViewRange( 'chg' )
+  splRangeX = perform defineViewRange( 'splX' )
+  splRangeY = perform defineViewRange( 'splY' )
+  chgRangeX = perform defineViewRange( 'chgX' )
+  chgRangeY = perform defineViewRange( 'chgY' )
 
   focusedFigure = perform defineViewFocus( 'focusedFigure' )
   focusedPoint = perform defineAxisCursor( 'focusedPoint' )
@@ -50,7 +52,7 @@ plot( 'randomGroup' ) $ {
   splCursorPoint = perform defineAxisCursor( 'splCursorPoint' )
   chgCursorPoint = perform defineAxisCursor( 'chgCursorPoint' )
 
-  perform plotWindow( 'randomSample', 'Overview of Sampled Line' ) $ {@
+  perform plotWindow( 'randomSample', 'Overview of Sampled Series' ) $ {@
     # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws serive thread
     # so it's better to be a scoped block for context isolation, unless with good reasons not to
 
@@ -77,6 +79,7 @@ plot( 'randomGroup' ) $ {
             g.click_policy = 'hide'
             g.background_fill_alpha = 0.6
           }
+          announceRange( figSample.x_range, {$ splRangeX $} )
           announceRange( figSample.y_range, {$ splRangeY $} )
           syncRange( figSample.x_range, {$ syncedRangeX $} )
 
@@ -98,6 +101,7 @@ plot( 'randomGroup' ) $ {
             g.click_policy = 'hide'
             g.background_fill_alpha = 0.6
           }
+          announceRange( figChange.x_range, {$ chgRangeX $} )
           announceRange( figChange.y_range, {$ chgRangeY $} )
           syncRange( figChange.x_range, {$ syncedRangeX $} )
 
@@ -130,6 +134,92 @@ plot( 'randomGroup' ) $ {
      # Alternatively:
        * `return false` here will also keep the plotting service, and the ws connection to the plot window will also be kept connected, serving further RPC from browser js
        * otherwise this plot script is considered a one-shot, all resources are unreferenced then
+     #}
+  @}
+
+
+  perform narrWindow( 'focusFigureNarr', 'Active Figure Info' ) $ {@
+
+    perform @sendCmd(js!expr (async()=>{
+
+          const story = narrator.addStoryLine(
+            'focusFigureNarr', 'Active Figure Info',
+            [ 'ffigName', 'shownRngX', 'x', ],
+            [ 'Figure Name', 'Observing X Range', 'X', ],
+          )
+
+          onViewRangeChange({$syncedRangeX$}, (start, end)=>{
+              story.updateNarremes({ shownRngX:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          })
+
+          onViewFocusChange({$focusedFigure$}, (figName)=>{
+              story.updateNarremes({ffigName: figName})
+          })
+
+          onAxisCursorChange({$focusedPoint$},(x,y)=>{
+              story.updateNarremes({ x: x, })
+          })
+
+    })())
+
+    return true {#
+     # Disconnect the window, but keep this narration service mounted, so the window can be refreshed correctly.
+     #}
+  @}
+
+
+  perform narrWindow( 'allFiguresNarr', 'All Figures Info' ) $ {@
+
+    perform @sendCmd(js!expr (async()=>{
+
+          const splStory = narrator.addStoryLine(
+            'splStory', 'Sample Figure Info',
+            [ 'shownRngX', 'shownRngY', 'x', 'y', 'v', ],
+            [ 'Shown X Range', 'Shown Y Range', 'Cursor X', 'Cursor Y', 'Sample Value', ],
+          )
+          onViewRangeChange({$splRangeX$}, (start, end)=>{
+              splStory.updateNarremes({ shownRngX:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          })
+          onViewRangeChange({$splRangeY$}, (start, end)=>{
+              splStory.updateNarremes({ shownRngY:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          })
+          onAxisCursorChange({$splCursorPoint$},(x,y)=>{
+              splStory.updateNarremes({ x: x, y: y, v: '<todo>', })
+          })
+
+          const chgStory = narrator.addStoryLine(
+            'chgStory', 'Change Figure Info',
+            [ 'shownRngX', 'shownRngY', 'x', 'y', 'v', ],
+            [ 'Shown X Range', 'Shown Y Range', 'Cursor X', 'Cursor Y', 'Sample Value', ],
+          )
+          onViewRangeChange({$chgRangeX$}, (start, end)=>{
+              chgStory.updateNarremes({ shownRngX:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          })
+          onViewRangeChange({$chgRangeY$}, (start, end)=>{
+              chgStory.updateNarremes({ shownRngY:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          })
+          onAxisCursorChange({$chgCursorPoint$},(x,y)=>{
+              chgStory.updateNarremes({ x: x, y: y, v: '<todo>', })
+          })
+
+
+          onViewFocusChange({$focusedFigure$}, (figName)=>{
+              if ( 'figSample' === figName ) {
+                splStory.focus()
+              } else if ( 'figChange' === figName ) {
+                chgStory.focus()
+              }
+          })
+
+    })())
+
+    return true {#
+     # Disconnect the window, but keep this narration service mounted, so the window can be refreshed correctly.
      #}
   @}
 

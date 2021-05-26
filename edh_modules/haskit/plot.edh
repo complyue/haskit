@@ -114,6 +114,45 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
       )
     }
 
+
+    {##
+Open the client narrative window identified by `pnid`, vend effectful API to install narrative storylines in it
+     #}
+    effect method narrWindow( pnid, title= None ) interpreter winNarrator (
+      winNarrScope, winNarrScript
+    ) void {
+      servicePath = '/' ++ UUID() # allocate a unique service path
+      hskiServer.mountServlet(servicePath) $ narrSvcScope => {
+
+        # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
+        return case winNarrScope.eval(winNarrScript) of {
+          # all done, disconnect this window as no further client/server interaction expected
+          true -> true
+          {return true} -> true
+          # initial narrting done, keep this window connected, further C/S interactions expected
+          false -> false
+          {return false} -> false
+          _ -> { # one-shot narrting, umount the service
+            hskiServer.unmountServlet(servicePath)
+            # todo which of the following is more correct?
+            true # disconnect this window, no further C/S interactions expected
+            # false # keep this window connected, further C/S interactions expected
+          }
+        }
+
+      }
+
+      # Instruct the browser to open one window automatically
+      narrUrl = '/narr.html?service=' ++ servicePath
+      if title then narrUrl += (
+        '&' ++ 'title=' ++ title # TODO urlEncode it
+      )
+      narrWinName = 'narr#' ++ pgid ++ '/' ++ pnid
+      rootPeer.postCommand(js!expr
+        window.open( {$narrUrl$}, {$narrWinName$}, )
+      )
+    }
+
     grpPlotScope.eval(grpPlotScript)
   }
 
