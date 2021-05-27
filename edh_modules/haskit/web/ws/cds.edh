@@ -1,0 +1,48 @@
+{##
+ # BokehJS ColumnDataSource manipulations from Đ server side
+
+Assuming the peer be a browser window connected through WebSocket, and some JavaScript services in scope there:
+
+ * receiveDataSource(dsName, colNames, colDtypes,)
+ * updateDataSource(cds, colNames, colDtypes,)
+ * cds(dsName)
+
+ #}
+
+import (
+  # alias these symbols to make the intent more obvious
+  sendCmd as netSendCmd, sendData as netSendData,
+  **
+) 'net'
+
+import (snippet, **) 'haskit/utils'
+
+
+export method defineDataSource( **cols ) {
+  dsName = 'cds#' ++ UUID()
+
+  let ( colNames, colDtypes, ) = (*unzip$
+    do ( k, v.dtype|str, ) for ( k, v ) from cols
+  )
+  perform @netSendCmd(js!expr receiveDataSource(
+      {$ dsName $},
+      {$snippet$json$ colNames $},
+      {$snippet$json$ colDtypes $},
+  ) )
+  for ( _k, v ) from cols do perform @netSendData( blob$ v )
+
+  return snippet$ 'cds('++repr(dsName)++')'
+}
+
+
+export method updateDataSource( dsRepr, **cols ) {
+  let ( colNames, colDtypes, ) = (*unzip$
+    do ( k, v.dtype|str, ) for ( k, v ) from cols
+  )
+  perform @netSendCmd(js!expr updateDataSource(
+      {$ dsRepr $},
+      {$snippet$json$ colNames $},
+      {$snippet$json$ colDtypes $},
+  ) )
+  for ( _k, v ) from cols do perform @netSendData( blob$ v )
+}

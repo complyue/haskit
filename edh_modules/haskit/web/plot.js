@@ -6,7 +6,12 @@ import { Lander, } from "nedh"
 
 import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
-import { cdsReceive, } from './cds.js'
+import { cdsServiceSuite } from './cds.js'
+
+import {
+  onViewRangeChange, onAxisCursorChange, onViewFocusChange,
+  announceRange, announceFocus,
+} from './comm.js'
 
 
 export function findViewByModelName(name) {
@@ -20,14 +25,6 @@ export function findViewByModelName(name) {
   }
 }
 
-
-export function announceRange(rng, vrName,) {
-  const ch = new BroadcastChannel(vrName)
-  rng.on_change([rng.properties.start, rng.properties.end], () => {
-    const rd = [rng.start, rng.end]
-    ch.postMessage(rd)
-  })
-}
 
 /**
  * Synchronize the specified Boken range with the rest of all such ranges,
@@ -61,17 +58,6 @@ export function syncRange(rng, vrName,) {
       const rd = [rng.start, rng.end]
       ch.postMessage(rd)
     }, 1000) // announce at most 1Hz
-  })
-}
-
-
-export function announceFocus(figView, vfName, focusName, focusTitle,) {
-  const effFocusName = focusName || figView.model.name
-  const effFocusTitle = focusTitle || figView.model.title
-  const evtElem = figView.canvas_view.events_el
-  const ch = new BroadcastChannel(vfName)
-  evtElem.addEventListener('mouseenter', _me => {
-    ch.postMessage([effFocusName, effFocusTitle])
   })
 }
 
@@ -160,17 +146,9 @@ const hskiPageConn = new PlotConn(plotService)
  */
 export const plotContext = {}
 
-export async function receiveDataSource(
-  dsName, colNames, colDtypes,
-) {
-  await cdsReceive(
-    await hskiPageConn.livePeer(), plotContext, bkh.ColumnDataSource,
-    dsName, colNames, colDtypes,
-  )
-}
-export function cds(name) {
-  return plotContext[name]
-}
+export const {
+  receiveDataSource, updateDataSource, cds,
+} = cdsServiceSuite(hskiPageConn, plotContext, bkh)
 
 
 // page UI reactions

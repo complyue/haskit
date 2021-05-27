@@ -252,6 +252,16 @@ plot( 'demoGroup' ) $ {
       x= xRaw[0:nDetailMax], y= yRaw[0:nDetailMax],
     )
 
+    perform implantServices $ namespace _ () export {
+      method updatePlotData(xStart, xEnd,) {
+        dpStart = xStart.trunc
+        dpStop = dpStart + min(nDetailMax, (1 + xEnd - dpStart).round)
+        perform updateDataSource( ds,
+          x= xRaw[dpStart:dpStop], y= yRaw[dpStart:dpStop],
+        )
+      }
+    }
+
     perform @sendCmd(js!expr (async()=>{
 
           const figDetails = plt.figure({ name: 'figDetails',
@@ -278,6 +288,13 @@ plot( 'demoGroup' ) $ {
           const dtlView = findViewByModelName( 'figDetails' )( plotView )
           announceFocus(dtlView, {$focusedFigure$})
           announceAxisCursor(dtlView, defaultScale, {$focusedPoint$})
+
+
+          onViewRangeChange({$syncedRangeX$}, (start, end)=>{
+              hskiPageConn.ifAlive(peer => peer.postCommand(
+                  `updatePlotData(${start}, ${end})`
+              ))
+          })
 
     })())
 

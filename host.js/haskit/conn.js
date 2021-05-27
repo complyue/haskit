@@ -64,6 +64,17 @@ export class HaskItConn {
     return this.peer
   }
 
+  ifAlive(act) {
+    const peer = this.peer
+    switch (peer ? peer.ws.readyState : WebSocket.CLOSED) {
+      case WebSocket.OPEN:
+        return act(peer)
+      default:
+    }
+    console.warn('HaskIt connection already dead.')
+    debugger
+  }
+
   async createLander() {
     throw Error('Subclass not implemented `createLander()` !')
   }

@@ -12,6 +12,8 @@ effect import * 'net/effects'
 
 import * 'haskit'
 
+effect import * './cds'
+
 
 if false then { # hint the assumed environment
 

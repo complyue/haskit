@@ -18,8 +18,8 @@ export function dtype2ArrayCtor(dt) {
 
 
 export async function cdsReceive(
-  peer, cdsContainer, cdsClass,
-  dsName, colNames, colDtypes,
+  colNames, colDtypes,
+  peer, cdsSaveData,
 ) {
   // arm a fresh new sink to receive the stream of column data
   const dataSink = peer.armChannel("data")
@@ -41,8 +41,70 @@ export async function cdsReceive(
       }
     }
 
-    cdsContainer[dsName] = new cdsClass({
-      data: cdsData,
-    })
+    cdsSaveData(cdsData)
   })
+}
+
+export async function cdsUpdate(
+  colNames, colDtypes,
+  peer, cds,
+) {
+  // arm a fresh new sink to receive the stream of column data
+  const dataSink = peer.armChannel("data")
+
+  // don't continue landing following commands until dataSink gets looped,
+  // or there's race condition for some column data to be missed.
+  return new Promise(async (resolve, _reject) => {
+    const cdsData = {}
+    let colCntr = 0
+
+    for await (const colData of dataSink.runProducer(async () => {
+      resolve(undefined)
+    })) {
+      cdsData[colNames[colCntr]] = new (dtype2ArrayCtor(colDtypes[colCntr]))(
+        colData
+      )
+      if (++colCntr >= colNames.length) {
+        break
+      }
+    }
+
+    cds.data = (new cds.constructor({
+      data: cdsData,
+    })).data
+  })
+}
+
+
+export function cdsServiceSuite(hskiPageConn, cdsContainer, bkh,) {
+  return {
+
+    receiveDataSource: async function receiveDataSource(
+      dsName, colNames, colDtypes,
+    ) {
+      await hskiPageConn.ifAlive(peer => {
+        return cdsReceive(
+          colNames, colDtypes,
+          peer, cdsData => cdsContainer[dsName] =
+            new bkh.ColumnDataSource({ data: cdsData }),
+        )
+      })
+    },
+
+    updateDataSource: async function updateDataSource(
+      cds, colNames, colDtypes,
+    ) {
+      await hskiPageConn.ifAlive(peer => {
+        return cdsUpdate(
+          colNames, colDtypes,
+          peer, cds,
+        )
+      })
+    },
+
+    cds: function cds(dsName) {
+      return cdsContainer[dsName]
+    }
+
+  }
 }

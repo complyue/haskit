@@ -6,34 +6,11 @@ import { Lander, } from "nedh"
 
 import { HaskItConn, uiLog, uiInitPage, } from "haskit"
 
-import { cdsReceive, } from './cds.js'
+import { cdsServiceSuite } from './cds.js'
 
-
-export function onViewRangeChange(vrName, onViewRangeChanged,) {
-  const ch = new BroadcastChannel(vrName)
-  ch.onmessage = function (me) {
-    const [start, end] = me.data
-    onViewRangeChanged(start, end)
-  }
-}
-
-
-export function onAxisCursorChange(acName, onAxisCursorChanged,) {
-  const ch = new BroadcastChannel(acName)
-  ch.onmessage = function (me) {
-    const [x, y] = me.data
-    onAxisCursorChanged(x, y)
-  }
-}
-
-
-export function onViewFocusChange(vfName, onViewFocusChanged,) {
-  const ch = new BroadcastChannel(vfName)
-  ch.onmessage = function (me) {
-    const [effFocusName, effFocusTitle] = me.data
-    onViewFocusChanged(effFocusName, effFocusTitle)
-  }
-}
+import {
+  onViewRangeChange, onAxisCursorChange, onViewFocusChange,
+} from './comm.js'
 
 
 // lander with this module scope as environment
@@ -104,17 +81,9 @@ const hskiPageConn = new NarrConn(narrService)
  */
 export const narrContext = {}
 
-export async function receiveDataSource(
-  dsName, colNames, colDtypes,
-) {
-  await cdsReceive(
-    await hskiPageConn.livePeer(), narrContext, bkh.ColumnDataSource,
-    dsName, colNames, colDtypes,
-  )
-}
-export function cds(name) {
-  return narrContext[name]
-}
+export const {
+  receiveDataSource, updateDataSource, cds,
+} = cdsServiceSuite(hskiPageConn, narrContext, bkh)
 
 
 export class Narrator {
