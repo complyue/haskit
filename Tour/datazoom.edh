@@ -194,7 +194,7 @@ plot( 'randomGroup' ) $ {
           })
           onAxisCursorChange({$splCursorPoint$},(x,y)=>{
               const xs = {$ds$}.data.x
-              const di = Math.min(xs.length-1, bounds.ge(xs, x))
+              const di = Math.max(0, bounds.le(xs, x))
               splStory.updateNarremes({ x: x, y: y,
                   dpx: xs[di], dpy: {$ds$}.data.y[di], })
           })
@@ -216,7 +216,7 @@ plot( 'randomGroup' ) $ {
           })
           onAxisCursorChange({$chgCursorPoint$},(x,y)=>{
               const xs = {$ds$}.data.x
-              const di = Math.min(xs.length-1, bounds.ge(xs, x))
+              const di = Math.max(0, bounds.le(xs, x))
               chgStory.updateNarremes({ x: x, y: y,
                   dpx: xs[di], dpy: {$ds$}.data.chg[di], })
           })
