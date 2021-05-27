@@ -57,9 +57,8 @@ outer most curly braces are being interpreted as markers of a block of code in j
     {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
      #}
-    effect method plotWindow( pwid, title= None ) interpreter winPlotter (
-      winPlotScope, winPlotScript
-    ) void {
+    effect method plotWindow( pwid, title= None, page= '/plot.html', )
+    interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
       servicePath = '/' ++ UUID() # allocate a unique service path
       hskiServer.mountServlet(servicePath) $ plotSvcScope => {
 
@@ -86,7 +85,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
       }
 
       # Instruct the browser to open one window automatically
-      plotUrl = '/plot.html?service=' ++ servicePath
+      plotUrl = page ++ '?service=' ++ servicePath
       if title then plotUrl += (
         '&' ++ 'title=' ++ title # TODO urlEncode it
       )
@@ -100,9 +99,8 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
     {##
 Open the client narrative window identified by `pnid`, vend effectful API to install narrative storylines in it
      #}
-    effect method narrWindow( pnid, title= None ) interpreter winNarrator (
-      winNarrScope, winNarrScript
-    ) void {
+    effect method narrWindow( pnid, title= None, page= '/narr.html', )
+    interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
       servicePath = '/' ++ UUID() # allocate a unique service path
       hskiServer.mountServlet(servicePath) $ narrSvcScope => {
 
@@ -129,7 +127,7 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
       }
 
       # Instruct the browser to open one window automatically
-      narrUrl = '/narr.html?service=' ++ servicePath
+      narrUrl = page ++ '?service=' ++ servicePath
       if title then narrUrl += (
         '&' ++ 'title=' ++ title # TODO urlEncode it
       )
