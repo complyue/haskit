@@ -30,7 +30,8 @@ export function onAxisCursorChange(acName, onAxisCursorChanged,) {
 export function onViewFocusChange(vfName, onViewFocusChanged,) {
   const ch = new BroadcastChannel(vfName)
   ch.onmessage = function (me) {
-    onViewFocusChanged(me.data)
+    const [effFocusName, effFocusTitle] = me.data
+    onViewFocusChanged(effFocusName, effFocusTitle)
   }
 }
 

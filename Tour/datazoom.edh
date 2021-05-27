@@ -20,7 +20,9 @@ effect import * 'dim/effects'
 
 # %% #
 nPoints = 50001
+nDetailMax = 501
 
+# %% #
 let xRaw = arange( nPoints, dtype=f8, )
 let yRaw = cumsum$random( nPoints, -0.499..0.501, dtype=f8, )
 
@@ -36,7 +38,7 @@ yChg[nChg:All] = ySample[nChg:All] - ySample[0: -nChg]
 
 # %%
 
-plot( 'randomGroup' ) $ {
+plot( 'demoGroup' ) $ {
   # Note this block is in-place interpreted, synchronously, per each connected root window
 
   syncedRangeX = perform defineViewRange( 'x' )
@@ -52,113 +54,31 @@ plot( 'randomGroup' ) $ {
   splCursorPoint = perform defineAxisCursor( 'splCursorPoint' )
   chgCursorPoint = perform defineAxisCursor( 'chgCursorPoint' )
 
-  perform plotWindow( 'randomSample', 'Overview of Sampled Series' ) $ {@
-    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws serive thread
-    # so it's better to be a scoped block for context isolation, unless with good reasons not to
-
-    ds = perform defineDataSource(
-      x= xSample, y= ySample, chg= yChg,
-    )
-
-    perform @sendCmd(js!expr (async()=>{
-
-          const figSample = plt.figure({ name: 'figSample',
-              title: 'Sample of Random Series',
-              toolbar_location: 'left',
-              sizing_mode: 'stretch_both',
-          })
-          figSample.line({
-              source: {$ ds $},
-              x: { field: 'x' },
-              y: { field: 'y' },
-              color: '#000000', alpha: 0.7,
-              legend: 'Sample',
-          })
-          for(let g of figSample.select( bkh.Legend )) {
-            g.location = 'top_left'
-            g.click_policy = 'hide'
-            g.background_fill_alpha = 0.6
-          }
-          announceRange( figSample.x_range, {$ splRangeX $} )
-          announceRange( figSample.y_range, {$ splRangeY $} )
-          syncRange( figSample.x_range, {$ syncedRangeX $} )
-
-
-          const figChange = plt.figure({ name: 'figChange',
-              title: 'Change of Random Series',
-              toolbar_location: 'left',
-              sizing_mode: 'stretch_both',
-          })
-          figChange.line({
-              source: {$ ds $},
-              x: { field: 'x' },
-              y: { field: 'chg' },
-              color: '#0000FF', alpha: 0.7,
-              legend: 'Change',
-          })
-          for(let g of figChange.select( bkh.Legend )) {
-            g.location = 'top_right'
-            g.click_policy = 'hide'
-            g.background_fill_alpha = 0.6
-          }
-          announceRange( figChange.x_range, {$ chgRangeX $} )
-          announceRange( figChange.y_range, {$ chgRangeY $} )
-          syncRange( figChange.x_range, {$ syncedRangeX $} )
-
-
-          const plotView = await plt.show( plt.gridplot(
-              [ [ figSample ], [ figChange ] ], {
-                merge_tools: false,
-                sizing_mode: 'stretch_both',
-            } ), $('#plot') )
-
-          const splView = findViewByModelName( 'figSample' )( plotView )
-          announceFocus(splView, {$focusedFigure$})
-          announceAxisCursor(splView, defaultScale, {$focusedPoint$})
-          announceAxisCursor(splView, defaultScale, {$splCursorPoint$})
-
-          const chgView = findViewByModelName( 'figChange' )( plotView )
-          announceFocus(chgView, {$focusedFigure$})
-          announceAxisCursor(chgView, defaultScale, {$focusedPoint$})
-          announceAxisCursor(chgView, defaultScale, {$chgCursorPoint$})
-
-    })())
-
-    return true {#
-     # Disconnect the window, but keep this plotting service mounted, so the window can be refreshed correctly.
-     # CAVEAT
-       This plot script (arrow procedure) captures the full hierearchy of its lexical scopes, kept mounted as a plotting service, all resources references by the closure are considered leaked in a sense.
-     #}
-
-    {#
-     # Alternatively:
-       * `return false` here will also keep the plotting service, and the ws connection to the plot window will also be kept connected, serving further RPC from browser js
-       * otherwise this plot script is considered a one-shot, all resources are unreferenced then
-     #}
-  @}
-
 
   perform narrWindow( 'focusFigureNarr', 'Active Figure Info' ) $ {@
 
     perform @sendCmd(js!expr (async()=>{
 
-          const story = narrator.addStoryLine(
+          const figStory = narrator.addStoryLine(
             'focusFigureNarr', 'Active Figure Info',
-            [ 'ffigName', 'shownRngX', 'x', ],
-            [ 'Figure Name', 'Observing X Range', 'X', ],
+            [ 'ffigName', 'ffigTitle', 'x', 'y', ],
+            [ 'Figure Name', 'Figure Title', 'Cursor X', 'Cursor Y', ],
           )
-
-          onViewRangeChange({$syncedRangeX$}, (start, end)=>{
-              story.updateNarremes({ shownRngX:
-                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
+          onViewFocusChange({$focusedFigure$}, (figName, figTitle)=>{
+              figStory.updateNarremes({ffigName: figName, ffigTitle: figTitle})
           })
-
-          onViewFocusChange({$focusedFigure$}, (figName)=>{
-              story.updateNarremes({ffigName: figName})
-          })
-
           onAxisCursorChange({$focusedPoint$},(x,y)=>{
-              story.updateNarremes({ x: x, })
+              figStory.updateNarremes({ x: x, y: y, })
+          })
+
+          const syncStory = narrator.addStoryLine(
+            'syncInfoNarr', 'Synchronization Info',
+            [ 'syncRngX', ],
+            [ "Sync'ed X Range", ],
+          )
+          onViewRangeChange({$syncedRangeX$}, (start, end)=>{
+              syncStory.updateNarremes({ syncRngX:
+                  start.toFixed(2) + ' ~ ' + end.toFixed(2), })
           })
 
     })())
@@ -222,7 +142,7 @@ plot( 'randomGroup' ) $ {
           })
 
 
-          onViewFocusChange({$focusedFigure$}, (figName)=>{
+          onViewFocusChange({$focusedFigure$}, (figName, figTitle)=>{
               if ( 'figSample' === figName ) {
                 splStory.focus()
               } else if ( 'figChange' === figName ) {
@@ -234,6 +154,137 @@ plot( 'randomGroup' ) $ {
 
     return true {#
      # Disconnect the window, but keep this narration service mounted, so the window can be refreshed correctly.
+     #}
+  @}
+
+
+  perform plotWindow( 'demoSample', 'Downsampled Series' ) $ {@
+    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws service thread
+    # so it's better to be a scoped block for context isolation, unless with good reasons not to
+
+    ds = perform defineDataSource(
+      x= xSample, y= ySample, chg= yChg,
+    )
+
+    perform @sendCmd(js!expr (async()=>{
+
+          const figSample = plt.figure({ name: 'figSample',
+              title: 'Sample of the Series',
+              toolbar_location: 'left',
+              sizing_mode: 'stretch_both',
+          })
+          announceRange( figSample.x_range, {$ splRangeX $} )
+          announceRange( figSample.y_range, {$ splRangeY $} )
+          syncRange( figSample.x_range, {$ syncedRangeX $} )
+          figSample.line({
+              source: {$ds$},
+              x: { field: 'x' },
+              y: { field: 'y' },
+              color: '#000000', alpha: 0.7,
+              legend: 'Sample',
+          })
+          for(let g of figSample.select( bkh.Legend )) {
+            g.location = 'top_left'
+            g.click_policy = 'hide'
+            g.background_fill_alpha = 0.6
+          }
+
+
+          const figChange = plt.figure({ name: 'figChange',
+              title: 'Change of the Series',
+              toolbar_location: 'right',
+              sizing_mode: 'stretch_both',
+          })
+          announceRange( figChange.x_range, {$ chgRangeX $} )
+          announceRange( figChange.y_range, {$ chgRangeY $} )
+          syncRange( figChange.x_range, {$ syncedRangeX $} )
+          figChange.line({
+              source: {$ds$},
+              x: { field: 'x' },
+              y: { field: 'chg' },
+              color: '#0000FF', alpha: 0.7,
+              legend: 'Change',
+          })
+          for(let g of figChange.select( bkh.Legend )) {
+            g.location = 'top_right'
+            g.click_policy = 'hide'
+            g.background_fill_alpha = 0.6
+          }
+
+
+          const plotView = await plt.show( plt.gridplot(
+              [ [ figSample ], [ figChange ] ], {
+                merge_tools: false,
+                sizing_mode: 'stretch_both',
+            } ), $('#plot') )
+
+          const splView = findViewByModelName( 'figSample' )( plotView )
+          announceFocus(splView, {$focusedFigure$})
+          announceAxisCursor(splView, defaultScale, {$focusedPoint$})
+          announceAxisCursor(splView, defaultScale, {$splCursorPoint$})
+
+          const chgView = findViewByModelName( 'figChange' )( plotView )
+          announceFocus(chgView, {$focusedFigure$})
+          announceAxisCursor(chgView, defaultScale, {$focusedPoint$})
+          announceAxisCursor(chgView, defaultScale, {$chgCursorPoint$})
+
+    })())
+
+    return true {#
+     # Disconnect the window, but keep this plotting service mounted, so the window can be refreshed correctly.
+     # CAVEAT
+       This plot script (arrow procedure) captures the full hierearchy of its lexical scopes, kept mounted as a plotting service, all resources references by the closure are considered leaked in a sense.
+     #}
+
+    {#
+     # Alternatively:
+       * `return false` here will also keep the plotting service, and the ws connection to the plot window will also be kept connected, serving further RPC from browser js
+       * otherwise this plot script is considered a one-shot, all resources are unreferenced then
+     #}
+  @}
+
+
+  perform plotWindow( 'demoDetails', 'Series Details' ) $ {@
+    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws service thread
+    # so it's better to be a scoped block for context isolation, unless with good reasons not to
+
+    ds = perform defineDataSource(
+      x= xRaw[0:nDetailMax], y= yRaw[0:nDetailMax],
+    )
+
+    perform @sendCmd(js!expr (async()=>{
+
+          const figDetails = plt.figure({ name: 'figDetails',
+              title: 'Detail of the Series',
+              toolbar_location: 'left',
+              sizing_mode: 'stretch_both',
+          })
+          figDetails.line({
+              source: {$ds$},
+              x: { field: 'x' },
+              y: { field: 'y' },
+              color: '#000000', alpha: 0.7,
+              legend: 'Details',
+          })
+          for(let g of figDetails.select( bkh.Legend )) {
+            g.location = 'top_left'
+            g.click_policy = 'hide'
+            g.background_fill_alpha = 0.6
+          }
+
+
+          const plotView = await plt.show( figDetails, $('#plot') )
+
+          const dtlView = findViewByModelName( 'figDetails' )( plotView )
+          announceFocus(dtlView, {$focusedFigure$})
+          announceAxisCursor(dtlView, defaultScale, {$focusedPoint$})
+
+    })())
+
+    return false {#
+     # Keep the window connected and this plotting service mounted, so the window can keep requesting new plot data on-demand, also the window can be refreshed correctly as a side effect.
+     # CAVEAT
+       This plot script (arrow procedure) captures the full hierearchy of its lexical scopes, kept mounted as a plotting service, all resources references by the closure are considered leaked in a sense.
      #}
   @}
 

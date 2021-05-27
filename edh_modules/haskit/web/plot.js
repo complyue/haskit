@@ -65,12 +65,13 @@ export function syncRange(rng, vrName,) {
 }
 
 
-export function announceFocus(figView, vfName, focusName,) {
+export function announceFocus(figView, vfName, focusName, focusTitle,) {
   const effFocusName = focusName || figView.model.name
+  const effFocusTitle = focusTitle || figView.model.title
   const evtElem = figView.canvas_view.events_el
   const ch = new BroadcastChannel(vfName)
   evtElem.addEventListener('mouseenter', _me => {
-    ch.postMessage(effFocusName)
+    ch.postMessage([effFocusName, effFocusTitle])
   })
 }
 
