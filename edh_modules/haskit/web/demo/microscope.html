@@ -6,9 +6,11 @@
 
   <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
 
-  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.css" />
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
+
+  <link rel="stylesheet" type="text/css" href="/narr.css" />
 
   <!-- this requires Chrome, with flag `Experimental Web Platform features`
        enabled for the time being 2020/10
@@ -25,7 +27,7 @@
 
   <script src="/vendor/jquery/jquery.js"></script>
 
-  <script src="/vendor/mui/mui.min.js"></script>
+  <script src="/vendor/mui/mui.js"></script>
 
   <!-- note: order of BokehJS imports does matter -->
   <script src="/vendor/bokehjs/bokeh.js"></script>
@@ -40,25 +42,41 @@
     Bokeh.settings.dev = true;
   </script>
 
-  <script type="module" src="./microscope.js"></script>
+  <script type="module" src="/plot.js"></script>
 
-  <!-- be the last to assume highest precedence, 
-    as mui/Bokeh are not dark theme aware -->
-  <style type="text/css">
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #000;
-      }
-    }
-
-    @media (prefers-color-scheme: light) {
-      body {
-        background: #fff;
-      }
-    }
-  </style>
 </head>
 
 <body>
+
+  <div id="plot"></div>
+
+
+  <div class="Narrator">
+    <div class="NarrationTitle">
+      <div class="FeatName">
+        <label>
+          <input id="auto-load-dyn-rng" type="checkbox" checked>
+          Auto Synchronize -
+        </label>
+        <span id="rng-mod-ind"></span>
+        X Range as shown on Downsampled Figure
+      </div>
+      <div id="shown-dyn-rng" class="Narreme">??</div>
+    </div>
+  </div>
+
+
+  <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
+    Clear Log
+  </button>
+
+  <button name="load-dyn-rng" class="mui-btn mui-btn--small mui-btn--primary">
+    Manually Load Range
+  </button>
+
+
+  <div class="LogArea">
+    <div class="LogBox"></div>
+  </div>
 
 </body>

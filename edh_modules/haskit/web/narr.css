@@ -2,18 +2,12 @@
 * Narrator page styles
 */
 
-body {
-  margin: 1px;
-  padding: 1px 1px 1px 9pt;
-  background: #383831;
-  color: #383802;
-}
-
 .Narrator {
   display: flex;
   flex-flow: column;
   margin: 0;
   padding: 6pt;
+  color: #383802;
   background-color: #e3e340;
 }
 

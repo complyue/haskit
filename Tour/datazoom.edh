@@ -275,7 +275,7 @@ plot( 'demoGroup' ) $ {
   @}
 
 
-  perform plotWindow( 'demoDetails', 'Series Details' ) $ {@
+  perform plotWindow( 'demoDetails', 'Series Details', page= '/demo/microscope.html', ) $ {@
     # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws service thread
     # so it's better to be a scoped block for context isolation, unless with good reasons not to
 
@@ -296,7 +296,7 @@ plot( 'demoGroup' ) $ {
     perform @sendCmd(js!expr (async()=>{
 
           const figDetails = plt.figure({ name: 'figDetails',
-              title: 'Detail of the Series',
+              title: 'Details of the Series',
               toolbar_location: 'left',
               sizing_mode: 'stretch_both',
           })
@@ -323,11 +323,34 @@ plot( 'demoGroup' ) $ {
           announceAxisCursor(dtlView, defaultScale, {$focusedPoint$})
           announceAxisCursor(dtlView, defaultScale, {$dtlCursorPoint$})
 
-
+          let startRngX = null, endRngX = null
           onViewRangeChange({$syncedRangeX$}, (start, end)=>{
-              hskiPageConn.ifAlive(peer => peer.postCommand(
-                  `updatePlotData(${start}, ${end})`
-              ))
+              startRngX = start; endRngX = end
+              $('#shown-dyn-rng').text(
+                start.toFixed(2) + ' ~ ' + end.toFixed(2))
+              if($('#auto-load-dyn-rng').prop('checked')) {
+                hskiPageConn.ifAlive(peer => {
+                    peer.postCommand(
+                      `updatePlotData(${startRngX}, ${endRngX})`
+                    )
+                })
+                $('#rng-mod-ind').text('')
+              } else {
+                $('#rng-mod-ind').text('*')
+                uiLog('Sample figure zoomed/panned, this figure is out of sync now.')
+              }
+          })
+          $("button[name=load-dyn-rng]").on("click", () => {
+              $('#auto-load-dyn-rng').prop('checked', false)
+              if(null !== startRngX && null !== endRngX) {
+                hskiPageConn.ifAlive(peer => {
+                    peer.postCommand(
+                      `updatePlotData(${startRngX}, ${endRngX})`
+                    )
+                    $('#rng-mod-ind').text('')
+                    uiLog('Details range synchronized')
+                })
+              }
           })
 
     })())
