@@ -24,7 +24,7 @@ export method plot( pgid ) interpreter groupPlotter (
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
    #}
   hskiServer = perform @haskItServer
-  hskiServer ?= HaskItServer()
+  hskiServer =: HaskItServer()
 
   # intermediate data for the plot group
   namespace pgData( pgid= pgid, ) {
@@ -52,7 +52,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
   }
 
   for (rootPeer, rootSvcScope) from hskiServer.wsClientsOn('/') do {
-    rootPeer ?= Peer()
+    rootPeer =: Peer()
 
     {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it

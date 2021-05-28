@@ -77,7 +77,7 @@ export class HaskItServer {
   generator wsClientsOn( path ) case this._wsClients[path] of
   # nil means no such path ever connected, we only care non-nil case
   { clntsOnPath } -> for (wsPeer, svcScope) from clntsOnPath do {
-    wsPeer ?= Peer()
+    wsPeer =: Peer()
     ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
     effect @haskItPeer = wsPeer
     yield (wsPeer, svcScope)
