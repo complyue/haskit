@@ -4,7 +4,7 @@
 
 import { Lander, } from "nedh"
 
-import { HaskItConn, uiLog, uiInitPage, } from "haskit"
+import { HaskItConn, uiLog,  } from "haskit"
 
 import { cdsServiceSuite } from './cds.js'
 
@@ -149,9 +149,6 @@ export class Storyline {
 
 export const narrator = new Narrator($("#narrator"))
 
-
-// page UI reactions
-uiInitPage()
 
 // Connect on open
 $(async function () {

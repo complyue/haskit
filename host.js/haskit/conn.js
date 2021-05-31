@@ -2,7 +2,7 @@
  * HaskIt WebSocket connection
  */
 
-import { WsPeer, } from "nedh"
+import { WsPeer, Lander, } from "nedh"
 
 import { hasLogBox, uiLog, } from "./log.js"
 
@@ -23,6 +23,45 @@ export class HaskItPeer extends WsPeer {
   cleanup() {
     super.cleanup()
     uiLog("Lost connection with HaskIt backend.")
+  }
+}
+
+
+class HaskItLander extends Lander {
+  async landingThread() {
+    // XXX a subclass of Lander normally overrides this method, with even
+    //     verbatim copy of the method code here, it's already very useful,
+    //     in that the subclass' lexical context becomes the landing
+    //     environment.
+    //
+    //     And as this function's scope is the local scope within which the
+    //     source of incoming packets are eval'ed, other forms of (maybe ugly
+    //     and nasty) hacks can be put right here, but god forbid it.
+
+    if (null === this.nxt) {
+      throw Error("Passed end-of-stream for packets")
+    }
+    while (true) {
+      const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt
+      const [_src, _nxt] = await _intake
+      this.nxt = _nxt
+      if (null === _src) {
+        if (null !== _nxt) {
+          throw Error("bug: inconsistent eos signal")
+        }
+        return // reached end-of-stream, terminate this thread
+      }
+      if (null === _nxt) {
+        throw Error("bug: null nxt for non-eos-packet")
+      }
+
+      // land one packet
+      try {
+        _resolve(await eval(_src))
+      } catch (exc) {
+        _reject(exc)
+      }
+    }
   }
 }
 
@@ -76,6 +115,10 @@ export class HaskItConn {
   }
 
   async createLander() {
-    throw Error('Subclass not implemented `createLander()` !')
+    return new HaskItLander()
   }
+
 }
+
+// default connection to root path
+export const hskiPageConn = new HaskItConn('')

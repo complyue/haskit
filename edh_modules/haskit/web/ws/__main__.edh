@@ -11,8 +11,7 @@ import * 'net/symbols'
 effect import * 'net/effects'
 
 import * 'haskit'
-
-effect import * './cds'
+effect import * 'haskit/effects'
 
 
 if false then { # hint the assumed environment
@@ -22,7 +21,7 @@ if false then { # hint the assumed environment
 
   # reqPath & reqParams should have been implanted as well, reflecting ws request path and query parameters
   reqPath =: '/'
-  reqParams =: ( s= '<session-id>', )
+  reqParams =: (, )
 
   # `@haskItServer` should have been implanted by per-connection peer module init method
   ; @haskItServer =: HaskItServer()

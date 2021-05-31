@@ -18,7 +18,7 @@ An instance of `HaskItServer` (usually a descendant instance of it) must be in e
 
  #}
 export method plot( pgid ) interpreter groupPlotter (
-  grpPlotScope, grpPlotScript
+  grpPlotScope, grpPlotScript,
 ) void {
   {# note wrt the js!expr posted to web clients:
 outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
@@ -67,7 +67,7 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
         }
 
         # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
-        return case winPlotScope.eval(winPlotScript) of {
+        return case winPlotScope.eval$ winPlotScript of {
           # all done, disconnect this window as no further client/server interaction expected
           true -> true
           {return true} -> true
@@ -109,7 +109,7 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
         }
 
         # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
-        return case winNarrScope.eval(winNarrScript) of {
+        return case winNarrScope.eval$ winNarrScript of {
           # all done, disconnect this window as no further client/server interaction expected
           true -> true
           {return true} -> true
@@ -137,7 +137,7 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
       )
     }
 
-    grpPlotScope.eval(grpPlotScript)
+    grpPlotScope.eval$ grpPlotScript
   }
 
 }

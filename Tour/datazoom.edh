@@ -243,11 +243,13 @@ plot( 'demoGroup' ) $ {
           }
 
 
-          const plotView = await plt.show( plt.gridplot(
-              [ [ figSample ], [ figChange ] ], {
-                merge_tools: false,
-                sizing_mode: 'stretch_both',
-            } ), $('#plot') )
+          const plotView = await plt.show(
+            plt.gridplot(
+              [ [ figSample ], [ figChange ] ],
+              { merge_tools: false, sizing_mode: 'stretch_both', }
+            ),
+            $('#plot'),
+          )
 
           const splView = findViewByModelName( 'figSample' )( plotView )
           announceFocus(splView, {$focusedFigure$})
@@ -316,7 +318,7 @@ plot( 'demoGroup' ) $ {
           }
 
 
-          const plotView = await plt.show( figDetails, $('#plot') )
+          const plotView = await plt.show( figDetails, $('#plot'), )
 
           const dtlView = findViewByModelName( 'figDetails' )( plotView )
           announceFocus(dtlView, {$focusedFigure$})

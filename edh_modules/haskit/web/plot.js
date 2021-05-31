@@ -4,7 +4,7 @@
 
 import { Lander, } from "nedh"
 
-import { HaskItConn, uiLog, uiInitPage, } from "haskit"
+import { HaskItConn, uiLog, } from "haskit"
 
 import { cdsServiceSuite } from './cds.js'
 
@@ -150,9 +150,6 @@ export const {
   receiveDataSource, updateDataSource, cds,
 } = cdsServiceSuite(hskiPageConn, plotContext, bkh)
 
-
-// page UI reactions
-uiInitPage()
 
 // Connect on open
 $(async function () {

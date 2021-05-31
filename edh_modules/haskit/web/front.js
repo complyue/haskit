@@ -4,7 +4,7 @@
 
 import { Lander, } from "nedh"
 
-import { HaskItConn, uiLog, uiInitPage, } from "haskit"
+import { HaskItConn, uiLog, } from "haskit"
 
 
 class FrontLander extends Lander {
@@ -54,9 +54,6 @@ class FrontConn extends HaskItConn {
 }
 const hskiPageConn = new FrontConn('') // connect to root path
 
-
-// page UI reactions
-uiInitPage()
 
 // Connect on open
 $(async function () {

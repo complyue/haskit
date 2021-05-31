@@ -12,6 +12,10 @@ let logBox = null, logArea = null,
 if (globalThis.window === globalThis) { // in browser
   logBox = $(".LogBox")
   logArea = logBox.closest(".LogArea")
+
+  $("button[name=clear-log]").on("click", () => {
+    clearLog()
+  })
 }
 
 
@@ -72,13 +76,4 @@ export function uiLog(msg, type = "msg", details = undefined) {
 
 export function clearLog() {
   if (hasLogBox) logBox.empty()
-}
-
-
-export function uiInitPage() {
-
-  $("button[name=clear-log]").on("click", () => {
-    clearLog()
-  })
-
 }
