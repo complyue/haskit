@@ -10,9 +10,23 @@ import * './utils'
 import * './debug'
 
 
-{##
+export method defineViewRange( vrName= 'view-range', vrIdent= None, ) {
+  return vrName ++ '#' ++ vrIdent or UUID()
+}
 
-Vend effectful API to plot a group of plotting windows against each hski client (root window)
+export method defineViewFocus( vfName= 'view-focus', vfIdent= None, ) {
+  return vfName ++ '#' ++ vfIdent or UUID()
+}
+
+export method defineAxisCursor( acName= 'axis-cursor', acIdent= None, ) {
+  return acName ++ '#' ++ acIdent or UUID()
+}
+
+
+{##
+ # Organize and show a group of plot/narrator windows
+
+The group plot script will be evaluated against each hski client (root window), with its @haskItPeer in effect.
 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
 
@@ -21,123 +35,109 @@ export method plot( pgid ) interpreter groupPlotter (
   grpPlotScope, grpPlotScript,
 ) void {
   {# note wrt the js!expr posted to web clients:
-outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (or JS object) literal is intended.
+outer most curly braces are being interpreted as markers of a block of code in js `eval`, need to get it parenthese quoted, in case a dict (a.k.a. JS object) literal is intended.
    #}
   hskiServer = perform @haskItServer
   hskiServer =: HaskItServer()
 
-  # intermediate data for the plot group
-  namespace pgData( pgid= pgid, ) {
-    nViewRanges = 0
-    nViewFocuses = 0
-    nAxisCursors = 0
-  }
+  effect pgid = pgid
 
-  effect method defineViewRange( vrName= 'view-range' ) {
-    # use a shared counter to ensure uniqueness per view-range definition
-    vrNum = ai pgData.nViewRanges+=1
-    return vrName ++ '#' ++ vrNum ++ '@' ++ pgid
-  }
+  for (_rootPeer, _rootSvcScope) from hskiServer.wsClientsOn('/')
+  do grpPlotScope.eval$ grpPlotScript
+}
 
-  effect method defineViewFocus( vfName= 'view-focus' ) {
-    # use a shared counter to ensure uniqueness per view-focus definition
-    vfNum = ai pgData.nViewFocuses+=1
-    return vfName ++ '#' ++ vfNum ++ '@' ++ pgid
-  }
 
-  effect method defineAxisCursor( acName= 'axis-cursor' ) {
-    # use a shared counter to ensure uniqueness per axis-cursor definition
-    acNum = ai pgData.nAxisCursors+=1
-    return acName ++ '#' ++ acNum ++ '@' ++ pgid
-  }
-
-  for (rootPeer, rootSvcScope) from hskiServer.wsClientsOn('/') do {
-    rootPeer =: Peer()
-
-    {##
+{##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
-     #}
-    effect method plotWindow( pwid, title= None, page= '/plot.html', )
-    interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
-      servicePath = '/' ++ UUID() # allocate a unique service path
-      hskiServer.mountServlet(servicePath) $ plotSvcScope => {
+ #}
+export method plotWindow( pwid, title= None, page= '/plot.html', )
+interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
+  let pgid = perform pgid $=> 'plot'
+  , hskiServer = perform @haskItServer
+  , rootPeer = perform @haskItPeer
+  hskiServer =: HaskItServer()
+  rootPeer =: Peer()
 
-        effect method implantServices(services) {
-          from services import * into plotSvcScope
-        }
+  servicePath = '/' ++ UUID() # allocate a unique service path
+  hskiServer.mountServlet(servicePath) $ plotSvcScope => {
 
-        # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
-        return case winPlotScope.eval$ winPlotScript of {
-          # all done, disconnect this window as no further client/server interaction expected
-          true -> true
-          {return true} -> true
-          # initial plotting done, keep this window connected, further C/S interactions expected
-          false -> false
-          {return false} -> false
-          _ -> { # one-shot plotting, umount the service
-            hskiServer.unmountServlet(servicePath)
-            # todo which of the following is more correct?
-            true # disconnect this window, no further C/S interactions expected
-            # false # keep this window connected, further C/S interactions expected
-          }
-        }
-
-      }
-
-      # Instruct the browser to open one window automatically
-      plotUrl = page ++ '?service=' ++ servicePath
-      if title then plotUrl += (
-        '&' ++ 'title=' ++ title # TODO urlEncode it
-      )
-      plotWinName = 'plot#' ++ pgid ++ '/' ++ pwid
-      rootPeer.postCommand(js!expr
-        window.open( {$plotUrl$}, {$plotWinName$}, )
-      )
+    effect method implantServices(services) {
+      from services import * into plotSvcScope
     }
 
-
-    {##
-Open the client narrative window identified by `pnid`, vend effectful API to install narrative storylines in it
-     #}
-    effect method narrWindow( pnid, title= None, page= '/narr.html', )
-    interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
-      servicePath = '/' ++ UUID() # allocate a unique service path
-      hskiServer.mountServlet(servicePath) $ narrSvcScope => {
-
-        effect method implantServices(services) {
-          from services import * into narrSvcScope
-        }
-
-        # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
-        return case winNarrScope.eval$ winNarrScript of {
-          # all done, disconnect this window as no further client/server interaction expected
-          true -> true
-          {return true} -> true
-          # initial narrting done, keep this window connected, further C/S interactions expected
-          false -> false
-          {return false} -> false
-          _ -> { # one-shot narrting, umount the service
-            hskiServer.unmountServlet(servicePath)
-            # todo which of the following is more correct?
-            true # disconnect this window, no further C/S interactions expected
-            # false # keep this window connected, further C/S interactions expected
-          }
-        }
-
+    # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
+    return case winPlotScope.eval$ winPlotScript of {
+      # all done, disconnect this window as no further client/server interaction expected
+      true -> true
+      {return true} -> true
+      # initial plotting done, keep this window connected, further C/S interactions expected
+      false -> false
+      {return false} -> false
+      _ -> { # one-shot plotting, umount the service
+        hskiServer.unmountServlet(servicePath)
+        # todo which of the following is more correct?
+        true # disconnect this window, no further C/S interactions expected
+        # false # keep this window connected, further C/S interactions expected
       }
-
-      # Instruct the browser to open one window automatically
-      narrUrl = page ++ '?service=' ++ servicePath
-      if title then narrUrl += (
-        '&' ++ 'title=' ++ title # TODO urlEncode it
-      )
-      narrWinName = 'narr#' ++ pgid ++ '/' ++ pnid
-      rootPeer.postCommand(js!expr
-        window.open( {$narrUrl$}, {$narrWinName$}, )
-      )
     }
 
-    grpPlotScope.eval$ grpPlotScript
   }
 
+  # Instruct the browser to open one window automatically
+  plotUrl = page ++ '?service=' ++ servicePath
+  if title then plotUrl += (
+    '&' ++ 'title=' ++ title # TODO urlEncode it
+  )
+  plotWinName = pgid ++ '/' ++ pwid ++ '-window'
+  rootPeer.postCommand(js!expr
+    window.open( {$plotUrl$}, {$plotWinName$}, )
+  )
+}
+
+
+{##
+Open the client narrative window identified by `pnid`, vend effectful API to install narrative storylines in it
+ #}
+export method narrWindow( pnid, title= None, page= '/narr.html', )
+interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
+  let pgid = perform pgid $=> 'plot'
+  , hskiServer = perform @haskItServer
+  , rootPeer = perform @haskItPeer
+  hskiServer =: HaskItServer()
+  rootPeer =: Peer()
+
+  servicePath = '/' ++ UUID() # allocate a unique service path
+  hskiServer.mountServlet(servicePath) $ narrSvcScope => {
+
+    effect method implantServices(services) {
+      from services import * into narrSvcScope
+    }
+
+    # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
+    return case winNarrScope.eval$ winNarrScript of {
+      # all done, disconnect this window as no further client/server interaction expected
+      true -> true
+      {return true} -> true
+      # initial narration setup done, keep this window connected, further C/S interactions expected
+      false -> false
+      {return false} -> false
+      _ -> { # one-shot narration setup, umount the service
+        hskiServer.unmountServlet(servicePath)
+        # todo which of the following is more correct?
+        true # disconnect this window, no further C/S interactions expected
+        # false # keep this window connected, further C/S interactions expected
+      }
+    }
+
+  }
+
+  # Instruct the browser to open one window automatically
+  narrUrl = page ++ '?service=' ++ servicePath
+  if title then narrUrl += (
+    '&' ++ 'title=' ++ title # TODO urlEncode it
+  )
+  narrWinName = pgid ++ '/' ++ pnid ++ '-narrator'
+  rootPeer.postCommand(js!expr
+    window.open( {$narrUrl$}, {$narrWinName$}, )
+  )
 }

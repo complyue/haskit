@@ -9,13 +9,9 @@ Assuming the peer be a browser window connected through WebSocket, and some Java
 
  #}
 
-import (
-  # alias these symbols to make the intent more obvious
-  sendCmd as netSendCmd, sendData as netSendData,
-  **
-) 'net'
+import ( sendCmd, sendData, ** ) 'net'
 
-import (snippet, **) 'haskit/utils'
+import ( snippet, ** ) './utils'
 
 
 export method defineDataSource( **cols ) {
@@ -24,12 +20,12 @@ export method defineDataSource( **cols ) {
   let ( colNames, colDtypes, ) = (*unzip$
     do ( k, v.dtype|str, ) for ( k, v ) from cols
   )
-  perform @netSendCmd(js!expr receiveDataSource(
+  perform @sendCmd(js!expr receiveDataSource(
       {$ dsName $},
       {$snippet$json$ colNames $},
       {$snippet$json$ colDtypes $},
   ) )
-  for ( _k, v ) from cols do perform @netSendData( blob$ v )
+  for ( _k, v ) from cols do perform @sendData( blob$ v )
 
   return snippet$ 'cds('++repr(dsName)++')'
 }
@@ -39,10 +35,10 @@ export method updateDataSource( dsRepr, **cols ) {
   let ( colNames, colDtypes, ) = (*unzip$
     do ( k, v.dtype|str, ) for ( k, v ) from cols
   )
-  perform @netSendCmd(js!expr updateDataSource(
+  perform @sendCmd(js!expr updateDataSource(
       {$ dsRepr $},
       {$snippet$json$ colNames $},
       {$snippet$json$ colDtypes $},
   ) )
-  for ( _k, v ) from cols do perform @netSendData( blob$ v )
+  for ( _k, v ) from cols do perform @sendData( blob$ v )
 }

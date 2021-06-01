@@ -3,6 +3,7 @@ export {
 
   import * './web'
   import * './plot'
+  import * './cds'
 
   import * './utils'
 

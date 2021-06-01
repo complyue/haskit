@@ -19,46 +19,52 @@ effect import * 'dim/effects'
 
 
 # %% #
-nPoints = 50001
-nDetailMax = 501
+let
+, nPoints = 50001
+, nDetailMax = 501
 
 # %% #
-let xRaw = arange( nPoints, dtype=f8, )
-let yRaw = cumsum$random( nPoints, -0.499..0.501, dtype=f8, )
+let
+, xRaw = arange( nPoints, dtype=f8, )
+, yRaw = cumsum$random( nPoints, -0.499..0.501, dtype=f8, )
 
 # %% #
-xSample = xRaw[0:nPoints:100]
-ySample = yRaw[0:nPoints:100]
+let
+, xSample = xRaw[0:nPoints:100]
+, ySample = yRaw[0:nPoints:100]
 
 # %% #
-nChg = 5
-yChg = ySample.copy()
+let
+, nChg = 5
+, yChg = copy$ ySample
 yChg[0:nChg] = nan
 yChg[nChg:All] = ySample[nChg:All] - ySample[0: -nChg]
 
 # %%
 
+syncedRangeX = defineViewRange( 'x' )
+
+splRangeX = defineViewRange( 'splX' )
+splRangeY = defineViewRange( 'splY' )
+chgRangeX = defineViewRange( 'chgX' )
+chgRangeY = defineViewRange( 'chgY' )
+dtlRangeX = defineViewRange( 'dtlX' )
+dtlRangeY = defineViewRange( 'dtlY' )
+
+focusedFigure = defineViewFocus( 'focusedFigure' )
+focusedPoint = defineAxisCursor( 'focusedPoint' )
+
+splCursorPoint = defineAxisCursor( 'splCursorPoint' )
+chgCursorPoint = defineAxisCursor( 'chgCursorPoint' )
+dtlCursorPoint = defineAxisCursor( 'dtlCursorPoint' )
+
 plot( 'demoGroup' ) $ {
   # Note this block is in-place interpreted, synchronously, per each connected root window
 
-  syncedRangeX = perform defineViewRange( 'x' )
 
-  splRangeX = perform defineViewRange( 'splX' )
-  splRangeY = perform defineViewRange( 'splY' )
-  chgRangeX = perform defineViewRange( 'chgX' )
-  chgRangeY = perform defineViewRange( 'chgY' )
-  dtlRangeX = perform defineViewRange( 'dtlX' )
-  dtlRangeY = perform defineViewRange( 'dtlY' )
-
-  focusedFigure = perform defineViewFocus( 'focusedFigure' )
-  focusedPoint = perform defineAxisCursor( 'focusedPoint' )
-
-  splCursorPoint = perform defineAxisCursor( 'splCursorPoint' )
-  chgCursorPoint = perform defineAxisCursor( 'chgCursorPoint' )
-  dtlCursorPoint = perform defineAxisCursor( 'dtlCursorPoint' )
-
-
-  perform narrWindow( 'focusFigureNarr', 'Active Figure Info' ) $ {@
+  narrWindow( 'focusFigureNarr', 'Active Figure Info' ) $ {@
+    # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
+    # So it's better to be a scoped block for context isolation, unless with good reasons not to
 
     perform @sendCmd(js!expr (async()=>{
 
@@ -92,13 +98,15 @@ plot( 'demoGroup' ) $ {
   @}
 
 
-  perform narrWindow( 'allFiguresNarr', 'All Figures Info' ) $ {@
+  narrWindow( 'allFiguresNarr', 'All Figures Info' ) $ {@
+    # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
+    # So it's better to be a scoped block for context isolation, unless with good reasons not to
 
-    ds = perform defineDataSource(
+    # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window
+    ds = defineDataSource(
       x= xSample, y= ySample, chg= yChg,
     )
-
-    dsDetails = perform defineDataSource(
+    dsDetails = defineDataSource(
       x= xRaw, y= yRaw,
     )
 
@@ -189,11 +197,12 @@ plot( 'demoGroup' ) $ {
   @}
 
 
-  perform plotWindow( 'demoSample', 'Downsampled Series' ) $ {@
-    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws service thread
-    # so it's better to be a scoped block for context isolation, unless with good reasons not to
+  plotWindow( 'demoSample', 'Downsampled Series' ) $ {@
+    # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
+    # So it's better to be a scoped block for context isolation, unless with good reasons not to
 
-    ds = perform defineDataSource(
+    # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window
+    ds = defineDataSource(
       x= xSample, y= ySample, chg= yChg,
     )
 
@@ -277,11 +286,12 @@ plot( 'demoGroup' ) $ {
   @}
 
 
-  perform plotWindow( 'demoDetails', 'Series Details', page= '/demo/microscope.html', ) $ {@
-    # Note this block is in-place interpreted, asynchronously, per every plot window connected (only if it opens the correct url), on their respective ws service thread
-    # so it's better to be a scoped block for context isolation, unless with good reasons not to
+  plotWindow( 'demoDetails', 'Series Details', page= '/demo/microscope.html', ) $ {@
+    # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
+    # So it's better to be a scoped block for context isolation, unless with good reasons not to
 
-    ds = perform defineDataSource(
+    # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window
+    ds = defineDataSource(
       x= xRaw[0:nDetailMax], y= yRaw[0:nDetailMax],
     )
 
@@ -289,7 +299,7 @@ plot( 'demoGroup' ) $ {
       method updatePlotData(xStart, xEnd,) {
         dpStart = xStart.trunc
         dpStop = dpStart + min(nDetailMax, (1 + xEnd - dpStart).round)
-        perform updateDataSource( ds,
+        updateDataSource( ds,
           x= xRaw[dpStart:dpStop], y= yRaw[dpStart:dpStop],
         )
       }
