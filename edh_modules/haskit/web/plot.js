@@ -133,7 +133,7 @@ class PlotConn extends HaskItConn {
   }
 }
 const plotService = plotParams.get('service')
-const hskiPageConn = new PlotConn(plotService)
+const hskiPageConn = plotService ? new PlotConn(plotService) : null
 
 {
   const title = plotParams.get('title')
@@ -152,12 +152,16 @@ export const {
 
 
 // Connect on open
-$(async function () {
-  try {
-    await hskiPageConn.livePeer()
-    uiLog("Connected with HaskIt backend.")
-  } catch (err) {
-    let details = err ? err.stack : err
-    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
-  }
-})
+if (hskiPageConn) {
+  $(async function () {
+    try {
+      await hskiPageConn.livePeer()
+      uiLog("Connected with HaskIt backend.")
+    } catch (err) {
+      let details = err ? err.stack : err
+      uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
+    }
+  })
+} else {
+  uiLog('Not connected to a service.')
+}
