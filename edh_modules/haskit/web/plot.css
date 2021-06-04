@@ -1,0 +1,10 @@
+/*
+* Plot page
+*/
+
+.Plot {
+  display: flex;
+  flex-flow: column;
+  margin: 0;
+  padding: 6pt;
+}
