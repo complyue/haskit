@@ -14,6 +14,19 @@ import {
 } from './comm.js'
 
 
+
+export function newPlotDiv(name = 'plot', classes = 'Plot') {
+  const div = $("<div/>", { class: classes, 'data-name': name, })
+  div.appendTo($('#plot-root'))
+  return div
+}
+
+export function plotDiv(name) {
+  const div = $(`#plot-root div[data-name=${name}]`)
+  return div.length > 0 ? div : newPlotDiv(name)
+}
+
+
 export function findViewByModelName(name) {
   return function findNamedView(view) {
     if (view.model && view.model.name == name) return view

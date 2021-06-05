@@ -21,7 +21,7 @@ effect import * 'dim/effects'
 # %% #
 let
 , nPoints = 50001
-, nDetailMax = 501
+, nDetailMax = nPoints//10
 
 # %% #
 let
@@ -39,6 +39,10 @@ let
 , yChg = copy$ ySample
 yChg[0:nChg] = nan
 yChg[nChg:All] = ySample[nChg:All] - ySample[0: -nChg]
+
+# %#
+
+# %% # First [Run Above] and choose `hski`, then open the url with a browser, then [Run Below]
 
 # %%
 
@@ -211,7 +215,11 @@ plot( 'demoGroup' ) $ {
           const figSample = plt.figure({ name: 'figSample',
               title: 'Sample of the Series',
               toolbar_location: 'left',
-              sizing_mode: 'stretch_both',
+              tools: [
+                'xwheel_zoom', 'ywheel_zoom',
+                'pan', 'crosshair', 'box_zoom',
+                'undo', 'redo', 'reset',
+              ], sizing_mode: 'stretch_both',
           })
           announceRange( figSample.x_range, {$ splRangeX $} )
           announceRange( figSample.y_range, {$ splRangeY $} )
@@ -233,7 +241,11 @@ plot( 'demoGroup' ) $ {
           const figChange = plt.figure({ name: 'figChange',
               title: 'Change of the Series',
               toolbar_location: 'right',
-              sizing_mode: 'stretch_both',
+              tools: [
+                'xwheel_zoom', 'ywheel_zoom',
+                'pan', 'crosshair', 'box_zoom',
+                'undo', 'redo', 'reset',
+              ], sizing_mode: 'stretch_both',
           })
           announceRange( figChange.x_range, {$ chgRangeX $} )
           announceRange( figChange.y_range, {$ chgRangeY $} )
@@ -257,7 +269,7 @@ plot( 'demoGroup' ) $ {
               [ [ figSample ], [ figChange ] ],
               { merge_tools: false, sizing_mode: 'stretch_both', }
             ),
-            $('#plot'),
+            plotDiv('sample'),
           )
 
           const splView = findViewByModelName( 'figSample' )( plotView )
@@ -292,16 +304,22 @@ plot( 'demoGroup' ) $ {
 
     # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window
     ds = defineDataSource(
-      x= xRaw[0:nDetailMax], y= yRaw[0:nDetailMax],
+      x= zeros(0), y= zeros(0),
     )
 
     perform implantServices $ namespace _ () export {
       method updatePlotData(xStart, xEnd,) {
-        dpStart = xStart.trunc
-        dpStop = dpStart + min(nDetailMax, (1 + xEnd - dpStart).round)
+        dpStart = max(0, xStart.floor)
+        # trim too large a range span
+        dpStop = min(len$ xRaw,
+          dpStart + min(nDetailMax, (xEnd - xStart.floor).ceil))
+
+        # hskiDebug.replHere()
+
         updateDataSource( ds,
           x= xRaw[dpStart:dpStop], y= yRaw[dpStart:dpStop],
         )
+        perform @sendCmd(js!expr plotView.reset())
       }
     }
 
@@ -310,7 +328,11 @@ plot( 'demoGroup' ) $ {
           const figDetails = plt.figure({ name: 'figDetails',
               title: 'Details of the Series',
               toolbar_location: 'left',
-              sizing_mode: 'stretch_both',
+              tools: [
+                'xwheel_zoom', 'ywheel_zoom',
+                'pan', 'crosshair', 'box_zoom',
+                'undo', 'redo', 'reset',
+              ], sizing_mode: 'stretch_both',
           })
           announceRange( figDetails.x_range, {$ dtlRangeX $} )
           announceRange( figDetails.y_range, {$ dtlRangeY $} )
@@ -328,7 +350,8 @@ plot( 'demoGroup' ) $ {
           }
 
 
-          const plotView = await plt.show( figDetails, $('#plot'), )
+          const plotView = await plt.show( figDetails, plotDiv('details'), )
+          window.plotView = plotView
 
           const dtlView = findViewByModelName( 'figDetails' )( plotView )
           announceFocus(dtlView, {$focusedFigure$})
