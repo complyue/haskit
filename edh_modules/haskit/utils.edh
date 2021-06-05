@@ -6,5 +6,5 @@ export class snippet {
 
 {## Helper for a series of literal source text to be interpolated into an expression #}
 export class snippets {
-  method __init__(srcs) this.__repr__ = join(*srcs, sep='\n\n')
+  method __init__(srcs) this.__repr__ = '\n\n'.join(*srcs)
 }

@@ -59,7 +59,19 @@ interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   rootPeer =: Peer()
 
   servicePath = '/' ++ UUID() # allocate a unique service path
-  hskiServer.mountServlet(servicePath) $ plotSvcScope => {
+  plotUrl = page ++ '?service=' ++ servicePath
+  if title then plotUrl += (
+    '&title=' ++ title # TODO urlEncode it
+  )
+  hskiServer.mountServlet(
+    servicePath, entryUrl= plotUrl,
+    pgid= pgid, pwid= pwid, title= title or nil,
+  ) $ plotSvcScope => {
+
+    effect {
+      reqPath = plotSvcScope.eval(expr reqPath)
+      reqParams = plotSvcScope.eval(expr reqParams)
+    }
 
     effect method implantServices(services) {
       from services import * into plotSvcScope
@@ -84,10 +96,6 @@ interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   }
 
   # Instruct the browser to open one window automatically
-  plotUrl = page ++ '?service=' ++ servicePath
-  if title then plotUrl += (
-    '&' ++ 'title=' ++ title # TODO urlEncode it
-  )
   plotWinName = pgid ++ '/' ++ pwid ++ '-window'
   rootPeer.postCommand(js!expr
     for(let i=0; i<{$nWinOpen$}; i++){

@@ -201,7 +201,7 @@ plot( 'demoGroup' ) $ {
   @}
 
 
-  plotWindow( 'demoSample', 'Downsampled Series' ) $ {@
+  plotWindow( 'demoSample', 'Downsampled Series', ) $ {@
     # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
     # So it's better to be a scoped block for context isolation, unless with good reasons not to
 

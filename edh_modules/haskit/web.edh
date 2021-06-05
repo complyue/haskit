@@ -6,6 +6,10 @@ export {
 }
 
 
+{## The meta information for a mounted servlet #}
+export data Servlet(service, entryUrl, ***extras) pass
+
+
 export class HaskItServer {
 
   # a stack of overlayed edh modules providing web resources
@@ -95,9 +99,9 @@ This must be called from such a service module's module procedure, thus run on i
     reqPath = svcScope.eval(expr reqPath)
 
     # check if a servlet mounted for it
-    case this._wsServlets[reqPath] of { servlet } -> {
+    case this._wsServlets[reqPath] of { Servlet(service) } -> {
       # hook this client to the servlet
-      return servlet( svcScope )
+      return service( svcScope )
     }
 
     # no servlet mounted for it, treat as active client session alone
@@ -117,16 +121,22 @@ This must be called from such a service module's module procedure, thus run on i
 The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` before return, after it returns `false`, the client will continue being served by `readCommand()` looping within the service module scope; if it returns `true`, the client will be disconnected immediately.
 
    #}
-  method mountServlet( path= '/' ++ UUID() ) servlet => {
-    if this._wsServlets[path] is not nil then {
-      console.warn<| 'Replacing servlet: [' ++ path ++ ']'
+  method mountServlet(
+    path= '/' ++ UUID(), entryUrl= None, ***extras
+  ) service => {
+    case this._wsServlets[path] of { Servlet() = servlet } -> {
+      console.warn<| 'Replacing servlet on path [' ++ path ++ ']: ' ++ servlet
     }
-    this._wsServlets[path] = servlet
+    this._wsServlets[path] = Servlet(service, entryUrl, ***extras)
     return path
   }
 
   method unmountServlet( path ) {
     this._wsServlets[path] = nil
+  }
+
+  generator mountedServlets() {
+    for (path, servlet) from this._wsServlets do yield (path, servlet)
   }
 
 
