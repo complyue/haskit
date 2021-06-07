@@ -50,7 +50,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
 {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
  #}
-export method plotWindow( pwid, title= None, page= '/page.html', nWinOpen= 1, )
+export method plotWindow( pwid, title= None, page= '/page.html', )
 interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   let pgid = perform pgid $=> 'plot'
   , hskiServer = perform @haskItServer
@@ -98,9 +98,7 @@ interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   # Instruct the browser to open one window automatically
   plotWinName = pgid ++ '/' ++ pwid ++ '-window'
   rootPeer.postCommand(js!expr
-    for(let i=0; i<{$nWinOpen$}; i++){
-      window.open( {$plotUrl$}, {$plotWinName$} + '#' + i, )
-    }
+    window.open( {$plotUrl$}, {$plotWinName$}, )
   )
 }
 
