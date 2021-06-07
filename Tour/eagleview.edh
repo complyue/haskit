@@ -19,22 +19,22 @@ effect import * 'dim/effects'
 
 
 # %% #
-let
+let # sizing the data for this demo
 , nPoints = 50001
 , nDetailMax = nPoints//10+1
 
 # %% #
-let
+let # in real cases, usually large (i.e. out-of-core) array mmap'ed
 , xRaw = arange( nPoints, dtype=f8, )
 , yRaw = cumsum$random( nPoints, -0.499..0.501, dtype=f8, )
 
 # %% #
-let
+let # downsample 1% of the data for easy plotting
 , xSample = xRaw[0:nPoints:100]
 , ySample = yRaw[0:nPoints:100]
 
 # %% #
-let
+let # demo of some feature series derived from original data
 , nChg = 5
 , yChg = copy$ ySample
 yChg[0:nChg] = nan
@@ -106,10 +106,11 @@ plot( 'demoGroup' ) $ {
     # Note this block is in-place interpreted in a multi-shot fashion, asynchronously on their respective ws service thread, per each plot window connected (only if it opens the correct url)
     # So it's better to be a scoped block for context isolation, unless with good reasons not to
 
-    # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window
+    # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window's context
     dsSpl = defineDataSource(
       x= xSample, y= ySample, chg= yChg,
     )
+    # it is usually unrealistic to dump the full dataset into browser, we do it just for demo
     dsRaw = defineDataSource(
       x= xRaw, y= yRaw,
     )
@@ -200,7 +201,7 @@ plot( 'demoGroup' ) $ {
 
     'eagle' -> { # the `eagle` iframe of the plot page
 
-      # Boken `ColumnRawSource`s have to be individually defined (initially sent) to each browser window
+      # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window's context
       dsSpl = defineDataSource(
         x= xSample, y= ySample,
       )
@@ -218,9 +219,12 @@ plot( 'demoGroup' ) $ {
 
           # hskiDebug.replHere()
 
-          updateDataSource( dsDyn,
-            x= xRaw[dpStart:dpStop], y= yRaw[dpStart:dpStop],
-          )
+          let # extract the small part from full raw dataset
+          , dynDataX= xRaw[dpStart:dpStop]
+          , dynDataY= yRaw[dpStart:dpStop]
+
+          # push dynamic data to browser, Bokeh will automatically update the plot upon cds changes
+          updateDataSource( dsDyn, x= dynDataX, y= dynDataY, )
         }
       }
 
@@ -269,14 +273,20 @@ plot( 'demoGroup' ) $ {
             announceAxisCursor(figView, defaultScale, {$focusedPoint$})
             announceAxisCursor(figView, defaultScale, {$splCursorPoint$})
 
-            let startRngX = null, endRngX = null
+            let startRngX = null, endRngX = null, updSched = null
             onViewRangeChange({$zoomRangeX$}, (start, end)=>{
                 startRngX = start; endRngX = end
-                hskiPageConn.ifAlive(peer => {
-                    peer.postCommand(
-                      `showRawData(${startRngX}, ${endRngX})`
-                    )
-                })
+                if(null !== updSched) return
+                updSched = setTimeout(
+                  ()=>{
+                    updSched = null
+                    hskiPageConn.ifAlive( peer => peer.postCommand(
+                        `showRawData(${startRngX}, ${endRngX})`
+                    ) )
+                  }, {$ # at most 0.5 Hz refresh rate
+                    500
+                  $},
+                )
             })
 
       })())
@@ -292,7 +302,7 @@ plot( 'demoGroup' ) $ {
 
     'chg' -> { # the `chg` iframe of the plot page
 
-      # Boken `ColumnRawSource`s have to be individually defined (initially sent) to each browser window
+      # Boken `ColumnDataSource`s have to be individually defined (initially sent) to each browser window's context
       dsSpl = defineDataSource(
         x= xSample, chg= yChg,
       )
@@ -301,7 +311,7 @@ plot( 'demoGroup' ) $ {
 
             const fig = plt.figure({
                 name: 'figChange',
-                title: 'Change Of Series',
+                title: 'Demo Feature Series',
                 toolbar_location: 'left',
                 tools: [
                   'xwheel_zoom', 'ywheel_zoom',

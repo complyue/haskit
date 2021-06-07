@@ -93,10 +93,7 @@ export function syncRange(rng, vrName,) {
     if (rd[0] === rng.start && rd[1] === rng.end) {
       return // well synced, don't propagate
     }
-    rng.setv({
-      start: rd[0],
-      end: rd[1],
-    })
+    rng.setv({ start: rd[0], end: rd[1], })
   }
   rng.on_change([rng.properties.start, rng.properties.end], () => {
     if (null !== announceTimer) {
