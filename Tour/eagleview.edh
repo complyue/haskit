@@ -42,10 +42,11 @@ yChg[nChg:All] = ySample[nChg:All] - ySample[0: -nChg]
 
 # %#
 
+
 # %% # First [Run Above] and choose `hski`, then open the url with a browser, then [Run Below]
 
-# %%
 
+# %%
 zoomRangeX = defineViewRange( 'xZoom' )
 syncedRangeX = defineViewRange( 'xSync' )
 
@@ -59,6 +60,8 @@ focusedPoint = defineAxisCursor( 'focusedPoint' )
 
 splCursorPoint = defineAxisCursor( 'splCursorPoint' )
 chgCursorPoint = defineAxisCursor( 'chgCursorPoint' )
+
+# %%
 
 plot( 'demoGroup' ) $ {
   # Note this block is in-place interpreted, synchronously, per each connected root window

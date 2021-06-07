@@ -125,11 +125,11 @@ export const {
 $(async function () {
   try {
     await hskiPageConn.livePeer()
-    uiLog("Page " + location.pathname + " connected with HaskIt backend at: "
-      + hskiPageConn.url)
+    uiLog("Page " + window.name + "@" + location.pathname
+      + " connected with HaskIt backend at: " + hskiPageConn.url)
   } catch (err) {
     let details = err ? err.stack : err
-    uiLog("Page " + location.pathname
+    uiLog("Page " + window.name + "@" + location.pathname
       + " failed connecting to HaskIt backend via ws.", "err-msg", details)
   }
 })
