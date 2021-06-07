@@ -1,5 +1,8 @@
 import * 'net'
 
+import * './debug'
+
+
 export {
   symbol @haskItServer
   symbol @haskItPeer
@@ -97,6 +100,8 @@ This must be called from such a service module's module procedure, thus run on i
     # peer/reqPath/repParams ets. should have been implanted there
     peer = svcScope.eval(expr peer)
     reqPath = svcScope.eval(expr reqPath)
+
+    # hskiDebug.replHere()
 
     # check if a servlet mounted for it
     case this._wsServlets[reqPath] of { Servlet(service) } -> {

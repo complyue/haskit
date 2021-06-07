@@ -1,90 +1,6 @@
 /**
- * main module of the narrator page
+ * extra module of the narrator page
  */
-
-import { Lander, } from "nedh"
-
-import { HaskItConn, uiLog,  } from "haskit"
-
-import { cdsServiceSuite } from './cds.js'
-
-import {
-  onViewRangeChange, onAxisCursorChange, onViewFocusChange,
-} from './comm.js'
-
-
-// lander with this module scope as environment
-class NarrLander extends Lander {
-  async landingThread() {
-    // XXX a subclass of Lander normally overrides this method, with even
-    //     verbatim copy of the method code here, it's already very useful,
-    //     in that the subclass' lexical context becomes the landing
-    //     environment.
-    //
-    //     And as this function's scope is the local scope within which the
-    //     source of incoming packets are eval'ed, other forms of (maybe ugly
-    //     and nasty) hacks can be put right here, but god forbid it.
-
-    if (null === this.nxt) {
-      throw Error("Passed end-of-stream for packets")
-    }
-    while (true) {
-      const [_outlet, _resolve, _reject, _intake, _inject] = this.nxt
-      const [_src, _nxt] = await _intake
-      this.nxt = _nxt
-      if (null === _src) {
-        if (null !== _nxt) {
-          throw Error("bug: inconsistent eos signal")
-        }
-        return // reached end-of-stream, terminate this thread
-      }
-      if (null === _nxt) {
-        throw Error("bug: null nxt for non-eos-packet")
-      }
-
-      // land one packet
-      try {
-        _resolve(await eval(_src))
-      } catch (exc) {
-        _reject(exc)
-      }
-    }
-  }
-}
-
-
-// Alias shothands for BokehJS stuff, which should haven been injected by html
-export const bkh = window.Bokeh, plt = bkh.Plotting
-
-
-// Narrator parameters passed via query string
-const narrParams = new URLSearchParams(window.location.search)
-
-// The page wide haskit connection to server
-class NarrConn extends HaskItConn {
-  async createLander() {
-    return new NarrLander()
-  }
-}
-const narrService = narrParams.get('service')
-const hskiPageConn = new NarrConn(narrService)
-
-{
-  const title = narrParams.get('title')
-  if (title) { document.title = title }
-}
-
-
-/*
- * js being strict-eval'ed can't create vars survive between eval invocations,
- * define containers here to persist intermediate data across scripted RPCs. 
- */
-export const narrContext = {}
-
-export const {
-  receiveDataSource, updateDataSource, cds,
-} = cdsServiceSuite(hskiPageConn, narrContext, bkh)
-
 
 export class Narrator {
   constructor(div) {
@@ -147,16 +63,4 @@ export class Storyline {
   }
 }
 
-export const narrator = new Narrator($("#narrator"))
-
-
-// Connect on open
-$(async function () {
-  try {
-    await hskiPageConn.livePeer()
-    uiLog("Connected with HaskIt backend.")
-  } catch (err) {
-    let details = err ? err.stack : err
-    uiLog("Failed connecting to HaskIt backend via ws.", "err-msg", details)
-  }
-})
+window.narrator = new Narrator($(".Narrator"))

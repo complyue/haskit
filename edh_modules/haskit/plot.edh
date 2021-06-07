@@ -50,7 +50,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
 {##
 Open the client plot window identified by `pwid`, vend effectful API to plot figures with glyphs in it
  #}
-export method plotWindow( pwid, title= None, page= '/plot.html', nWinOpen= 1, )
+export method plotWindow( pwid, title= None, page= '/page.html', nWinOpen= 1, )
 interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   let pgid = perform pgid $=> 'plot'
   , hskiServer = perform @haskItServer
@@ -110,6 +110,9 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
  #}
 export method narrWindow( pnid, title= None, page= '/narr.html', )
 interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
+  # the catch should be replaced with:
+  #   effect default (pgid= 'plot') pass
+  # once that's supported
   let pgid = perform pgid $=> 'plot'
   , hskiServer = perform @haskItServer
   , rootPeer = perform @haskItPeer

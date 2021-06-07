@@ -2,15 +2,16 @@
 <meta charset="utf-8" />
 
 <head>
-  <title>HaskIt Narrator</title>
+  <title>HaskIt iPlot</title>
 
-  <link rel="icon" type="image/png" href="/icons/narr.png" />
+  <link rel="icon" type="image/png" href="/icons/bokeh-32x32.png" />
 
   <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.css" />
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
-  <link rel="stylesheet" type="text/css" href="./narr.css" />
+
+  <link rel="stylesheet" type="text/css" href="./iplot.css" />
 
   <!-- this requires Chrome, with flag `Experimental Web Platform features`
        enabled for the time being 2021/05
@@ -46,24 +47,8 @@
     window.plt = bkh.Plotting
   </script>
 
-  <script type="module" src="/vendor/binary-search-bounds/search-bounds.js"></script>
-
   <script type="module" src="/page.js"></script>
-
-  <script type="module" src="./narr.js"></script>
 
 </head>
 
-<body>
-
-  <div class="Narrator"></div>
-
-  <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
-    Clear Log
-  </button>
-
-  <div class="LogArea">
-    <div class="LogBox"></div>
-  </div>
-
-</body>
+<body></body>

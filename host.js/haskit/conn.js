@@ -22,7 +22,7 @@ export class HaskItPeer extends WsPeer {
   }
   cleanup() {
     super.cleanup()
-    uiLog("Lost connection with HaskIt backend.")
+    uiLog("Page " + location.pathname + " lost connection with HaskIt backend.")
   }
 }
 
@@ -67,8 +67,14 @@ class HaskItLander extends Lander {
 
 
 export class HaskItConn {
-  constructor(path = '', params = null,) {
-    this.path = (path.startsWith('/') ? '' : '/') + path
+  constructor(path = null, params = null,) {
+    if (typeof path !== 'string') {
+      this.path = ''
+    } else if (path.startsWith('/')) {
+      this.path = path
+    } else {
+      this.path = '/' + path
+    }
     this.params = null === params ? null : new URLSearchParams(params)
     this.url = null
     this.peer = null
@@ -119,6 +125,3 @@ export class HaskItConn {
   }
 
 }
-
-// default connection to root path
-export const hskiPageConn = new HaskItConn('')

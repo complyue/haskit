@@ -5,12 +5,16 @@
 import { NaiveDate } from "./ts.js"
 
 
-
 let logBox = null, logArea = null,
   logAnimTask = null, lastAnimTime = 0
 
 if (globalThis.window === globalThis) { // in browser
   logBox = $(".LogBox")
+  if (logBox.length < 1 && window.parent) {
+    // within an iframe without its own log box, try UI widgets in parent window
+    logBox = $(".LogBox", parent.document)
+    // todo support deeper nested iframes?
+  }
   logArea = logBox.closest(".LogArea")
 
   $("button[name=clear-log]").on("click", () => {

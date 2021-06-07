@@ -76,7 +76,7 @@ export async function cdsUpdate(
 }
 
 
-export function cdsServiceSuite(hskiPageConn, cdsContainer, bkh,) {
+export function cdsServiceSuite(hskiPageConn, cdsContainer,) {
   return {
 
     receiveDataSource: async function receiveDataSource(
@@ -86,7 +86,7 @@ export function cdsServiceSuite(hskiPageConn, cdsContainer, bkh,) {
         return cdsReceive(
           colNames, colDtypes,
           peer, cdsData => cdsContainer[dsName] =
-            new bkh.ColumnDataSource({ data: cdsData }),
+            new Bokeh.ColumnDataSource({ data: cdsData }),
         )
       })
     },

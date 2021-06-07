@@ -1,5 +1,5 @@
 /**
- * haskit.css
+ * HaskIt global styles
 */
 
 body {
@@ -12,6 +12,27 @@ body {
 a {
   color: #0f9af0;
   text-decoration: none;
+}
+
+div.Chunk {
+  display: flex;
+  flex-flow: column;
+
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+iframe.Plot {
+  flex: unset; /* will prevent resize if set */
+  overflow: scroll;
+  resize: vertical;
+  margin: 1px 1px;
+  padding: 0 5px 5px 0; /* ensure resize handle visible */
+  border: none;
+
+  min-height: 72pt;
+  height: 30vh;
 }
 
 .LogArea {

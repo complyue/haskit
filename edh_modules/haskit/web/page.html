@@ -2,15 +2,14 @@
 <meta charset="utf-8" />
 
 <head>
-  <title>HaskIt Narrator</title>
+  <title>HaskIt Page</title>
 
-  <link rel="icon" type="image/png" href="/icons/narr.png" />
+  <link rel="icon" type="image/png" href="/haskit-fav.png" />
 
   <!-- TODO mui support of dark theme? -->
   <link rel="stylesheet" type="text/css" href="/vendor/mui/mui.css" />
 
   <link rel="stylesheet" type="text/css" href="/haskit.css" />
-  <link rel="stylesheet" type="text/css" href="./narr.css" />
 
   <!-- this requires Chrome, with flag `Experimental Web Platform features`
        enabled for the time being 2021/05
@@ -46,17 +45,13 @@
     window.plt = bkh.Plotting
   </script>
 
-  <script type="module" src="/vendor/binary-search-bounds/search-bounds.js"></script>
-
   <script type="module" src="/page.js"></script>
-
-  <script type="module" src="./narr.js"></script>
 
 </head>
 
 <body>
 
-  <div class="Narrator"></div>
+  <div id="plot-chunk" class="Chunk"></div>
 
   <button name="clear-log" class="mui-btn mui-btn--small mui-btn--danger">
     Clear Log
