@@ -1,12 +1,17 @@
 
-import * 'net'
-effect import * 'net/effects'
+if other'than'hski'repl!false {
+  # %% # You only need to run this cell if against a non-hski-compliant repl
+  # but that repl's backing interpreter has to have `haskit` batteries baked in nevertheless
+  import * 'net'
+  effect import * 'net/effects'
 
-import * 'haskit'
+  import * 'haskit'
 
-effect import * 'haskit/demo-server'
+  effect import * 'haskit/demo-server'
+  # %# above should have been automatically imported by repls started from `hski` interpreter, other Đ interpreters leveraging `haskit` package will likely do the same
+}
 
-# above will be automatically imported by `hski`
+
 # %% # this importing cell may need manual execution
 
 # import hasdim this way so:
@@ -206,22 +211,52 @@ plot( 'demoGroup' ) $ {
         x= zeros(0), y= zeros(0),
       )
 
-      perform implantServices $ namespace _ () export {
-        method showRawData(xStart, xEnd,) {
+      perform implantServices $ namespace _ (
+        tbsStart= 0, tbsEnd= 0, updSched= false,
+        shownStart= 0, shownEnd= 0,
+      ) { # use this namespace to localize intermediate states for paced, dynamic vis data update
+
+        export method showRawData(xStart, xEnd,) void {
+          assert$ xStart <= xEnd
+
           dpStart = max(0, xStart.floor)
           # trim too large a range span
-          dpStop = min(len$ xRaw,
+          dpEnd = min(len(xRaw)-1,
             dpStart + min(nDetailMax, (xEnd - xStart.floor).ceil))
+          assert$ dpStart <= dpEnd
 
-          # hskiDebug.replHere()
+          # hskiDebug.replHere() # uncomment to have an unconditional "breakpoint" here
 
-          let # extract the small part from full raw dataset
-          , dynDataX= xRaw[dpStart:dpStop]
-          , dynDataY= yRaw[dpStart:dpStop]
+          # but don't update too often
+          ai if this.updSched then {
+            # update the range to be shown, unless fitting within a previous request, this is the case when user zooming in
+            (this.tbsStart <= dpStart && dpEnd <= this.tbsEnd) or {
+              this.tbsStart = dpStart this.tbsEnd = dpEnd
+            }
+          } else if this.shownStart <= dpStart && dpEnd <= this.shownEnd then {
+            return nil # the requested range is already shown
+          } else { # make a schedule
+            this.tbsStart = dpStart this.tbsEnd = dpEnd
+            this.updSched = true
+            go {@
+              # delay half a second to control the pace
+              for _ from console.everyMillis(500) do break
 
-          # push dynamic data to browser, Bokeh will automatically update the plot upon cds changes
-          updateDataSource( dsDyn, x= dynDataX, y= dynDataY, )
+              # allow further updates to be scheduled, update the "scheduled" flag here, so we can only race to read further requested ranges, but never miss a request
+              this.updSched = false
+
+              let # extract the small part from full raw dataset
+              , dynDataX= xRaw[this.tbsStart .. this.tbsEnd]
+              , dynDataY= yRaw[this.tbsStart .. this.tbsEnd]
+
+              # push dynamic data to browser, Bokeh will automatically update the plot upon cds changes
+              updateDataSource( dsDyn, x= dynDataX, y= dynDataY, )
+
+              this.shownStart = this.tbsStart this.shownEnd = this.tbsEnd
+            @}
+          }
         }
+
       }
 
       perform @sendCmd(js!expr (async()=>{
@@ -269,20 +304,10 @@ plot( 'demoGroup' ) $ {
             announceAxisCursor(figView, defaultScale, {$focusedPoint$})
             announceAxisCursor(figView, defaultScale, {$splCursorPoint$})
 
-            let startRngX = null, endRngX = null, updSched = null
             onViewRangeChange({$zoomRangeX$}, (start, end)=>{
-                startRngX = start; endRngX = end
-                if(null !== updSched) return
-                updSched = setTimeout(
-                  ()=>{
-                    updSched = null
-                    hskiPageConn.ifAlive( peer => peer.postCommand(
-                        `showRawData(${startRngX}, ${endRngX})`
-                    ) )
-                  }, {$ # at most 0.5 Hz refresh rate
-                    500
-                  $},
-                )
+                hskiPageConn.ifAlive( peer => peer.postCommand(
+                    `showRawData(${start}, ${end})`
+                ) )
             })
 
       })())
