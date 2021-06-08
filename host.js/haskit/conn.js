@@ -118,7 +118,6 @@ export class HaskItConn {
       default:
     }
     console.warn('HaskIt connection already dead.')
-    debugger
   }
 
   async createLander() {
