@@ -52,7 +52,8 @@ Open the client plot window identified by `pwid`, vend effectful API to plot fig
  #}
 export method plotWindow( pwid, title= None, page= '/page.html', )
 interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
-  let pgid = perform pgid $=> 'plot'
+  effect default pgid = 'plot'
+  let pgid = perform pgid
   , hskiServer = perform @haskItServer
   , rootPeer = perform @haskItPeer
   hskiServer =: HaskItServer()
@@ -108,10 +109,8 @@ Open the client narrative window identified by `pnid`, vend effectful API to ins
  #}
 export method narrWindow( pnid, title= None, page= '/narr.html', )
 interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
-  # the catch should be replaced with:
-  #   effect default (pgid= 'plot') pass
-  # once that's supported
-  let pgid = perform pgid $=> 'plot'
+  effect default pgid = 'plot'
+  let pgid = perform pgid
   , hskiServer = perform @haskItServer
   , rootPeer = perform @haskItPeer
   hskiServer =: HaskItServer()
