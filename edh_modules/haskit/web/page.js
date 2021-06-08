@@ -86,7 +86,7 @@ class PageConn extends HaskItConn {
 
 // Page parameters passed via query string of the top page
 // todo support deeper nested iframes?
-const pageParams = new URLSearchParams(window.parent
+export const pageParams = new URLSearchParams(window.parent
   ? parent.location.search
   : window.location.search
 )
@@ -94,7 +94,7 @@ const pageParams = new URLSearchParams(window.parent
 
 // The page wide haskit connection to server
 const pageService = pageParams.get('service')
-const hskiPageConn = new PageConn(pageService, {
+export const hskiPageConn = new PageConn(pageService, {
   page: location.pathname,
   name: window.name,
 })

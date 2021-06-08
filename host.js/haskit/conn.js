@@ -23,7 +23,7 @@ export class HaskItPeer extends WsPeer {
   cleanup() {
     super.cleanup()
     uiLog("Page " + window.name + "@" + location.pathname
-      + " lost connection with HaskIt backend.")
+      + " disconnected with HaskIt backend.")
   }
 }
 
