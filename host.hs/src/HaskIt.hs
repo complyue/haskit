@@ -12,18 +12,10 @@ installHaskItBatteries !world = do
     installEdhModule world "haskit/RT" $ \ !ets !exit -> do
       let !moduScope = contextScope $ edh'context ets
 
-      !moduArts <-
-        sequence $
-          [(nm,) <$> mkHostProc moduScope mc nm hp | (mc, nm, hp) <- []]
-            ++ [ (nm,) <$> mkHostProperty moduScope nm getter setter
-                 | (nm, getter, setter) <- []
-               ]
+      let !moduArts = []
 
-      !artsDict <-
-        EdhDict
-          <$> createEdhDict [(EdhString k, v) | (k, v) <- moduArts]
-      flip iopdUpdate (edh'scope'entity moduScope) $
-        [(AttrByName k, v) | (k, v) <- moduArts]
-          ++ [(AttrByName "__exports__", artsDict)]
+      iopdUpdate moduArts $ edh'scope'entity moduScope
+      prepareExpStore ets (edh'scope'this moduScope) $ \ !esExps ->
+        iopdUpdate moduArts esExps
 
       exit
