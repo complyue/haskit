@@ -6,6 +6,7 @@ import Control.Concurrent (forkFinally)
 import Control.Exception (SomeException)
 import Control.Monad
 import qualified Data.Text as T
+import GHCi.Signals
 import Language.Edh.EHI
   ( EdhConsole (consoleIO, consoleIOLoop),
     EdhConsoleIO (ConsoleOut, ConsoleShutdown),
@@ -19,7 +20,10 @@ import System.IO (hPutStrLn, stderr)
 import Prelude
 
 main :: IO ()
-main =
+main = do
+  -- don't crash on double Ctrl^C or Ctrl^\, mimic what GHCi is doing
+  installSignalHandlers
+  -- run the specified module, assuming `repl` semantics
   getArgs >>= \case
     [] -> runModu "haskit"
     [edhModu] -> runModu edhModu
