@@ -25,7 +25,6 @@ source-repository head
 executable hski
   hs-source-dirs:     hski
   main-is:            Main.hs
-  other-modules:      Repl
   default-language:   Haskell2010
   default-extensions:
     NoImplicitPrelude
@@ -51,8 +50,6 @@ executable hski
     , edh
     , hasdim
     , haskit
-    , ghc               >=8.8.3
-    , ghci
     , lossless-decimal
     , mtl
     , nedh
