@@ -8,7 +8,7 @@ import { hasLogBox, uiLog, } from "./log.js"
 
 
 export async function getWsBaseUrl() {
-  const wsPort = await $.get("/:")
+  const wsPort = await $.get("/@")
   // todo use wss:// when appropriate
   return "ws://" + location.hostname + ":" + wsPort
 }

@@ -28,7 +28,7 @@ export class HaskItServer {
   WS_MODULE = 'haskit/web/ws'
 
   # extra routes by url
-  URL_ROUTES = ()
+  URL_ROUTES = {}
 
 
   # constructor
@@ -61,10 +61,10 @@ export class HaskItServer {
 
     this.http = HttpServer(
       that.WEB_MODULES,
-      netInterface, httpPort, routes=
-      # tell web browser our port of WebSocket at uri `/:`
-      ( ":", '' ++ wsAddr.port(), mime= 'text/plain' )
-      :> that.URL_ROUTES,
+      netInterface, httpPort, routes= { # routes by URI
+        # tell web browser our port of WebSocket at uri `/@`
+        "@": (blob$str$ wsAddr.port(), mime= 'text/plain', ),
+      } =< that.URL_ROUTES,
       port'max= httpPort+numAltPorts,
     )
     case this.http.addrs() of {
