@@ -24,9 +24,6 @@ export class HaskItServer {
     'web', # from edh
   )
 
-  # WebSocket serving module
-  WS_MODULE = 'haskit/web/ws'
-
   # extra routes by url
   URL_ROUTES = {}
 
@@ -37,6 +34,7 @@ export class HaskItServer {
     httpPort= 3780,
     wsPort= 3790,
     numAltPorts= 9,
+    useSandbox= true,
   ) {
 
     # collection of active servlets by path
@@ -45,11 +43,10 @@ export class HaskItServer {
     this._wsClients = {}
 
     this.ws = WsServer(
-      that.WS_MODULE, netInterface, wsPort,
+      that.wsService,
+      netInterface, wsPort,
       port'max= wsPort+numAltPorts,
-      init= modu => {
-        modu.@haskItServer = this
-      },
+      useSandbox= useSandbox,
     )
     case this.ws.addrs() of {
       { wsAddr :> _extraWsAddrs } -> {
@@ -79,6 +76,71 @@ export class HaskItServer {
 
 
   {##
+   # per-client service method to run as a dedicated Edh program
+   #
+   # note once this procedure returns, the ws connection is disconnected, all forkee threads spawn from this thread, together with this thread, will be terminated as well.
+   #}
+  method wsService() {
+
+    # obtain effectful arts per WebSocket service context
+    peer = perform @netPeer
+    peer =: Peer()
+    rqURI = perform rqURI
+    # rqParams = perform rqParams
+
+    defer {
+      console.debug<| 'Disconnecting ws client - [' ++ rqURI ++ '] ' ++ peer
+    }
+    console.debug<| 'WebSocket client connected - [' ++ rqURI ++ '] ' ++ peer
+
+    effect { # define conventional artifacts in effect
+      # note in assignments to symbolic attributes, semicolon before `@` is likely necessary, to disambiguate the `@` from an infix operator, in case there are any expressions before it
+
+      # local receiving end of the standard data channel
+      ; @dataSink = peer.armChannel( dataChan ?:= 'data' )
+
+      # HaskIt specific effectful artifacts for commands to be landed here
+      ; @haskItServer = that
+      ; @haskItPeer = peer
+
+    }
+
+    # where incoming commands will be landed
+    svcScope = peer.sandbox or scope()
+    # unless a mounted servlet for this request states that it's done
+    doneServing = false
+
+    # check if a servlet mounted for this client request
+    case this._wsServlets[rqURI] of {
+      { Servlet(service) } -> { # hook this client to the servlet
+        doneServing = service( svcScope ) is not false
+      }
+
+      # no servlet mounted for this request, treat as active client session alone
+      clntsOnPath = this._wsClients[rqURI] |= {}
+      # cleanup on termination of the service module procedure thread
+      defer clntsOnPath[peer] = nil
+      # record this connection
+      clntsOnPath[peer] = svcScope
+    }
+
+    if not doneServing then {@ # keep landing incoming commands, within this isolated scope
+
+      while peer.eol() is false case peer.readCommand() of {@
+        { cmdVal } -> {
+          console.warn<| 'Unexpected command result from ws: ' ++ desc(cmdVal)
+        }
+      @}
+
+    @} $=> { exc } -> {
+      console.error<| 'Exception by ws client ' ++ peer ++ ' error: '
+      ++ desc(exc)
+    }
+
+  }
+
+
+  {##
    # Enumerate all websocket clients connected to the specified path, those not hooked by a servlet
    #}
   generator wsClientsOn( path ) case this._wsClients[path] of
@@ -88,34 +150,6 @@ export class HaskItServer {
     ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
     effect @haskItPeer = wsPeer
     yield (wsPeer, svcScope)
-  }
-
-
-  {##
-   # For the client facing service module to register the websocket connection it is handling
-
-This must be called from such a service module's module procedure, thus run on its connection handling thread.
-   #}
-  interpreter hookWsClient( svcScope ) {
-    # peer/reqPath/repParams ets. should have been implanted there
-    peer = svcScope.eval(expr peer)
-    reqPath = svcScope.eval(expr reqPath)
-
-    # hskiDebug.replHere()
-
-    # check if a servlet mounted for it
-    case this._wsServlets[reqPath] of { Servlet(service) } -> {
-      # hook this client to the servlet
-      return service( svcScope )
-    }
-
-    # no servlet mounted for it, treat as active client session alone
-    clntsOnPath = this._wsClients[reqPath] |= {}
-    # cleanup on termination of the service module procedure thread
-    defer clntsOnPath[peer] = nil
-    # record it
-    clntsOnPath[peer] = svcScope
-    return false
   }
 
 

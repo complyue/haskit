@@ -196,7 +196,7 @@ plot( 'demoGroup' ) $ {
 
   plotWindow(
     'eagleView', 'Demo Eagle View',
-  ) $ case perform reqParams.name of {@
+  ) $ case perform rqParams.name of {@
     # Here we use a scoped block for context isolation, as this block is in-place interpreted in a multi-shot fashion, asynchronously on multiple WebSocket service threads, per each browser window context connected, i.e. the plot start page, each iframe as added into the start page, also when later user refresh the browser windows showing them etc.
 
 

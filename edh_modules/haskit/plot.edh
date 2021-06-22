@@ -69,11 +69,6 @@ interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
     pgid= pgid, pwid= pwid, title= title or nil,
   ) $ plotSvcScope => {
 
-    effect {
-      reqPath = plotSvcScope.eval(expr reqPath)
-      reqParams = plotSvcScope.eval(expr reqParams)
-    }
-
     effect method implantServices(services) {
       from services import * into plotSvcScope
     }
