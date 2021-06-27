@@ -44,7 +44,7 @@ export class HaskItServer {
 
     this.ws = WsServer(
       that.wsService,
-      netInterface, wsPort,
+      addr= netInterface, port= wsPort,
       port'max= wsPort+numAltPorts,
       useSandbox= useSandbox,
     )
