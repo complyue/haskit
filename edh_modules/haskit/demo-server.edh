@@ -2,7 +2,7 @@
 
 You should never import this module unless for demonstration purpose, instead you would usually craft a similar module, with a properly customized server instance exported per your business needs.
 
-That is, you usually derive a custom class from `HaskItServer`, with your own `WEB_MODULES` list and/or `WS_MODULE`, then create a globally shared instance of it, export the instance as `@haskItServer` from your server module, then `effect import ` your server module where necessary.
+That is, you usually derive a custom class from `HaskItServer`, with your own `WEB_MODULES` list and/or `wsService()`, then create a globally shared instance of it, export the instance as `@haskItServer` from your server module, then `effect import ` your server module where necessary.
 
  #}
 
