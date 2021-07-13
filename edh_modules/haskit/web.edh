@@ -124,7 +124,9 @@ export class HaskItServer {
       clntsOnPath[peer] = svcScope
     }
 
-    if not doneServing then {@ # keep landing incoming commands, within this isolated scope
+    if not doneServing then {
+
+      # hskiDebug.replHere()
 
       while peer.eol() is false case peer.readCommand() of {@
         { cmdVal } -> {
@@ -132,7 +134,7 @@ export class HaskItServer {
         }
       @}
 
-    @} $=> { exc } -> {
+    } $=> { exc } -> {
       console.error<| 'Exception by ws client ' ++ peer ++ ' error: '
       ++ desc(exc)
     }
