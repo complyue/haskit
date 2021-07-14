@@ -31,7 +31,7 @@ The group plot script will be evaluated against each hski client (root window), 
 An instance of `HaskItServer` (usually a descendant instance of it) must be in effect via `@haskItServer` key.
 
  #}
-export method plot( pgid ) interpreter groupPlotter (
+export method plot( pgid, clientPath= '/' ) interpreter groupPlotter (
   grpPlotScope, grpPlotScript,
 ) void {
   {# note wrt the js!expr posted to web clients:
@@ -42,7 +42,7 @@ outer most curly braces are being interpreted as markers of a block of code in j
 
   effect pgid = pgid
 
-  for (_rootPeer, _rootSvcScope) from hskiServer.wsClientsOn('/')
+  for (_rootPeer, _rootSvcScope) from hskiServer.wsClientsOn( clientPath )
   do grpPlotScope.eval$ grpPlotScript
 }
 
