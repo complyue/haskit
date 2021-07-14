@@ -67,25 +67,18 @@ interpreter winPlotter ( winPlotScope, winPlotScript, ) void {
   hskiServer.mountServlet(
     servicePath, entryUrl= plotUrl,
     pgid= pgid, pwid= pwid, title= title or nil,
-  ) $ plotSvcScope => {
-
-    effect method implantServices(services) {
-      from services import * into plotSvcScope
-    }
+  ) $ () => {
 
     # the plot script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing plotted
     return case winPlotScope.eval$ winPlotScript of {
       # all done, disconnect this window as no further client/server interaction expected
-      true -> true
-      {return true} -> true
+      true -> pass
+      {return true} -> pass
       # initial plotting done, keep this window connected, further C/S interactions expected
-      false -> false
-      {return false} -> false
+      false -> perform keepServing()
+      {return false} -> perform keepServing()
       _ -> { # one-shot plotting, umount the service
         hskiServer.unmountServlet(servicePath)
-        # todo which of the following is more correct?
-        true # disconnect this window, no further C/S interactions expected
-        # false # keep this window connected, further C/S interactions expected
       }
     }
 
@@ -112,25 +105,18 @@ interpreter winNarrator ( winNarrScope, winNarrScript, ) void {
   rootPeer =: Peer()
 
   servicePath = '/' ++ UUID() # allocate a unique service path
-  hskiServer.mountServlet(servicePath) $ narrSvcScope => {
-
-    effect method implantServices(services) {
-      from services import * into narrSvcScope
-    }
+  hskiServer.mountServlet(servicePath) $ () => {
 
     # the narr script has to explicitly return a bool to keep the service mounted, or it'll get unmounted and further refresh of the browser window can get nothing
     return case winNarrScope.eval$ winNarrScript of {
       # all done, disconnect this window as no further client/server interaction expected
-      true -> true
-      {return true} -> true
-      # initial narration setup done, keep this window connected, further C/S interactions expected
-      false -> false
-      {return false} -> false
+      true -> pass
+      {return true} -> pass
+      # initial plotting done, keep this window connected, further C/S interactions expected
+      false -> perform keepServing()
+      {return false} -> perform keepServing()
       _ -> { # one-shot narration setup, umount the service
         hskiServer.unmountServlet(servicePath)
-        # todo which of the following is more correct?
-        true # disconnect this window, no further C/S interactions expected
-        # false # keep this window connected, further C/S interactions expected
       }
     }
 

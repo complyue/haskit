@@ -211,7 +211,7 @@ plot( 'demoGroup' ) $ {
         x= zeros(0), y= zeros(0),
       )
 
-      perform implantServices $ namespace _ (
+      perform implantServiceMethods $ namespace _ (
         tbsStart= 0, tbsEnd= 0, updSched= false,
         shownStart= 0, shownEnd= 0,
       ) { # use this namespace to localize intermediate states for paced, dynamic vis data update

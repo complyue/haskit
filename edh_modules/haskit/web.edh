@@ -105,15 +105,27 @@ export class HaskItServer {
 
     }
 
-    # where incoming commands will be landed
-    svcScope = peer.sandbox or scope()
-    # unless a mounted servlet for this request states that it's done
-    doneServing = false
-
     # check if a servlet mounted for this client request
-    case this._wsServlets[rqURI] of {
+    case this._wsServlets[rqURI] of {@
+      # where incoming commands will be landed
+      svcScope = peer.sandbox or scope()
+
+      method keepServing() {
+        while peer.eol() is false case peer.readCommand() of {@ { cmdVal } -> {
+            console.warn<| 'Unexpected command result from ws: ' ++ desc(cmdVal)
+        } @}
+      }
+
       { Servlet(service) } -> { # hook this client to the servlet
-        doneServing = service( svcScope ) is not false
+
+        effect method implantServiceMethods(svcMths) {
+          from svcMths import * into svcScope
+        }
+
+        effect keepServing = keepServing
+
+        service()
+
       }
 
       # no servlet mounted for this request, treat as active client session alone
@@ -122,19 +134,10 @@ export class HaskItServer {
       defer clntsOnPath[peer] = nil
       # record this connection
       clntsOnPath[peer] = svcScope
-    }
+      # keep serving over this connection
+      keepServing()
 
-    if not doneServing then {
-
-      # hskiDebug.replHere()
-
-      while peer.eol() is false case peer.readCommand() of {@
-        { cmdVal } -> {
-          console.warn<| 'Unexpected command result from ws: ' ++ desc(cmdVal)
-        }
-      @}
-
-    } $=> { exc } -> {
+    @} $=> { exc } -> {
       console.error<| 'Exception by ws client ' ++ peer ++ ' error: '
       ++ desc(exc)
     }
