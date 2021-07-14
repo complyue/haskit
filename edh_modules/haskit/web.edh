@@ -122,6 +122,11 @@ export class HaskItServer {
           from svcMths import * into svcScope
         }
 
+        effect method implantServiceEffects(svcEffs) {
+          effect import * svcEffs into svcScope
+          # hskiDebug.replHere()
+        }
+
         effect keepServing = keepServing
 
         service()
