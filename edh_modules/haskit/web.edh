@@ -134,7 +134,7 @@ export class HaskItServer {
       }
 
       # no servlet mounted for this request, treat as active client session alone
-      clntsOnPath = this._wsClients[rqURI] |= {}
+      clntsOnPath = ai this._wsClients[rqURI] |= {}
       # cleanup on termination of the service module procedure thread
       defer clntsOnPath[peer] = nil
       # record this connection
