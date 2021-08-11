@@ -40,6 +40,7 @@ executable hski
     ScopedTypeVariables
     TupleSections
     TypeApplications
+    AllowAmbiguousTypes
     TypeOperators
     ViewPatterns
 
@@ -77,6 +78,7 @@ library
     ScopedTypeVariables
     TupleSections
     TypeApplications
+    AllowAmbiguousTypes
     TypeOperators
     ViewPatterns
 
