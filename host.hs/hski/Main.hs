@@ -4,7 +4,7 @@ module Main where
 
 import Dim.EHI (installDimBatteries)
 import HaskIt (installHaskItBatteries)
-import Language.Edh.EHI
+import Language.Edh.CHI
 import Language.Edh.Net (installNetBatteries)
 import Language.Edh.Repl
 import System.Environment (getArgs)

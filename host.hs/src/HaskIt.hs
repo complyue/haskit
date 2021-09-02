@@ -3,7 +3,7 @@ module HaskIt where
 -- import           Debug.Trace
 
 import Control.Monad
-import Language.Edh.EHI
+import Language.Edh.CHI
 import Prelude
 
 installHaskItBatteries :: EdhWorld -> IO ()
