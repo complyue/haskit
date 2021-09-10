@@ -3,19 +3,17 @@ module HaskIt where
 -- import           Debug.Trace
 
 import Control.Monad
-import Language.Edh.CHI
+import Language.Edh.MHI
 import Prelude
 
 installHaskItBatteries :: EdhWorld -> IO ()
 installHaskItBatteries !world = do
   void $
-    installEdhModule world "haskit/RT" $ \ !ets !exit -> do
-      let !moduScope = contextScope $ edh'context ets
+    installEdhModuleM world "haskit/RT" $ do
+      !moduScope <- contextScope . edh'context <$> edhThreadState
 
       let !moduArts = []
 
-      iopdUpdate moduArts $ edh'scope'entity moduScope
-      prepareExpStore ets (edh'scope'this moduScope) $ \ !esExps ->
-        iopdUpdate moduArts esExps
-
-      exit
+      iopdUpdateEdh moduArts $ edh'scope'entity moduScope
+      !esExps <- prepareExpStoreM (edh'scope'this moduScope)
+      iopdUpdateEdh moduArts esExps
