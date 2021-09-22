@@ -1,12 +1,42 @@
-# HaskIt Đ - Haskell Software, Fast Iterations
+# HaskIt Đ - Mathematical Modeling, Procedural Iterations
 
-> Get Quality from
-> [Haskell](https://haskell.org),
-> Get Bullshit Done Quickly with
+> Model Your Business Mathematically in
+> [Haskell](https://haskell.org)
+
+> Drive it Running Procedurally in
 > [Đ (Edh)](https://github.com/e-wrks/edh)
 
-Undoubtedly, [Haskell](https://haskell.org) means all good things with respect
-to software development, but with shortcomings (though few):
+## Why Technical Debt
+
+-- or: How you can avoid it
+
+### Whelming Abstractions of CS Concerns in the System
+
+Can you identify the Computer Scientists who operate the computer systems your business depends on?
+
+If you are a large corporation, you probably have your own Dev oo Ops departments in collaboration with sophisticated data & management workflows. Or you have a smaller IT department/team. Or you just hire some senior software developer(s) for the job.
+
+Or yourself happen to hold such a position in your organization.
+
+Unless you are a programming languguage designer, computer programming is never your real business, even though you are in charge of the system software development undergoing. Because inevitably you have to think about laboring activities by the users of your (computer powered) system, and how they get the real business profitable & healthy.
+
+But you probably are not one of those very few lucky guys in the world, whose sole job is to design some programming languages (machine instruction set included, and i.e. the logical computer in essense). So your job involves more or less the translation of your business logic into some computer programming languages, and in a sense you are nontheless one of the "computer software developers".
+
+Now think about it, how much of your concerns are about how your computers work, rather than how your business generates profits? Well, greater percentage than you would regard as reasonable, I guess. Of course you may be already comfortable with this, that's a sign that you have become a computer expert at all.
+
+Even for commputer experts, there are way too many circumstances some functionality are unexpectedly limited for unobvious reasons, way too many "features" of a computer system bear some "bug" nature in them. They are just not strictly "bugs" from the perspective of software engineering, though nevertheless real "bug" in design of the business supporting architecture, of the overall computer system. This can be one way a definition of "technical debt", which states the cost to buy power in first needs, that to be paid by future freedom (of the system).
+
+Deeper reason behind this, is just "Computer Science". Not because of its weakness in intelligence simulation, but its complexity in doing so. It's always about tradeoffs, those outsiders can not even imagine.
+
+For computer experts (i.e. the insiders), it can be real headaches to communicate those tradeoffs to the users, the client representatives, or the stakeholders of a software project. So more often than not, they don't speak of it, they just bury themselves in getting the obvious things done, so the system looks good on the surface, at least.
+
+### Mind Your Own Business
+
+-- or: Escape the hell of "Computer Implementation Details"
+
+### Embrace Citizen Development
+
+# Whatnot
 
 - A steeper learning curve compared to other mainstream languages, which is bad
   for hiring and team-building.
