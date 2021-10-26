@@ -9,7 +9,7 @@ import Prelude
 installHaskItBatteries :: EdhWorld -> IO ()
 installHaskItBatteries !world = do
   void $
-    installEdhModuleM world "haskit/RT" $ do
+    installModuleM world "haskit/RT" $ do
       !moduScope <- contextScope . edh'context <$> edhThreadState
 
       let !moduArts = []
