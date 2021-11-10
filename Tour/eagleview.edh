@@ -1,4 +1,7 @@
 
+import * as Math 'math'
+
+
 if other'than'hski'repl!false {
   # %% # You only need to run this cell if against a non-hski-compliant repl
   # but that repl's backing interpreter has to have `haskit` batteries baked in nevertheless
@@ -213,13 +216,13 @@ plot( 'demoGroup' ) $ {
         shownStart= 0, shownEnd= 0,
       ) { # use this namespace to localize intermediate states for paced, dynamic vis data update
 
-        export method showRawData(xStart, xEnd,) void {
+        export method showRawData(xStart: 'Decimal', xEnd: 'Decimal',) void {
           assert$ xStart <= xEnd
 
-          dpStart = max(0, xStart.floor)
+          dpStart = Math.max(0, xStart.floor)
           # trim too large a range span
-          dpEnd = min(len(xRaw)-1,
-            dpStart + min(nDetailMax, (xEnd - xStart.floor).ceil))
+          dpEnd = Math.min(len(xRaw)-1,
+            dpStart + Math.min(nDetailMax, (xEnd - xStart.floor).ceil))
           assert$ dpStart <= dpEnd
 
           # hskiDebug.replHere() # uncomment to have an unconditional "breakpoint" here
