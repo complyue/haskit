@@ -173,7 +173,7 @@ The servlet can repeat `@netPeer.readCommand()` or `@netPeer.readSource()` befor
   method mountServlet(
     path= '/' ++ UUID(), entryUrl= None, ***extras
   ) service => {
-    case this._wsServlets[path] of { Servlet() = servlet } -> {
+    case this._wsServlets[path] of { Servlet() as servlet } -> {
       console.warn<| 'Replacing servlet on path [' ++ path ++ ']: ' ++ servlet
     }
     this._wsServlets[path] = Servlet(service, entryUrl, ***extras)
