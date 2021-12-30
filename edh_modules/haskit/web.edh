@@ -96,9 +96,6 @@ export class HaskItServer {
     effect { # define conventional artifacts in effect
       # note in assignments to symbolic attributes, semicolon before `@` is likely necessary, to disambiguate the `@` from an infix operator, in case there are any expressions before it
 
-      # local receiving end of the standard data channel
-      ; @dataSink = peer.armChannel( dataChan ?:= 'data' )
-
       # HaskIt specific effectful artifacts for commands to be landed here
       ; @haskItServer = that
       ; @haskItPeer = peer
