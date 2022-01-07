@@ -83,10 +83,9 @@ export class HaskItServer {
   method wsService() {
 
     # obtain effectful arts per WebSocket service context
-    peer = perform @netPeer
-    peer =: Peer()
-    rqURI = perform rqURI
-    # rqParams = perform rqParams
+    let peer: Peer = perform @netPeer
+    , rqURI = perform rqURI
+    # , rqParams = perform rqParams
 
     defer {
       console.debug<| 'Disconnecting ws client - [' ++ rqURI ++ '] ' ++ peer
@@ -152,8 +151,7 @@ export class HaskItServer {
    #}
   generator wsClientsOn( path ) case this._wsClients[path] of
   # nil means no such path ever connected, we only care non-nil case
-  { clntsOnPath } -> for (wsPeer, svcScope) from clntsOnPath do {
-    wsPeer =: Peer()
+  { clntsOnPath } -> for (wsPeer: Peer, svcScope: scope) from clntsOnPath do {
     ;| wsPeer.eol() -> clntsOnPath[wsPeer] = nil
     effect @haskItPeer = wsPeer
     yield (wsPeer, svcScope)

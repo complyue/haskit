@@ -1,3 +1,4 @@
+import * 'net'
 
 import * 'haskit'
 
@@ -7,8 +8,9 @@ effect import * 'haskit/demo-server'
 
 
 # %%
-for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
-  hskiPeer =: Peer() # just to hint the IDE
+for (
+  hskiPeer: Peer, svcScope: scope
+) from perform @haskItServer.wsClientsOn('/') do {
 
   # we can construct some expression as for JavaScript source here, only if it parses as valid Đ source (thus syntax highlighted as such), it'll run as JavaScript source in the browser window, and we craft it that way.
   hskiPeer.postCommand( js!expr {
@@ -31,9 +33,9 @@ for(let i=0; i<3; i++) {
 
 # %%
 # client root peer is a WsPeer object, whose lander environment hosts our expression, we can call any function exposed there, we can access constants and variables there. but note due to JavaScript strict evaluation, we can not introduce new variables there (via var/let/const).
-for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
-  hskiPeer =: Peer() # just to hint the IDE
-
+for (
+  hskiPeer: Peer, svcScope: scope
+) from perform @haskItServer.wsClientsOn('/') do {
   hskiPeer.postCommand( js!expr
 
     clearLog()
@@ -43,9 +45,9 @@ for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
 
 
 # %%
-for (hskiPeer, svcScope) from perform @haskItServer.wsClientsOn('/') do {
-  hskiPeer =: Peer() # just to hint the IDE
-
+for (
+  hskiPeer: Peer, svcScope: scope
+) from perform @haskItServer.wsClientsOn('/') do {
   hskiPeer.postCommand( js!expr
 
     uiLog( 'xxx', 'msg', 'zzz ... yyy' )
