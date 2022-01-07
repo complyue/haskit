@@ -2,11 +2,13 @@ module HaskIt where
 
 -- import           Debug.Trace
 
-import Control.Monad
+import HaskIt.RT
 import Language.Edh.EHI
 import Prelude
 
 installHaskItBatteries :: EdhWorld -> IO ()
 installHaskItBatteries !world = runProgramM_ world $ do
-  installModuleM_ "haskit/RT" $ do
-    return ()
+  installModuleM_ "haskit/RT" $
+    exportM_ $ do
+      defEdhProc'_ EdhMethod "readFile" readFileProc
+      defEdhProc'_ EdhMethod "writeFile" writeFileProc

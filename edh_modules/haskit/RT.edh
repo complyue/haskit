@@ -13,3 +13,21 @@ then error( 'Missing host module: ' ++ __name__ )
 # rest of the source here serves as meta documentation for aforementioned
 # host artifacts, and is meant to be leveraged by IDE tools (such as els)
 # with source code analysis capabilities, to aid the developers
+
+export {
+
+  {##
+   # Read the contents of a file from local filesystem
+   #}
+  method readFile( name: 'String', binary: 'Bool' = false,
+    dir: 'String' = NA ): 'String' | 'Blob' pass
+
+  {##
+   # Write some data into a file in local filesystem
+
+The file will be overwritten.
+   #}
+  method writeFile( name: 'String', data: 'String' | 'Blob',
+    dir: 'String' = NA ) pass
+
+}
