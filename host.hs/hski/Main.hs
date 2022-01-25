@@ -2,7 +2,6 @@ module Main where
 
 -- import           Debug.Trace
 
-import Dim.EHI (installDimBatteries)
 import HaskIt (installHaskItBatteries)
 import Language.Edh.EHI
 import Language.Edh.Net (installNetBatteries)
@@ -27,7 +26,6 @@ main =
         -- install all necessary batteries
         installEdhBatteries world
         installNetBatteries world
-        installDimBatteries world
         installHaskItBatteries world
 
         consoleOut $

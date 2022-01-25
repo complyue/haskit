@@ -49,7 +49,6 @@ executable hski
     , base              >=4.12
     , bytestring
     , edh
-    , hasdim
     , haskit
     , lossless-decimal
     , mtl
@@ -92,7 +91,6 @@ library
     , directory
     , edh
     , filepath
-    , hasdim
     , hashable
     , lossless-decimal
     , mmap                  >=0.5.4
